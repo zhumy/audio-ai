@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 听觉进入智能时代</title>
+    <meta
+      name="description"
+      content="Audio AI：围绕音频、语音与听觉智能的交互式课程开场页。"
+    />
+    <link rel="stylesheet" href="../../assets/css/home.css" />
+    <link rel="stylesheet" href="../../assets/css/theme.css" />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
+    <header class="topbar">
+      <div class="brand" aria-label="Audio AI">
+        <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+        <span>AUDIO <strong>AI</strong></span>
+      </div>
+      <nav class="home-nav" aria-label="课程章节导航">
+        <a href="../01-time-domain-audio/">01 时域音频</a>
+        <a href="../02-frequency-domain-processing/">02 频域处理</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-label="课程开场">
+        <div class="hero-copy">
+          <p class="eyebrow">声音 · 语言 · 听觉智能</p>
+          <h1>
+            听见世界，<br />
+            <span>理解声音里的智能。</span>
+          </h1>
+          <p class="lede">
+            <strong>Audio AI</strong>
+            是一门面向 AI 时代的交互式课程。我们从音频与语音的基本原理出发，
+            观察机器如何聆听、识别、生成与创造，并亲手构建可感知的声音应用。
+          </p>
+          <div class="course-tags" aria-label="课程主题">
+            <span>音频原理</span>
+            <span>语音交互</span>
+            <span>听觉感知</span>
+            <span>AI 开发</span>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="声音与智能的视觉图形">
+          <div class="orb">
+            <div class="orbit orbit-a"></div>
+            <div class="orbit orbit-b"></div>
+            <div class="listening-core">
+              <svg viewBox="0 0 160 190" role="img" aria-label="由声波构成的听觉核心">
+                <path class="ear-line" d="M96 151c-2 16-14 26-29 25-14-1-25-12-25-27V70c0-31 24-53 54-53s51 22 51 50c0 20-10 34-29 46-13 8-18 18-22 38Z" />
+                <path class="ear-inner" d="M94 116c3-13 15-18 22-27 8-10 11-23 5-34-7-14-26-20-40-12-11 6-16 17-16 31v48" />
+              </svg>
+              <span class="pulse-dot"></span>
+            </div>
+            <div class="note note-one">voice</div>
+            <div class="note note-two">signal</div>
+            <div class="note note-three">model</div>
+          </div>
+          <canvas id="heroWave" class="hero-wave" aria-hidden="true"></canvas>
+        </div>
+      </section>
+
+      <section class="vision" aria-label="课程思想">
+        <div class="vision-heading">
+          <p class="section-index">00 / COURSE VISION</p>
+          <h2>不是阅读一门课，<br />而是进入声音之中。</h2>
+        </div>
+        <p class="vision-body">
+          这里的知识将以网页中的动态现象和动手体验呈现：
+          波形可以观察，特征可以比较，模型的结果可以亲自触发。
+          学习从“听懂原理”走向“做出应用”。
+        </p>
+      </section>
+
+      <section class="pillars" id="roadmap" aria-label="学习路径">
+        <article>
+          <span class="pillar-number">01</span>
+          <h3>听见 / Signal</h3>
+          <p>看见波形、频率与声学特征，建立声音作为数据的直觉。</p>
+          <a class="pillar-link" href="../01-time-domain-audio/">进入第 1 章</a>
+        </article>
+        <article>
+          <span class="pillar-number">02</span>
+          <h3>理解 / Intelligence</h3>
+          <p>理解识别、合成和听觉模型怎样把信号变成意义。</p>
+          <a class="pillar-link" href="../02-frequency-domain-processing/">进入第 2 章</a>
+        </article>
+        <article>
+          <span class="pillar-number">03</span>
+          <h3>创造 / Build</h3>
+          <p>以开发实践把语音与音频 AI 转化为真实可用的交互。</p>
+          <a class="pillar-link" href="#roadmap">后续章节规划中</a>
+        </article>
+      </section>
+
+      <section class="course-index" aria-label="当前已发布章节">
+        <div>
+          <p class="section-index">PUBLISHED STRUCTURE</p>
+          <h2>三页先行，<br />每一页都是独立可扩展的章节。</h2>
+        </div>
+        <div class="course-index-list">
+          <a href="./">
+            <span>00</span>
+            <strong>课程首页</strong>
+            <small>课程定位、学习路径与发布入口</small>
+          </a>
+          <a href="../01-time-domain-audio/">
+            <span>01</span>
+            <strong>时域音频</strong>
+            <small>波形、采样、RMS、ZCR 与时间听觉线索</small>
+          </a>
+          <a href="../02-frequency-domain-processing/">
+            <span>02</span>
+            <strong>频域处理</strong>
+            <small>频谱、DFT、频带听感与滤波器组入口</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="lab" aria-label="互动声音实验台">
+        <div class="lab-copy">
+          <p class="section-index">LIVE PREVIEW</p>
+          <h2>拨动一次，<br />让声音回应你。</h2>
+          <p>
+            这是课程体验的缩影：参数变化不只是一行公式，
+            而是一幅会变化的听觉图景。
+          </p>
+        </div>
+
+        <div class="console">
+          <div class="console-header">
+            <div class="console-status">
+              <span class="status-light" id="statusLight"></span>
+              <span id="statusText">Listening mode: standby</span>
+            </div>
+            <button id="activateButton" type="button" aria-pressed="false">
+              开始感知
+            </button>
+          </div>
+          <canvas id="labWave" aria-label="交互式声音波形"></canvas>
+          <div class="controls">
+            <label>
+              <span>音高 <small id="frequencyValue">220 Hz</small></span>
+              <input id="frequency" type="range" min="90" max="680" value="220" />
+            </label>
+            <label>
+              <span>情绪强度 <small id="energyValue">54%</small></span>
+              <input id="energy" type="range" min="10" max="100" value="54" />
+            </label>
+          </div>
+          <div class="recognition">
+            <span>AI 感知</span>
+            <strong id="perception">平静语音 · 清晰度 92%</strong>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Audio AI</p>
+      <p>FROM SOUND TO INTELLIGENCE</p>
+    </footer>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/home.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>
+

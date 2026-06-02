@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 必修基础 2：频域特征</title>
+    <meta
+      name="description"
+      content="90 分钟必修基础章节：从频域、傅里叶变换与 DFT，进入频段听感、等响度曲线和滤波器组特征设计。"
+    />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260601-3" />
+    <link rel="stylesheet" href="../../assets/css/theme.css" />
+  </head>
+  <body class="chapter-page lecture-page frequency-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../chapters/00-home/">大纲 V2</a>
+        <a href="../../chapters/01-time-domain-audio/">第一章</a>
+        <a href="../../chapters/00-home/#roadmap">实践样章</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="chapter-hero lecture-hero">
+        <div>
+          <p class="chapter-code">REQUIRED FOUNDATION / 02 / 90 MINUTES</p>
+          <h1>从时间轴到<br /><span>频域特征</span></h1>
+          <p class="chapter-lead">
+            第一章回答了声音在时间中怎样变化。本章把同一段声音换到频率坐标中观察：
+            哪些频率成分存在、能量集中在哪里、这些频段为什么会对应不同的听觉印象，
+            以及机器如何把频谱进一步变成可学习的特征。
+          </p>
+        </div>
+        <aside class="brief-card" aria-label="章节路线">
+          <span class="card-label">本节课路线</span>
+          <div class="brief-grid session-brief">
+            <p><strong>为什么要进频域</strong></p>
+            <p><strong>频率、周期与频谱</strong></p>
+            <p><strong>傅里叶变换与 DFT</strong></p>
+            <p><strong>低频 / 中频 / 高频听感</strong></p>
+            <p><strong>等响度曲线</strong></p>
+            <p><strong>滤波器组与进阶方向</strong></p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="chapter-block frequency-opening">
+        <div class="section-heading">
+          <p>00-08 MIN / LISTEN FIRST</p>
+          <h2>同一段声音，为什么需要换一个坐标系？</h2>
+        </div>
+        <div class="opening-grid">
+          <div class="question-panel">
+            <span class="prompt-tag">开场观察</span>
+            <h3>两个波形看起来相近时，频率组成可能完全不同。</h3>
+            <p>
+              先回看第一章：波形、RMS、ZCR 能描述能量和变化速度，却很难直接回答
+              “它主要由低沉共鸣、清晰语音，还是尖锐摩擦声组成”。频域提供的不是另一段声音，
+              而是同一段声音的另一种坐标表示。
+            </p>
+            <div class="frequency-prompt-list" aria-label="频域要回答的问题">
+              <article><strong>有哪些频率？</strong><span>声音中包含哪些正弦基元或频带能量。</span></article>
+              <article><strong>强弱在哪里？</strong><span>能量集中在低频、中频还是高频。</span></article>
+              <article><strong>听起来怎样？</strong><span>频率位置如何影响厚度、清晰度、明亮度与刺耳感。</span></article>
+            </div>
+          </div>
+          <aside class="spectrum-sketch" aria-label="从时间波形到频谱的示意">
+            <p class="card-label">同一信号的两种视图</p>
+            <svg viewBox="0 0 620 310" role="img" aria-labelledby="spectrumSketchTitle spectrumSketchDesc">
+              <title id="spectrumSketchTitle">时间域与频域示意</title>
+              <desc id="spectrumSketchDesc">左侧为随时间起伏的波形，右侧为不同频率位置上的能量柱。</desc>
+              <defs>
+                <linearGradient id="spectrumBar" x1="0" x2="0" y1="1" y2="0">
+                  <stop offset="0%" stop-color="rgba(105,238,227,.18)" />
+                  <stop offset="100%" stop-color="#69eee3" />
+                </linearGradient>
+              </defs>
+              <line x1="42" y1="145" x2="270" y2="145" />
+              <path
+                class="wave-path"
+                d="M42 145 C58 78 74 78 90 145 S122 212 138 145 S170 78 186 145 S218 212 234 145 S258 106 270 145"
+              />
+              <text x="42" y="260">时间 t</text>
+              <text x="78" y="38">时域：振幅随时间变化</text>
+              <path class="view-arrow" d="M295 145 H350" />
+              <path class="view-arrow-head" d="M350 145 l-13 -8 v16 Z" />
+              <line x1="385" y1="238" x2="585" y2="238" />
+              <line x1="385" y1="238" x2="385" y2="58" />
+              <rect x="410" y="156" width="24" height="82" />
+              <rect x="454" y="86" width="24" height="152" />
+              <rect x="498" y="126" width="24" height="112" />
+              <rect x="542" y="184" width="24" height="54" />
+              <text x="394" y="260">频率 f</text>
+              <text x="398" y="38">频域：每个频率有多强</text>
+            </svg>
+          </aside>
+        </div>
+      </section>
+
+      <section class="chapter-block frequency-concept">
+        <div class="section-heading">
+          <p>08-28 MIN / REPRESENTATION</p>
+          <h2>什么是频域：把声音拆成频率成分</h2>
+        </div>
+        <div class="module-heading">
+          <span class="concept-index">01 / FREQUENCY DOMAIN</span>
+          <h3>频域不是“新声音”，而是同一信号的组成清单</h3>
+          <p>
+            时域关注
+            <math class="inline-mathml"><mrow><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow></math>
+            在第几个采样点上取什么值；频域关注这段序列可以由哪些不同频率的正弦或复指数基元叠加而成。
+            对声音来说，这个转换尤其有用，因为音高、音色、语音清晰度和噪声质感都和频率分布密切相关。
+          </p>
+        </div>
+        <div class="frequency-roadmap" aria-label="频域基本概念路线">
+          <article>
+            <span>01</span>
+            <h4>周期与频率</h4>
+            <p>周期越短，频率越高；频率单位是 Hz，表示每秒重复次数。</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h4>正弦基元</h4>
+            <p>复杂声音可看作多个不同频率、幅度和相位的基元叠加。</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h4>频谱</h4>
+            <p>频谱展示每个频率位置上的强度，常看幅度谱或功率谱。</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h4>听觉解释</h4>
+            <p>频谱峰值、能量重心和频带分布会影响我们听到的厚度、清晰度与明亮度。</p>
+          </article>
+        </div>
+        <div class="definition-grid frequency-definitions">
+          <article class="definition-card">
+            <h4>频率与周期</h4>
+            <p>若一个周期为 <math class="inline-mathml"><mi>T</mi></math> 秒，频率为每秒重复次数。</p>
+            <div class="equation">
+              <math display="block">
+                <mrow><mi>f</mi><mo>=</mo><mfrac><mn>1</mn><mi>T</mi></mfrac></mrow>
+              </math>
+            </div>
+          </article>
+          <article class="definition-card">
+            <h4>幅度与相位</h4>
+            <p>幅度说明某个频率成分有多强；相位说明这个成分在时间上从哪里开始。</p>
+            <div class="equation">
+              <math display="block">
+                <mrow><mi>A</mi><mi>sin</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi><mo>+</mo><mi>φ</mi><mo>)</mo></mrow>
+              </math>
+            </div>
+          </article>
+          <article class="definition-card">
+            <h4>频谱</h4>
+            <p>频谱可理解为“频率索引上的能量分布图”，常用来比较声音的组成差异。</p>
+            <div class="equation">
+              <math display="block">
+                <mrow><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>↔</mo><mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo></mrow>
+              </math>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block fourier-basics">
+        <div class="section-heading">
+          <p>28-50 MIN / FOURIER TO DFT</p>
+          <h2>傅里叶变换与 DFT：从连续想法到离散计算</h2>
+        </div>
+        <div class="fourier-grid">
+          <article class="definition-card">
+            <span class="concept-index">02 / FOURIER TRANSFORM</span>
+            <h4>傅里叶变换</h4>
+            <p>
+              傅里叶变换把时间函数映射为频率函数：
+              每个频率位置的复数系数同时携带幅度和相位信息。
+              在课堂中先建立直觉，再进入公式。
+            </p>
+            <div class="equation">
+              <math display="block">
+                <mrow>
+                  <mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <msubsup><mo>∫</mo><mrow><mo>-</mo><mi>∞</mi></mrow><mi>∞</mi></msubsup>
+                  <mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                  <msup><mi>e</mi><mrow><mo>-</mo><mi>j</mi><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi></mrow></msup>
+                  <mi>d</mi><mi>t</mi>
+                </mrow>
+              </math>
+            </div>
+          </article>
+          <article class="definition-card">
+            <span class="concept-index">03 / DFT</span>
+            <h4>离散傅里叶变换</h4>
+            <p>
+              计算机处理的是有限长度采样序列，所以使用 DFT。
+              它把 <math class="inline-mathml"><mi>N</mi></math> 个采样点映射到
+              <math class="inline-mathml"><mi>N</mi></math> 个频率格点。
+            </p>
+            <div class="equation">
+              <math display="block">
+                <mrow>
+                  <mi>X</mi><mo>[</mo><mi>k</mi><mo>]</mo>
+                  <mo>=</mo>
+                  <munderover><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow></munderover>
+                  <mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                  <msup><mi>e</mi><mrow><mo>-</mo><mi>j</mi><mn>2</mn><mi>π</mi><mi>k</mi><mi>n</mi><mo>/</mo><mi>N</mi></mrow></msup>
+                </mrow>
+              </math>
+            </div>
+          </article>
+          <article class="definition-card">
+            <span class="concept-index">04 / SPECTRUM</span>
+            <h4>幅度谱与功率谱</h4>
+            <p>
+              初学阶段先看
+              <math class="inline-mathml"><mrow><mo>|</mo><mi>X</mi><mo>[</mo><mi>k</mi><mo>]</mo><mo>|</mo></mrow></math>
+              理解“哪个频率强”；后续再比较功率谱、对数幅度和 dB 标度。
+            </p>
+            <div class="spectrum-key">
+              <p><strong>幅度谱</strong><span>成分强弱</span></p>
+              <p><strong>相位谱</strong><span>时间对齐</span></p>
+              <p><strong>功率谱</strong><span>能量分布</span></p>
+            </div>
+          </article>
+          <article class="definition-card">
+            <span class="concept-index">05 / FREQUENCY BINS</span>
+            <h4>频率格点与分辨率</h4>
+            <p>
+              第 <math class="inline-mathml"><mi>k</mi></math> 个 DFT 格点对应的实际频率由采样率
+              <math class="inline-mathml"><msub><mi>F</mi><mi>s</mi></msub></math>
+              和窗口长度 <math class="inline-mathml"><mi>N</mi></math> 决定。
+            </p>
+            <div class="equation">
+              <math display="block">
+                <mrow>
+                  <msub><mi>f</mi><mi>k</mi></msub>
+                  <mo>=</mo>
+                  <mfrac><mrow><mi>k</mi><msub><mi>F</mi><mi>s</mi></msub></mrow><mi>N</mi></mfrac>
+                  <mo>,</mo>
+                  <mspace width="0.8em" />
+                  <mi>Δ</mi><mi>f</mi><mo>=</mo><mfrac><msub><mi>F</mi><mi>s</mi></msub><mi>N</mi></mfrac>
+                </mrow>
+              </math>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block band-listening">
+        <div class="section-heading">
+          <p>50-67 MIN / FREQUENCY AND HEARING</p>
+          <h2>频率位置改变，听觉印象也改变</h2>
+        </div>
+        <div class="band-map" aria-label="低频、中频和高频的听觉特点">
+          <article class="band-card low">
+            <small>LOW / 20-250 Hz</small>
+            <h3>低频：重量、共鸣与身体感</h3>
+            <p>
+              低频常决定鼓、低音、引擎、风噪等声音的厚度和震动感。
+              能量过多会显得轰鸣，能量不足会显得单薄。
+            </p>
+          </article>
+          <article class="band-card mid">
+            <small>MID / 250 Hz-4 kHz</small>
+            <h3>中频：语音主体与可辨识信息</h3>
+            <p>
+              人声、乐器主体和很多环境声线索集中在中频。
+              这一范围往往关系到“听得懂”和“听得近”。
+            </p>
+          </article>
+          <article class="band-card high">
+            <small>HIGH / 4-20 kHz</small>
+            <h3>高频：明亮、摩擦与空气感</h3>
+            <p>
+              高频带来齿音、擦音、边缘、明亮度和空间空气感。
+              过多时可能刺耳，过少时会显得闷或缺少细节。
+            </p>
+          </article>
+        </div>
+        <div class="frequency-note">
+          <strong>课堂处理方式</strong>
+          <p>
+            这些频段边界只是教学用粗分。真实听感还会受到声压级、音色、持续时间、
+            听音设备、房间响应和个人听力差异影响。
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-block loudness-curves">
+        <div class="section-heading">
+          <p>67-78 MIN / EQUAL LOUDNESS</p>
+          <h2>等响度曲线：同样的 dB，不一定同样响</h2>
+        </div>
+        <div class="loudness-layout">
+          <figure class="equal-loudness-figure" aria-label="等响度曲线概念示意">
+            <svg viewBox="0 0 720 380" role="img" aria-labelledby="loudnessTitle loudnessDesc">
+              <title id="loudnessTitle">等响度曲线概念示意</title>
+              <desc id="loudnessDesc">不同响度水平下，低频和极高频通常需要更高声压级才与中频听起来一样响。</desc>
+              <line x1="70" y1="315" x2="650" y2="315" />
+              <line x1="70" y1="315" x2="70" y2="48" />
+              <path class="loudness-curve curve-quiet" d="M86 282 C142 198 210 160 298 148 C395 136 464 162 530 201 C584 233 620 258 642 274" />
+              <path class="loudness-curve curve-mid" d="M86 238 C155 176 230 134 314 126 C414 116 493 143 558 180 C602 205 628 225 642 237" />
+              <path class="loudness-curve curve-loud" d="M86 194 C161 151 235 116 326 108 C424 101 505 120 574 148 C612 164 634 177 642 184" />
+              <text x="92" y="48">声压级 SPL</text>
+              <text x="544" y="350">频率</text>
+              <text x="98" y="290">低响度</text>
+              <text x="100" y="240">中等响度</text>
+              <text x="100" y="196">高响度</text>
+              <text x="274" y="88">人耳对约 2-5 kHz 更敏感</text>
+              <line class="sensitivity-window" x1="307" y1="96" x2="380" y2="96" />
+              <text x="78" y="344">20 Hz</text>
+              <text x="315" y="344">1 kHz</text>
+              <text x="586" y="344">20 kHz</text>
+            </svg>
+            <figcaption>
+              图为概念示意，不作为精确标准曲线使用。课堂目标是理解：
+              人耳对不同频率的响度敏感度不相同。
+            </figcaption>
+          </figure>
+          <div class="loudness-notes">
+            <article>
+              <span>01</span>
+              <strong>响度不是声压级的简单复制</strong>
+              <p>相同 dB SPL 的低频、中频和高频，听起来可能并不一样响。</p>
+            </article>
+            <article>
+              <span>02</span>
+              <strong>低频通常需要更高声压</strong>
+              <p>在较低响度水平下，人耳对低频不如中频敏感。</p>
+            </article>
+            <article>
+              <span>03</span>
+              <strong>中高频影响清晰度与警觉感</strong>
+              <p>人耳在约 2-5 kHz 附近较敏感，语音清晰度与很多告警声也常利用这一范围。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block filter-design">
+        <div class="section-heading">
+          <p>78-88 MIN / FILTERS AND FEATURES</p>
+          <h2>基于频率的特征：滤波器、滤波器组与进阶位置</h2>
+        </div>
+        <div class="filter-plan">
+          <article>
+            <p class="card-label">基础章内保留</p>
+            <h3>频带滤波的直觉</h3>
+            <p>
+              先讲低通、高通、带通的听觉效果：保留或削弱某些频率范围，
+              让学生把“频谱图上的区域”与“听到的变化”对应起来。
+            </p>
+          </article>
+          <article>
+            <p class="card-label">章末过渡</p>
+            <h3>滤波器组与 Mel 滤波器组</h3>
+            <p>
+              把完整频谱压缩为一组频带能量，为 Mel 频谱、MFCC 和后续机器学习特征做准备。
+              这一部分适合作为第二章的收束，也可以拆到下一章展开。
+            </p>
+          </article>
+          <article>
+            <p class="card-label">进阶内容候选</p>
+            <h3>听觉滤波与耳蜗直觉</h3>
+            <p>
+              Gammatone、临界带、耳蜗压缩与适应可作为进阶模块。
+              若课程时间紧，第二章只给动机和图像，不在这里推导模型。
+            </p>
+          </article>
+        </div>
+        <div class="chapter-plan">
+          <p class="card-label">结构建议</p>
+          <ol>
+            <li>第二章主体讲“频域表示 + DFT + 频段听感 + 等响度曲线”。</li>
+            <li>章末用一页介绍“频带滤波 / Mel 滤波器组”作为特征工程入口。</li>
+            <li>更完整的听觉滤波、耳蜗和 Gammatone 放入后续进阶章节。</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="chapter-block checkout">
+        <div class="section-heading">
+          <p>88-90 MIN / CHECKOUT</p>
+          <h2>本章结束时，学生应该能说清楚什么？</h2>
+        </div>
+        <div class="checkout-grid">
+          <article><strong>表示</strong><span>频域是同一声音的频率组成视图，不是替代时域。</span></article>
+          <article><strong>计算</strong><span>DFT 如何把有限采样序列映射到频率格点。</span></article>
+          <article><strong>听感</strong><span>低频、中频、高频为何对应不同的听觉特征。</span></article>
+          <article><strong>感知</strong><span>等响度曲线说明人耳对不同频率的敏感度不同。</span></article>
+          <article><strong>特征</strong><span>滤波器组如何把频谱变成更紧凑的机器学习输入。</span></article>
+        </div>
+        <div class="next-chapter">
+          <p class="chapter-code">NEXT / FEATURE ENGINEERING</p>
+          <h2>下一步：<span>声谱图、Mel 频谱与 MFCC</span></h2>
+          <p>
+            DFT 描述一小段声音的频率组成。真实声音会随时间变化，因此后续要引入 STFT、
+            声谱图，以及更贴近听觉刻度的 Mel 频谱和 MFCC。
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip">
+        <div>
+          <p class="card-label">本章参考来源</p>
+          <p>
+            `Audio Signal Processing for Machine Learning`：Fourier Transform；
+            Discrete Fourier Transform；Short-Time Fourier Transform；
+            Spectrogram；Mel Spectrogram；MFCC；Intensity, Loudness, and Timbre。
+          </p>
+        </div>
+        <div>
+          <p class="card-label">延伸阅读</p>
+          <p>
+            Richard F. Lyon, <em>Human and Machine Hearing</em>, Part I:
+            Sound Analysis and Representation Overview / Human Hearing Overview。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="chapter-footer">
+      <span>AUDIO AI / REQUIRED FOUNDATION 02</span>
+      <a href="../../chapters/00-home/">返回课程大纲 V2</a>
+    </footer>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/chapter.js?v=20260602-1"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>
+

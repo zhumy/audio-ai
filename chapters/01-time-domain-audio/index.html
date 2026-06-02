@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 必修基础 1：从波形到时域特征</title>
+    <meta
+      name="description"
+      content="90 分钟必修基础章节：从空气机械波、电容式麦克风与数字采样，进入波形、RMS、ZCR 与听觉时间线索。"
+    />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260601-3" />
+    <link rel="stylesheet" href="../../assets/css/theme.css" />
+  </head>
+  <body class="chapter-page lecture-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../chapters/00-home/">大纲 V2</a>
+        <a href="../../chapters/02-frequency-domain-processing/">第二章</a>
+        <a href="../../chapters/00-home/#roadmap">实践样章</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="chapter-hero lecture-hero">
+        <div>
+          <p class="chapter-code">REQUIRED FOUNDATION / 01 / 90 MINUTES</p>
+          <h1>从波形到<br /><span>时域特征</span></h1>
+          <p class="chapter-lead">
+            声音首先是以空气为介质传播的机械波。机器接收的是换能、采样后的数列，
+            而听觉系统感受到的是持续、起音、节奏与变化。本章从同一条时间轴出发，
+            连接声学、数学描述与人的聆听经验。
+          </p>
+        </div>
+        <aside class="brief-card" aria-label="章节路线">
+          <span class="card-label">本节课路线</span>
+          <div class="brief-grid session-brief">
+            <p><strong>试听与问题</strong></p>
+            <p><strong>机械波、换能与采样</strong></p>
+            <p><strong>RMS 与 ZCR</strong></p>
+            <p><strong>互动观察</strong></p>
+            <p><strong>听觉的时间线索</strong></p>
+            <p><strong>走向频域</strong></p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="chapter-block opening-listen">
+        <div class="section-heading">
+          <p>00-10 MIN / LISTEN FIRST</p>
+          <h2>听到不同，究竟哪里不同？</h2>
+        </div>
+        <div class="opening-grid">
+          <div class="question-panel">
+            <span class="prompt-tag">开场观察</span>
+            <h3>三段声音中，哪一段是短促敲击？哪一段是持续纯音？</h3>
+            <p>
+              先听，不看波形。注意每段声音的持续时间、是否突然开始、
+              是否粗糙或规则。随后我们将把这些听觉印象放到时间轴上解释。
+            </p>
+            <div class="listening-test" aria-label="三个声音试听样本">
+              <button class="sample-play" type="button" data-play-sample="noise">
+                <span>样本 A</span><strong>播放声音</strong>
+              </button>
+              <button class="sample-play" type="button" data-play-sample="tap">
+                <span>样本 B</span><strong>播放声音</strong>
+              </button>
+              <button class="sample-play" type="button" data-play-sample="tone">
+                <span>样本 C</span><strong>播放声音</strong>
+              </button>
+            </div>
+            <div class="listen-feedback">
+              <p id="listenStatus" aria-live="polite">试听后，先用三个词描述每个样本。</p>
+              <button id="revealSamples" class="reveal-answer" type="button" aria-expanded="false">
+                观察完成后，显示样本类型
+              </button>
+              <p id="sampleAnswer" class="sample-answer" hidden>
+                A = 摩擦噪声，B = 短促敲击，C = 持续纯音（<math class="inline-mathml"><mrow><mn>440</mn><mtext>&nbsp;Hz</mtext></mrow></math> 正弦波）。
+                纯音是用于建立基准的理想化信号，而非真实人声或乐器音。
+              </p>
+            </div>
+          </div>
+          <aside class="listening-notes">
+            <p class="card-label">聆听提示</p>
+            <div>
+              <strong>持续性</strong>
+              <p>声音在时间中维持多久？是否立即衰减？</p>
+            </div>
+            <div>
+              <strong>规则性</strong>
+              <p>它听起来稳定、带明确音高，还是粗糙随机？</p>
+            </div>
+            <div>
+              <strong>起始瞬态</strong>
+              <p>声音的开始是柔和渐入，还是突然出现？</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="chapter-block physics">
+        <div class="section-heading">
+          <p>10-30 MIN / SIGNAL CHAIN</p>
+          <h2>从空气机械波，到数字音频序列</h2>
+        </div>
+        <div class="signal-chain" aria-label="声音进入计算机的信号链">
+          <p><small>声源</small><strong>机械振动</strong><span>振膜 / 音叉 / 声带</span></p>
+          <i>→</i>
+          <p><small>空气</small><strong>纵波 / 疏密波</strong><span>压缩与稀疏交替传播</span></p>
+          <i>→</i>
+          <p><small>传感器</small><strong>麦克风换能</strong><span>振膜位移 → 电信号</span></p>
+          <i>→</i>
+          <p><small>计算机</small><strong>A/D 采样</strong><span>数字序列 <math class="inline-mathml"><mrow><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow></math></span></p>
+        </div>
+
+        <div class="physics-module">
+          <div class="module-heading">
+            <span class="concept-index">01 / ACOUSTICS</span>
+            <h3>声波是纵波，又称疏密波</h3>
+            <p>
+              发声体的机械振动会推动相邻空气微团前后往复运动，形成一段段<b>压缩</b>与<b>稀疏</b>交替的扰动。
+              这些疏密变化沿传播方向向外传递，所以声波是<b>纵波</b>，又称<b>疏密波</b>；
+              传播的是压强扰动与能量，而不是一团空气从声源一路跑到耳朵。
+            </p>
+          </div>
+          <figure class="sound-wave-animation" aria-label="声波从声源经空气传播到人耳的动画示意">
+            <svg viewBox="0 0 960 260" role="img" aria-labelledby="soundWaveAnimTitle soundWaveAnimDesc">
+              <title id="soundWaveAnimTitle">声波是纵波，又称疏密波</title>
+              <desc id="soundWaveAnimDesc">声源振膜左右振动，中间空气出现压缩和稀疏区域，并向右传播到人耳。</desc>
+              <defs>
+                <linearGradient id="airTube" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0%" stop-color="rgba(105,238,227,.08)" />
+                  <stop offset="50%" stop-color="rgba(244,201,101,.07)" />
+                  <stop offset="100%" stop-color="rgba(105,238,227,.08)" />
+                </linearGradient>
+                <marker id="soundArrow" markerHeight="9" markerWidth="9" orient="auto" refX="8" refY="4.5">
+                  <path d="M0,0 L9,4.5 L0,9 Z" fill="#69eee3" />
+                </marker>
+              </defs>
+              <rect class="air-field" x="172" y="47" width="615" height="152" rx="76" />
+              <g class="speaker">
+                <rect x="46" y="88" width="42" height="84" rx="8" />
+                <path d="M88 92 L139 62 V198 L88 168 Z" />
+                <line class="diaphragm" x1="143" y1="72" x2="143" y2="188" />
+              </g>
+              <g class="equilibrium-guides" aria-hidden="true">
+                <line x1="214" y1="66" x2="214" y2="184" /><line x1="254" y1="66" x2="254" y2="184" />
+                <line x1="294" y1="66" x2="294" y2="184" /><line x1="334" y1="66" x2="334" y2="184" />
+                <line x1="374" y1="66" x2="374" y2="184" /><line x1="414" y1="66" x2="414" y2="184" />
+                <line x1="454" y1="66" x2="454" y2="184" /><line x1="494" y1="66" x2="494" y2="184" />
+                <line x1="534" y1="66" x2="534" y2="184" /><line x1="574" y1="66" x2="574" y2="184" />
+                <line x1="614" y1="66" x2="614" y2="184" /><line x1="654" y1="66" x2="654" y2="184" />
+                <line x1="694" y1="66" x2="694" y2="184" /><line x1="734" y1="66" x2="734" y2="184" />
+                <line x1="774" y1="66" x2="774" y2="184" />
+              </g>
+              <g class="air-particles" aria-hidden="true">
+                <g class="particle-column" style="--delay: 0ms"><circle cx="214" cy="96" r="4" /><circle cx="214" cy="132" r="4" /><circle cx="214" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -120ms"><circle cx="254" cy="96" r="4" /><circle cx="254" cy="132" r="4" /><circle cx="254" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -240ms"><circle cx="294" cy="96" r="4" /><circle cx="294" cy="132" r="4" /><circle cx="294" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -360ms"><circle cx="334" cy="96" r="4" /><circle cx="334" cy="132" r="4" /><circle cx="334" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -480ms"><circle cx="374" cy="96" r="4" /><circle cx="374" cy="132" r="4" /><circle cx="374" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -600ms"><circle cx="414" cy="96" r="4" /><circle cx="414" cy="132" r="4" /><circle cx="414" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -720ms"><circle cx="454" cy="96" r="4" /><circle cx="454" cy="132" r="4" /><circle cx="454" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -840ms"><circle cx="494" cy="96" r="4" /><circle cx="494" cy="132" r="4" /><circle cx="494" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -960ms"><circle cx="534" cy="96" r="4" /><circle cx="534" cy="132" r="4" /><circle cx="534" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -1080ms"><circle cx="574" cy="96" r="4" /><circle cx="574" cy="132" r="4" /><circle cx="574" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -1200ms"><circle cx="614" cy="96" r="4" /><circle cx="614" cy="132" r="4" /><circle cx="614" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -1320ms"><circle cx="654" cy="96" r="4" /><circle cx="654" cy="132" r="4" /><circle cx="654" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -1440ms"><circle cx="694" cy="96" r="4" /><circle cx="694" cy="132" r="4" /><circle cx="694" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -1560ms"><circle cx="734" cy="96" r="4" /><circle cx="734" cy="132" r="4" /><circle cx="734" cy="168" r="4" /></g>
+                <g class="particle-column" style="--delay: -1680ms"><circle cx="774" cy="96" r="4" /><circle cx="774" cy="132" r="4" /><circle cx="774" cy="168" r="4" /></g>
+              </g>
+              <line class="propagation-arrow" x1="188" y1="218" x2="782" y2="218" marker-end="url(#soundArrow)" />
+              <g class="ear">
+                <path d="M862 72 C815 78 803 117 813 146 C820 169 839 174 844 195 C848 210 864 213 874 200 C883 188 874 176 863 170 C850 163 847 151 857 139 C872 121 892 137 882 155 C876 166 861 167 859 181" />
+                <path d="M845 106 C863 94 889 105 894 130 C900 159 873 179 849 168" />
+              </g>
+              <text x="52" y="38">发声体振动</text>
+              <text x="386" y="37">空气压缩 / 稀疏向前传播</text>
+              <text x="811" y="38">人耳接收</text>
+              <text class="particle-note" x="214" y="80">每个空气微团只在自己的平衡位置附近左右往复</text>
+              <path class="local-motion-arrow" d="M300 192 H350 M300 192 l12 -8 M300 192 l12 8 M350 192 l-12 -8 M350 192 l-12 8" />
+              <text class="particle-note small" x="362" y="197">局部往复，不随声波一路向右跑</text>
+            </svg>
+            <figcaption>
+              纵波的关键不是“空气整体搬家”，而是空气微团沿传播方向前后摆动；
+              相邻空气微团的摆动不同步，列间距会时而变小、时而变大，于是形成<b>压缩</b>与<b>稀疏</b>。
+              向前传播的是这种疏密变化和声压扰动，不是空气粒子本身从左向右迁移。
+            </figcaption>
+          </figure>
+          <div class="definition-grid acoustics-definitions">
+            <article class="definition-card">
+              <h4>声压与声压级 SPL</h4>
+              <p>
+                当压缩区和稀疏区经过某个固定观察点时，该点的空气压强会围绕静态大气压上下变化。
+                <b>声压</b>
+                <math class="inline-mathml"><mrow><mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math>
+                就是这种瞬时压强偏离，单位 Pa。
+                声压级以空气中的参考声压
+                <math class="inline-mathml">
+                  <mrow>
+                    <msub><mi>p</mi><mn>0</mn></msub>
+                    <mo>=</mo>
+                    <mn>20</mn><mtext>&nbsp;μPa</mtext>
+                  </mrow>
+                </math>
+                表达量级。
+              </p>
+              <div class="equation math-stack">
+                <math display="block">
+                  <mrow>
+                    <mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                    <mo>=</mo>
+                    <mi>P</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                    <mo>-</mo>
+                    <msub><mi>P</mi><mtext>atm</mtext></msub>
+                  </mrow>
+                </math>
+                <math display="block">
+                  <mrow>
+                    <msub><mi>L</mi><mi>p</mi></msub>
+                    <mo>=</mo>
+                    <mn>20</mn><msub><mi mathvariant="normal">log</mi><mn>10</mn></msub>
+                    <mo>(</mo>
+                    <mfrac>
+                      <msub><mi>p</mi><mtext>rms</mtext></msub>
+                      <msub><mi>p</mi><mn>0</mn></msub>
+                    </mfrac>
+                    <mo>)</mo>
+                    <mtext>&nbsp;dB SPL</mtext>
+                  </mrow>
+                </math>
+              </div>
+            </article>
+            <article class="definition-card">
+              <h4>频率与正弦声压波形</h4>
+              <p>
+                若声源做理想简谐振动，固定观察点记录到的声压变化可以近似为正弦波。
+                一次“压缩 → 稀疏 → 再压缩”对应一个周期
+                <math class="inline-mathml"><mi>T</mi></math>，每秒重复次数就是频率
+                <math class="inline-mathml"><mi>f</mi></math>，单位
+                <math class="inline-mathml"><mtext>Hz</mtext></math>。
+              </p>
+              <div class="equation math-stack">
+                <math display="block">
+                  <mrow>
+                    <mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                    <mo>=</mo>
+                    <mi>A</mi><mi mathvariant="normal">sin</mi><mo>(</mo><mn>2</mn><mi>π</mi><mi>f</mi><mi>t</mi><mo>+</mo><mi>φ</mi><mo>)</mo>
+                  </mrow>
+                </math>
+                <math display="block">
+                  <mrow>
+                    <mi>f</mi><mo>=</mo><mfrac><mn>1</mn><mi>T</mi></mfrac>
+                    <mtext>&nbsp;[Hz]</mtext>
+                  </mrow>
+                </math>
+              </div>
+            </article>
+            <article class="definition-card">
+              <h4>速度与声强 Intensity</h4>
+              <p>
+                <b>声速</b>
+                <math class="inline-mathml"><mi>c</mi></math>
+                是波的传播速度，
+                <math class="inline-mathml"><mrow><mn>20</mn><mo>°</mo><mi>C</mi></mrow></math>
+                空气中约
+                <math class="inline-mathml"><mrow><mn>343</mn><mtext>&nbsp;m/s</mtext></mrow></math>；
+                <b>质点速度</b>
+                <math class="inline-mathml"><mrow><mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math>
+                是空气微团的局部往复速度。声强
+                <math class="inline-mathml"><mi>I</mi></math>
+                描述单位面积通过的声功率，瞬时声强来自声压与质点速度的共同作用。
+              </p>
+              <div class="equation math-stack">
+                <math display="block">
+                  <mrow>
+                    <mi>i</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                    <mo>=</mo>
+                    <mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                    <mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                    <mo>,</mo>
+                    <mspace width="0.8em" />
+                    <mi>I</mi><mo>=</mo>
+                    <mo>⟨</mo><mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo><mi>u</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>⟩</mo>
+                  </mrow>
+                </math>
+                <span class="math-note">远场 / 平面行波：</span>
+                <math display="block">
+                  <mrow>
+                    <mi>U</mi><mo>≈</mo><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac>
+                    <mo>,</mo>
+                    <mspace width="0.8em" />
+                    <mi>I</mi><mo>=</mo>
+                    <mfrac>
+                      <msubsup><mi>p</mi><mtext>rms</mtext><mn>2</mn></msubsup>
+                      <mrow><mi>ρ</mi><mi>c</mi></mrow>
+                    </mfrac>
+                  </mrow>
+                </math>
+              </div>
+            </article>
+          </div>
+          <aside class="acoustic-propagation-note" aria-label="从粒子往复运动到声能传播">
+            <div>
+              <p class="card-label">引申理解 / LOCAL MOTION, GLOBAL PROPAGATION</p>
+              <h4>空气粒子不远行，声能会向外传播</h4>
+              <p>
+                经典声学中，空气介质质点 <b>particle</b> 在平衡位置附近往复运动，
+                机械波携带声能量向外辐射。
+              </p>
+              <figure class="sphere-spread-figure" aria-label="点声源球面扩散示意图">
+                <svg viewBox="0 0 420 260" role="img" aria-labelledby="sphereSpreadTitle sphereSpreadDesc">
+                  <title id="sphereSpreadTitle">点声源球面扩散</title>
+                  <desc id="sphereSpreadDesc">声源位于中心，距离从 r 增加到 2r 时，球面面积由 4πr² 增加到 16πr²，即四倍。</desc>
+                  <defs>
+                    <radialGradient id="sourceGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#f4c965" stop-opacity="0.85" />
+                      <stop offset="100%" stop-color="#f4c965" stop-opacity="0" />
+                    </radialGradient>
+                    <marker id="radiusArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                      <path d="M0,0 L8,4 L0,8 Z" fill="#69eee3" />
+                    </marker>
+                  </defs>
+                  <rect x="14" y="18" width="392" height="224" rx="20" />
+                  <circle class="sphere-outer-fill" cx="138" cy="130" r="92" />
+                  <circle class="sphere-inner-fill" cx="138" cy="130" r="46" />
+                  <ellipse class="sphere-ring outer" cx="138" cy="130" rx="92" ry="34" />
+                  <circle class="sphere-ring outer" cx="138" cy="130" r="92" />
+                  <ellipse class="sphere-ring inner" cx="138" cy="130" rx="46" ry="17" />
+                  <circle class="sphere-ring inner" cx="138" cy="130" r="46" />
+                  <circle class="source-glow" cx="138" cy="130" r="28" />
+                  <circle class="source-dot" cx="138" cy="130" r="6" />
+                  <line class="radius-line inner-radius" x1="138" y1="130" x2="184" y2="130" marker-end="url(#radiusArrow)" />
+                  <line class="radius-line outer-radius" x1="138" y1="130" x2="230" y2="130" marker-end="url(#radiusArrow)" />
+                  <text class="sphere-label" x="153" y="122">r</text>
+                  <text class="sphere-label" x="194" y="122">2r</text>
+                  <text class="sphere-title" x="255" y="78">球面面积</text>
+                  <text class="sphere-formula" x="255" y="112">S(r) = 4πr²</text>
+                  <text class="sphere-formula" x="255" y="146">S(2r) = 4π(2r)²</text>
+                  <text class="sphere-formula emphasis" x="255" y="180">= 16πr² = 4S(r)</text>
+                </svg>
+                <figcaption>
+                  距离翻倍，球面面积变为
+                  <math class="inline-mathml"><mn>4</mn></math>
+                  倍，因此单位面积上的声强变为
+                  <math class="inline-mathml"><mfrac><mn>1</mn><mn>4</mn></mfrac></math>。
+                </figcaption>
+              </figure>
+            </div>
+            <div class="sphere-law">
+              <h5>理想点声源的球面扩散</h5>
+              <p>
+                若点声源在无反射、无吸收的自由三维声场中均匀辐射声功率 <b>W</b>，
+                距离为
+                <math class="inline-mathml"><mi>r</mi></math>
+                的位置接收到的能量分布在半径为
+                <math class="inline-mathml"><mi>r</mi></math>
+                的球面上：
+              </p>
+              <div class="equation math-stack">
+                <math display="block">
+                  <mrow>
+                    <mi>S</mi><mo>=</mo><mn>4</mn><mi>π</mi><msup><mi>r</mi><mn>2</mn></msup>
+                  </mrow>
+                </math>
+                <math display="block">
+                  <mrow>
+                    <mi>I</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+                    <mo>=</mo><mfrac><mi>W</mi><mi>S</mi></mfrac>
+                    <mo>=</mo>
+                    <mfrac>
+                      <mi>W</mi>
+                      <mrow><mn>4</mn><mi>π</mi><msup><mi>r</mi><mn>2</mn></msup></mrow>
+                    </mfrac>
+                  </mrow>
+                </math>
+              </div>
+              <p>
+                所以声强满足
+                <math class="inline-mathml">
+                  <mrow><mi>I</mi><mo>∝</mo><mfrac><mn>1</mn><msup><mi>r</mi><mn>2</mn></msup></mfrac></mrow>
+                </math>。距离加倍时：
+              </p>
+              <div class="equation math-stack">
+                <math display="block">
+                  <mrow>
+                    <mi>I</mi><mo>(</mo><mn>2</mn><mi>r</mi><mo>)</mo>
+                    <mo>=</mo>
+                    <mfrac>
+                      <mrow><mi>I</mi><mo>(</mo><mi>r</mi><mo>)</mo></mrow>
+                      <mn>4</mn>
+                    </mfrac>
+                  </mrow>
+                </math>
+                <math display="block">
+                  <mrow>
+                    <mi>Δ</mi><msub><mi>L</mi><mi>I</mi></msub>
+                    <mo>=</mo>
+                    <mn>10</mn><msub><mi mathvariant="normal">log</mi><mn>10</mn></msub><mo>(</mo><mfrac><mn>1</mn><mn>4</mn></mfrac><mo>)</mo>
+                    <mo>≈</mo><mo>-</mo><mn>6.02</mn><mtext>&nbsp;dB</mtext>
+                  </mrow>
+                </math>
+              </div>
+              <p>
+                又因为远场中
+                <math class="inline-mathml">
+                  <mrow>
+                    <mi>I</mi><mo>=</mo>
+                    <mfrac>
+                      <msubsup><mi>p</mi><mtext>rms</mtext><mn>2</mn></msubsup>
+                      <mrow><mi>ρ</mi><mi>c</mi></mrow>
+                    </mfrac>
+                  </mrow>
+                </math>，
+                声压幅度随距离近似按
+                <math class="inline-mathml"><mfrac><mn>1</mn><mi>r</mi></mfrac></math>
+                衰减。距离加倍时声压变为
+                <math class="inline-mathml"><mfrac><mn>1</mn><mn>2</mn></mfrac></math>：
+              </p>
+              <div class="equation math-stack">
+                <math display="block">
+                  <mrow>
+                    <mi>Δ</mi><msub><mi>L</mi><mi>p</mi></msub>
+                    <mo>=</mo>
+                    <mn>20</mn><msub><mi mathvariant="normal">log</mi><mn>10</mn></msub><mo>(</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>)</mo>
+                    <mo>≈</mo><mo>-</mo><mn>6.02</mn><mtext>&nbsp;dB SPL</mtext>
+                  </mrow>
+                </math>
+              </div>
+              <p class="limit-note">
+                这个“每倍距离约
+                <math class="inline-mathml"><mrow><mo>-</mo><mn>6</mn><mtext>&nbsp;dB</mtext></mrow></math>”
+                只适用于理想点声源、自由场、远场近似；
+                教室、房间反射、声源指向性和空气吸收都会让实际读数偏离它。
+              </p>
+            </div>
+          </aside>
+          <section class="wave-solution-note wave-solution-section" aria-labelledby="waveSolutionTitle">
+            <p class="card-label">从波动方程到近场 / 远场</p>
+            <h4 id="waveSolutionTitle">球面波：把声压、声压梯度和质点速度连起来</h4>
+            <p>
+              更完整地看，声压不是只随时间变化的曲线，而是同时依赖空间位置和时间的场：
+              <math class="inline-mathml">
+                <mrow><mi>p</mi><mo>(</mo><mi>r</mi><mo>,</mo><mi>t</mi><mo>)</mo></mrow>
+              </math>。
+              下面这条推导线把“完整声压场”一步步化成“远场 / 近场中的声压-质点速度关系”。
+            </p>
+            <div class="formula-roadmap" aria-label="球面波推导关系">
+              <span>完整声压场</span>
+              <i>波动方程</i>
+              <span>空间声压</span>
+              <i>空间梯度</i>
+              <span>质点速度</span>
+            </div>
+            <ol class="derivation-steps">
+              <li>
+                <span>完整声压场满足波动方程</span>
+                <p>
+                  在均匀、无损、无声源的空气中，声压扰动满足线性声学波动方程。
+                  它表达的是：空间中的弯曲变化和时间上的加速变化彼此约束，扰动因此以声速
+                  <math class="inline-mathml"><mi>c</mi></math>
+                  传播。
+                </p>
+                <div class="equation math-stack">
+                  <math display="block">
+                    <mrow>
+                      <msup><mo>∇</mo><mn>2</mn></msup>
+                      <mi>p</mi><mo>(</mo><mi>r</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                      <mo>-</mo>
+                      <mfrac><mn>1</mn><msup><mi>c</mi><mn>2</mn></msup></mfrac>
+                      <mfrac>
+                        <mrow>
+                          <msup><mo>∂</mo><mn>2</mn></msup>
+                          <mi>p</mi><mo>(</mo><mi>r</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                        </mrow>
+                        <mrow><mo>∂</mo><msup><mi>t</mi><mn>2</mn></msup></mrow>
+                      </mfrac>
+                      <mo>=</mo><mn>0</mn>
+                    </mrow>
+                  </math>
+                </div>
+              </li>
+              <li>
+                <span>固定频率时，拆出时间因子并引入波数</span>
+                <p>
+                  对单一频率的简谐声场，所有位置共享同一个时间因子
+                  <math class="inline-mathml">
+                    <msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup>
+                  </math>；
+                  剩下的
+                  <math class="inline-mathml"><mrow><mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo></mrow></math>
+                  记录空间中的幅度和相位。
+                  <math class="inline-mathml"><mi>k</mi></math>
+                  称为波数，表示单位距离累积多少相位：
+                </p>
+                <div class="equation math-stack">
+                  <math display="block">
+                    <mrow>
+                      <mi>p</mi><mo>(</mo><mi>r</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                      <mo>=</mo>
+                      <mi>Re</mi>
+                      <mo>{</mo>
+                      <mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+                      <msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup>
+                      <mo>}</mo>
+                    </mrow>
+                  </math>
+                  <math display="block">
+                    <mrow>
+                      <mi>k</mi><mo>=</mo><mfrac><mi>ω</mi><mi>c</mi></mfrac>
+                      <mo>=</mo>
+                      <mfrac><mrow><mn>2</mn><mi>π</mi></mrow><mi>λ</mi></mfrac>
+                    </mrow>
+                  </math>
+                  <span class="math-note">代回波动方程后，空间声压满足 Helmholtz 方程：</span>
+                  <math display="block">
+                    <mrow>
+                      <msup><mo>∇</mo><mn>2</mn></msup><mi>P</mi>
+                      <mo>+</mo><msup><mi>k</mi><mn>2</mn></msup><mi>P</mi>
+                      <mo>=</mo><mn>0</mn>
+                    </mrow>
+                  </math>
+                </div>
+              </li>
+              <li>
+                <span>点声源球面波的空间声压与空间梯度</span>
+                <p>
+                  理想点声源向外辐射时，
+                  <math class="inline-mathml"><mfrac><mn>1</mn><mi>r</mi></mfrac></math>
+                  描述幅度随距离衰减，
+                  <math class="inline-mathml">
+                    <msup><mi>e</mi><mrow><mo>-</mo><mi>j</mi><mi>k</mi><mi>r</mi></mrow></msup>
+                  </math>
+                  描述相位随距离累积。对空间声压求径向梯度，就得到声压在空间上变化的快慢：
+                </p>
+                <div class="equation math-stack">
+                  <math display="block">
+                    <mrow>
+                      <mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+                      <mo>=</mo>
+                      <mfrac>
+                        <mrow>
+                          <mi>A</mi>
+                          <msup>
+                            <mi>e</mi>
+                            <mrow><mo>-</mo><mi>j</mi><mi>k</mi><mi>r</mi></mrow>
+                          </msup>
+                        </mrow>
+                        <mi>r</mi>
+                      </mfrac>
+                    </mrow>
+                  </math>
+                  <math display="block">
+                    <mrow>
+                      <mfrac><mrow><mi>d</mi><mi>P</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac>
+                      <mo>=</mo>
+                      <mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+                      <mo>(</mo><mo>-</mo><mi>j</mi><mi>k</mi><mo>-</mo><mfrac><mn>1</mn><mi>r</mi></mfrac><mo>)</mo>
+                    </mrow>
+                  </math>
+                </div>
+              </li>
+              <li>
+                <span>空间梯度通过动量方程决定质点速度</span>
+                <p>
+                  这一步来自牛顿第二定律：空气微团两侧的声压不同，会产生净压力并推动它加速。
+                  写成连续形式，就是线性化动量方程；再代入简谐形式，时间求导等价于乘以
+                  <math class="inline-mathml"><mrow><mi>j</mi><mi>ω</mi></mrow></math>。
+                </p>
+                <div class="equation math-stack">
+                  <math display="block">
+                    <mrow>
+                      <mi>ρ</mi>
+                      <mfrac>
+                        <mrow><mo>∂</mo><mi>u</mi></mrow>
+                        <mrow><mo>∂</mo><mi>t</mi></mrow>
+                      </mfrac>
+                      <mo>=</mo>
+                      <mo>-</mo><mo>∇</mo><mi>p</mi>
+                    </mrow>
+                  </math>
+                  <math display="block">
+                    <mrow>
+                      <mi>j</mi><mi>ω</mi><mi>ρ</mi><mi>U</mi>
+                      <mo>=</mo>
+                      <mo>-</mo>
+                      <mfrac><mrow><mi>d</mi><mi>P</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac>
+                    </mrow>
+                  </math>
+                  <math display="block">
+                    <mrow>
+                      <mi>U</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+                      <mo>=</mo>
+                      <mfrac>
+                        <mrow><mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo></mrow>
+                        <mrow><mi>ρ</mi><mi>c</mi></mrow>
+                      </mfrac>
+                      <mo>[</mo>
+                      <mn>1</mn>
+                      <mo>+</mo>
+                      <mfrac>
+                        <mn>1</mn>
+                        <mrow><mi>j</mi><mi>k</mi><mi>r</mi></mrow>
+                      </mfrac>
+                      <mo>]</mo>
+                    </mrow>
+                  </math>
+                </div>
+              </li>
+            </ol>
+            <p>
+              <math class="inline-mathml"><mrow><mi>k</mi><mi>r</mi></mrow></math>
+              是传播到距离
+              <math class="inline-mathml"><mi>r</mi></math>
+              所累积的相位，也可理解为用波长衡量的无量纲距离。
+              当
+              <math class="inline-mathml"><mrow><mi>k</mi><mi>r</mi><mo>≫</mo><mn>1</mn></mrow></math>
+              时，
+              <math class="inline-mathml">
+                <mfrac><mn>1</mn><mrow><mi>j</mi><mi>k</mi><mi>r</mi></mrow></mfrac>
+              </math>
+              很小，回到远场近似；当
+              <math class="inline-mathml"><mrow><mi>k</mi><mi>r</mi></mrow></math>
+              不大时，声压和质点速度不再简单同相同幅比例，这就是近场需要单独讨论的原因。
+            </p>
+          </section>
+          <figure class="spl-scale" aria-labelledby="splScaleTitle">
+            <figcaption>
+              <p class="card-label">建立直觉 / SOUND PRESSURE LEVEL</p>
+              <h4 id="splScaleTitle">典型声音的声压级标尺</h4>
+              <p>
+                <math class="inline-mathml"><mtext>dB SPL</mtext></math>
+                是对数标度：声压级每增加
+                <math class="inline-mathml"><mrow><mn>20</mn><mtext>&nbsp;dB</mtext></mrow></math>，对应的
+                <math class="inline-mathml"><msub><mi>p</mi><mtext>rms</mtext></msub></math>
+                约增大
+                <math class="inline-mathml"><mn>10</mn></math>
+                倍。下列值为常见距离与环境下的近似参考，
+                实际读数会随距离、空间反射和声源状态改变。
+              </p>
+            </figcaption>
+            <div class="spl-chart" aria-label="从零至一百四十分贝的典型声音声压级示意图">
+              <article class="spl-row extreme" style="--level: 100%">
+                <strong>140</strong><small>dB SPL</small>
+                <div class="spl-bar"></div>
+                <p><b>约 <math class="inline-mathml"><mrow><mn>200</mn><mtext>&nbsp;Pa</mtext></mrow></math></b><span>近距离烟花爆炸 / 枪声瞬态</span></p>
+              </article>
+              <article class="spl-row danger" style="--level: 86%">
+                <strong>120</strong><small>dB SPL</small>
+                <div class="spl-bar"></div>
+                <p><b>约 <math class="inline-mathml"><mrow><mn>20</mn><mtext>&nbsp;Pa</mtext></mrow></math></b><span>摇滚扩声近处 / 紧急警报器近处</span></p>
+              </article>
+              <article class="spl-row danger" style="--level: 71%">
+                <strong>100</strong><small>dB SPL</small>
+                <div class="spl-bar"></div>
+                <p><b>约 <math class="inline-mathml"><mrow><mn>2</mn><mtext>&nbsp;Pa</mtext></mrow></math></b><span>摩托车或大型设备近处</span></p>
+              </article>
+              <article class="spl-row caution-level" style="--level: 57%">
+                <strong>80</strong><small>dB SPL</small>
+                <div class="spl-bar"></div>
+                <p><b>约 <math class="inline-mathml"><mrow><mn>0.2</mn><mtext>&nbsp;Pa</mtext></mrow></math></b><span>繁忙道路旁 / 较响吸尘器</span></p>
+              </article>
+              <article class="spl-row" style="--level: 43%">
+                <strong>60</strong><small>dB SPL</small>
+                <div class="spl-bar"></div>
+                <p><b>约 20 mPa</b><span>约 1 m 处日常交谈</span></p>
+              </article>
+              <article class="spl-row" style="--level: 29%">
+                <strong>40</strong><small>dB SPL</small>
+                <div class="spl-bar"></div>
+                <p><b>约 2 mPa</b><span>安静室内 / 轻微背景声</span></p>
+              </article>
+              <article class="spl-row" style="--level: 14%">
+                <strong>20</strong><small>dB SPL</small>
+                <div class="spl-bar"></div>
+                <p><b>约 0.2 mPa</b><span>极安静环境中的细微声音</span></p>
+              </article>
+              <article class="spl-row threshold" style="--level: 1%">
+                <strong>0</strong><small>dB SPL</small>
+                <div class="spl-bar"></div>
+                <p><b><math class="inline-mathml"><mrow><mn>20</mn><mtext>&nbsp;μPa</mtext></mrow></math></b><span>约 <math class="inline-mathml"><mrow><mn>1</mn><mtext>&nbsp;kHz</mtext></mrow></math> 的听阈参考，不代表“没有声音”</span></p>
+              </article>
+            </div>
+            <div class="spl-safety" aria-label="世界卫生组织安全聆听提示">
+              <p class="safety-title"><strong>WHO 安全聆听提示：听力风险取决于声级与累计暴露时间</strong></p>
+              <p>
+                世界卫生组织指出，声音越响、持续越久、暴露越频繁，听力损伤风险越高：
+                <b>极高声级的短时或一次性暴露</b>可能立即伤害内耳；
+                <b>中等偏高声级的长时间或反复暴露</b>也可能累积为不可逆的噪声性听力损失。
+              </p>
+              <div class="safe-dose-grid" aria-label="WHO 每周安全聆听时长示例">
+                <article><strong><math class="inline-mathml"><mrow><mn>80</mn><mtext>&nbsp;dB</mtext></mrow></math></strong><span>最长约 40 小时/周</span></article>
+                <article><strong><math class="inline-mathml"><mrow><mn>90</mn><mtext>&nbsp;dB</mtext></mrow></math></strong><span>最长约 4 小时/周</span></article>
+                <article><strong><math class="inline-mathml"><mrow><mn>100</mn><mtext>&nbsp;dB</mtext></mrow></math></strong><span>最长约 20 分钟/周</span></article>
+                <article><strong><math class="inline-mathml"><mrow><mn>120</mn><mtext>&nbsp;dB</mtext></mrow></math></strong><span>最长约 12 秒/周</span></article>
+              </div>
+              <p class="safety-practice">
+                <b>课堂实践：</b>不要用耳机模拟极高声压；降低音量、缩短持续试听时间并安排安静间歇。
+                数字信号的
+                <math class="inline-mathml"><mrow><mn>0</mn><mtext>&nbsp;dBFS</mtext></mrow></math>
+                只表示数字满幅，不能判断耳朵接收到的声压是否安全。
+              </p>
+              <p class="safety-source">
+                依据：World Health Organization. <em>Deafness and hearing loss: Safe listening</em>,
+                updated 6 March 2026.
+              </p>
+            </div>
+          </figure>
+          <aside class="hearing-perspective" id="hearing-perspective" aria-labelledby="hearingPerspectiveTitle">
+            <div class="perspective-intro">
+              <p class="card-label">EXTENDED READING / WHO IS LISTENING?</p>
+              <h4 id="hearingPerspectiveTitle">声级计的“听感刻度”，默认以人耳为对象</h4>
+              <p>
+                <b>dB SPL</b> 描述物理声压；但环境噪声与听力安全场景中的声级计常显示
+                <b>dB(A)</b>，也就是经过 <b>A-weighting</b> 的读数。A 加权压低人耳不敏感的低频和高频，
+                以近似普通人类听觉对频率的响应。因此，一台用来评估人类听感或人类听力风险的声级计，
+                并不等价于“猫耳声级计”或“狗耳声级计”。
+              </p>
+              <a
+                class="reading-link"
+                href="appendix-hearing-ranges.html"
+              >
+                打开离线附页：跨物种听觉范围与阈值比较表 →
+              </a>
+            </div>
+            <div class="species-audiograms" aria-label="人、猫与狗的听觉阈值对比例子">
+              <article>
+                <span>HUMAN / 人</span>
+                <strong>约 <math class="inline-mathml"><mrow><mo>-</mo><mn>10</mn><mtext>&nbsp;dB SPL</mtext></mrow></math></strong>
+                <p>最敏感区域约在 <math class="inline-mathml"><mrow><mn>2</mn><mo>–</mo><mn>4</mn><mtext>&nbsp;kHz</mtext></mrow></math>；日常 A 加权主要围绕人耳听觉响应设计。</p>
+              </article>
+              <article>
+                <span>CAT / 猫</span>
+                <strong>约 <math class="inline-mathml"><mrow><mo>-</mo><mn>3</mn><mtext>&nbsp;dB SPL</mtext></mrow></math></strong>
+                <p>在 <math class="inline-mathml"><mrow><mn>8</mn><mo>–</mo><mn>16</mn><mtext>&nbsp;kHz</mtext></mrow></math> 左右非常敏感；在较高声级下，可听范围可延伸到约 <math class="inline-mathml"><mrow><mn>75</mn><mo>–</mo><mn>85</mn><mtext>&nbsp;kHz</mtext></mrow></math>。</p>
+              </article>
+              <article>
+                <span>DOG / 狗</span>
+                <strong>约 <math class="inline-mathml"><mrow><mn>0</mn><mtext>&nbsp;dB SPL</mtext></mrow></math></strong>
+                <p>最敏感区域约在 <math class="inline-mathml"><mrow><mn>2</mn><mo>–</mo><mn>8</mn><mtext>&nbsp;kHz</mtext></mrow></math>；在 <math class="inline-mathml"><mrow><mn>60</mn><mtext>&nbsp;dB SPL</mtext></mrow></math> 参考下，可听高频约延伸到 <math class="inline-mathml"><mrow><mn>45</mn><mtext>&nbsp;kHz</mtext></mrow></math>。</p>
+              </article>
+            </div>
+            <p class="perspective-note">
+              <strong>如何理解这组数字：</strong>动物并不是在所有频率上都比人耳更敏锐；
+              它们拥有不同形状的听力图（audiogram），尤其能感知许多人类听不到的高频声音。
+              比较“谁听得更轻”时，必须同时说明声音的频率与测试方法。
+            </p>
+            <div class="reading-references">
+              <p class="card-label">课堂离线材料</p>
+              <p class="local-reading-note">
+                表格数据、测试脚注与对应参考文献已整理为项目内附页，课堂使用时无需访问互联网。
+              </p>
+              <a class="reading-link" href="appendix-hearing-ranges.html">查看本地表格与文献 →</a>
+            </div>
+          </aside>
+        </div>
+
+        <div class="physics-module">
+          <div class="module-heading">
+            <span class="concept-index">02 / TRANSDUCER</span>
+            <h3>MEMS 电容式麦克风换能</h3>
+            <p>
+              麦克风有多种换能原理。本课以手机、耳机与智能设备中常见的<b>电容式 MEMS 麦克风</b>为典型：
+              声压作用在微加工振膜上，振膜与背板构成可变电容，间距变化引起电容量变化。
+              封装内的 ASIC 提供偏置与读出电路，再将微弱信号变为模拟输出，或进一步转换为数字输出。
+            </p>
+          </div>
+          <div class="microphone-layout">
+            <div class="transduction-path" aria-label="MEMS 电容式麦克风传感过程">
+              <p><strong>声压 <math class="inline-mathml"><mrow><mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math></strong><span>空气压缩 / 稀疏</span></p>
+              <i>→</i>
+              <p><strong>MEMS 振膜</strong><span>机械耦合位移</span></p>
+              <i>→</i>
+              <p><strong>电容 <math class="inline-mathml"><mrow><mi>Δ</mi><mi>C</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math></strong><span>振膜 + 固定背板</span></p>
+              <i>→</i>
+              <p><strong>ASIC 输出</strong><span>模拟电压 / 数字数据</span></p>
+            </div>
+            <article class="sensitivity-card">
+              <h4>麦克风灵敏度 Sensitivity</h4>
+              <p>
+                灵敏度描述给定声压能产生多少输出。模拟输出麦克风通常在
+                <math class="inline-mathml"><mrow><mn>1</mn><mtext>&nbsp;kHz</mtext></mrow></math>、
+                <math class="inline-mathml"><mrow><mn>1</mn><mtext>&nbsp;Pa</mtext></mrow></math>
+                （即
+                <math class="inline-mathml"><mrow><mn>94</mn><mtext>&nbsp;dB SPL</mtext></mrow></math>）
+                条件下标为
+                <math class="inline-mathml"><mtext>dBV/Pa</mtext></math>；数字输出器件也常给出
+                <math class="inline-mathml"><mtext>dBFS/Pa</mtext></math>。
+              </p>
+              <div class="equation math-stack">
+                <math display="block">
+                  <mrow>
+                    <mi>S</mi><mo>=</mo>
+                    <mn>20</mn><msub><mi mathvariant="normal">log</mi><mn>10</mn></msub>
+                    <mo>(</mo>
+                    <mfrac>
+                      <msub><mi>V</mi><mtext>out</mtext></msub>
+                      <mrow><mn>1</mn><mtext>&nbsp;V</mtext></mrow>
+                    </mfrac>
+                    <mo>)</mo>
+                    <mtext>&nbsp;dBV/Pa</mtext>
+                  </mrow>
+                </math>
+              </div>
+              <p class="example">
+                模拟输出示例：
+                <math class="inline-mathml"><mrow><mo>-</mo><mn>38</mn><mtext>&nbsp;dBV/Pa</mtext></mrow></math>
+                表示
+                <math class="inline-mathml"><mrow><mn>1</mn><mtext>&nbsp;Pa</mtext></mrow></math>
+                输入时约产生
+                <math class="inline-mathml"><mrow><mn>12.6</mn><msub><mtext>&nbsp;mV</mtext><mtext>rms</mtext></msub></mrow></math>
+                输出；
+                灵敏度越负，同样声压下电输出越小。
+              </p>
+            </article>
+          </div>
+          <div class="microphone-visuals mems-visuals" aria-label="ST MEMS 麦克风真实器件与官方视频">
+            <figure>
+              <img
+                src="https://www.st.com.cn/content/dam/category-pages/mems-microphones/mems-microphones-mp34dt05a-v2.png"
+                alt="ST 顶部开孔 MEMS 麦克风的官方产品图，可见封装顶部的声孔"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+              />
+              <figcaption>
+                <strong>真实器件：ST 顶开孔 MEMS 麦克风</strong>
+                <span>ST 页面给出的顶部开孔器件约为 3 × 4 × 1 mm；MEMS 结构位于声孔下方，封装内还包含 ASIC。</span>
+              </figcaption>
+            </figure>
+            <figure class="mems-video-card">
+              <a
+                class="mems-video-link"
+                href="https://www.st.com.cn/zh/mems-and-sensors/mems-microphones.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="在 ST 官方页面观看什么是 MEMS 麦克风视频"
+              >
+                <img
+                  src="https://www.st.com.cn/content/ccc/fragment/multimedia/video/presentation_video_thumbnail/group0/f2/53/ff/5f/01/5e/4b/3f/What_is_a_MEMS_microphone/files/ST24229_What-is-a-MEMS-microphone.jpg/jcr:content/translations/en.ST24229_What-is-a-MEMS-microphone.thumbnail.jpg"
+                  alt="ST 官方短视频：什么是 MEMS 麦克风的缩略图"
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                />
+                <span class="video-duration">观看视频 · 0:38</span>
+              </a>
+              <figcaption>
+                <strong>ST 官方短视频：什么是 MEMS 麦克风？</strong>
+                <span>短片演示 MEMS 传感器与 ASIC 共封装的概念；点击后在 ST 官方页面播放，课堂观看需要联网。</span>
+              </figcaption>
+            </figure>
+          </div>
+          <p class="mic-compare-note">
+            <b>核心原理没有改变：</b>MEMS 麦克风仍然把“声压造成的机械振膜位移”变成“电容量变化”。
+            不同之处是可动结构被微加工在硅片上，并与偏置、放大及输出转换所需的 ASIC 集成到微型封装内。
+            ST 的器件既有顶开孔也有底开孔设计，声孔位置会影响声音进入 MEMS 结构的路径。
+          </p>
+          <div class="capsule-study">
+            <figure class="mems-cutaway">
+              <img
+                src="../../assets/images/mems-top-bottom-port-cross-section.png"
+                alt="MEMS 麦克风顶部开孔与底部开孔剖面对比图，标出前声腔与后声腔"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>MEMS 麦克风剖面：Bottom port 与 Top port</strong>
+                <span>声孔朝向不同，声音进入前声腔的路径也不同；图中同时标出了背后的 back chamber。</span>
+              </figcaption>
+            </figure>
+            <div class="capsule-parts">
+              <p class="card-label">沿着剖面图读懂 MEMS 封装</p>
+              <article><b>01 · 声孔 Port</b><span>声音从顶部或底部的开孔进入；图中左右两种封装首先改变的就是入声方向。</span></article>
+              <article><b>02 · 前 / 后声腔</b><span>Front chamber 接收外界声压，back chamber 为振膜背侧提供声学容积，两者共同影响响应。</span></article>
+              <article><b>03 · MEMS 振膜</b><span>微加工的轻薄可动结构受声压差驱动而位移，这是空气振动向机械运动的耦合点。</span></article>
+              <article><b>04 · 空气间隙 <math class="inline-mathml"><mrow><mi>d</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math></b><span>振膜与固定背极之间的距离改变，使电容 <math class="inline-mathml"><mrow><mi>C</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mfrac><mrow><mi>ε</mi><mi>A</mi></mrow><mrow><mi>d</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></mfrac></mrow></math> 随声音变化。</span></article>
+              <article><b>05 · 背极与 ASIC</b><span>固定电极感知微小的 <math class="inline-mathml"><mrow><mi>Δ</mi><mi>C</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math>，同封装 ASIC 负责偏置、低噪声读出与信号调理。</span></article>
+              <article><b>06 · 输出形式</b><span>模拟 MEMS 输出电压交给外部 ADC；数字 MEMS 可在芯片内转换后直接输出 PDM 数据流。</span></article>
+            </div>
+          </div>
+          <div class="microphone-electronics">
+            <p class="card-label">数字 MEMS 麦克风的信号路径</p>
+            <div class="electronics-chain" aria-label="数字 MEMS 麦克风电子输出链路">
+              <p><strong><math class="inline-mathml"><mrow><mi>Δ</mi><mi>C</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math></strong><span>MEMS 可变电容</span></p><i>→</i>
+              <p><strong>ASIC AFE</strong><span>偏置与低噪读出</span></p><i>→</i>
+              <p><strong>ADC</strong><span>片内量化</span></p><i>→</i>
+              <p><strong>PDM</strong><span>数字脉冲流</span></p>
+            </div>
+            <p class="microphone-note">
+              对于模拟输出 MEMS，ADC 仍位于麦克风之外；对于数字输出 MEMS，ADC 可集成在 ASIC 中。
+              这也解释了为什么模拟器件常给出 dBV/Pa，而数字器件可以直接给出 dBFS/Pa 灵敏度。
+            </p>
+          </div>
+          <p class="media-credit">
+            剖面对照图为课程本地素材；器件图片、尺寸说明与短视频入口来自
+            <a href="https://www.st.com.cn/zh/mems-and-sensors/mems-microphones.html" target="_blank" rel="noopener noreferrer">STMicroelectronics：MEMS 麦克风</a>
+            官方页面（访问于 2026-05-27）。剖面对照图可离线显示；ST 产品图与视频播放需要网络连接。
+          </p>
+        </div>
+
+        <div class="physics-module">
+          <div class="module-heading">
+            <span class="concept-index">03 / A/D CONVERSION</span>
+            <h3>ADC 采样与量化</h3>
+            <p>
+              前置放大器或 MEMS 内部 ASIC 将麦克风的微弱信号调理到 ADC 可处理的范围。
+              ADC 做两件事：先在离散时刻“抓住”模拟电压，再把连续电压映射到有限个数字码。
+              因此未经声学校准的波形
+              <math class="inline-mathml"><mrow><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow></math>
+              首先代表数字幅度，不直接等于 Pa 或 dB SPL。
+            </p>
+          </div>
+          <div class="adc-visual-layout">
+            <figure class="adc-wave-figure" aria-label="采样与量化图示">
+              <svg viewBox="0 0 900 430" role="img" aria-labelledby="adcWaveTitle adcWaveDesc">
+                <title id="adcWaveTitle">模拟波形经过采样和量化变成数字序列</title>
+                <desc id="adcWaveDesc">连续正弦波上叠加离散采样点和量化阶梯，标注采样间隔、量化步长与 Nyquist 条件。</desc>
+                <defs>
+                  <linearGradient id="adcFade" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0%" stop-color="#69eee3" stop-opacity="0.12" />
+                    <stop offset="100%" stop-color="#f4c965" stop-opacity="0.11" />
+                  </linearGradient>
+                  <marker id="adcArrow" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#69eee3" />
+                  </marker>
+                </defs>
+                <rect x="24" y="24" width="852" height="335" rx="18" fill="url(#adcFade)" stroke="rgba(105,238,227,.18)" />
+                <line x1="70" y1="190" x2="830" y2="190" stroke="rgba(238,248,246,.35)" />
+                <line x1="70" y1="60" x2="70" y2="318" stroke="rgba(238,248,246,.35)" />
+                <path class="analog-wave" d="M70 190 C115 95,165 95,210 190 S305 285,350 190 S445 95,490 190 S585 285,630 190 S725 95,770 190 S830 245,850 205" />
+                <path class="quant-step" d="M80 150 H125 V110 H170 V150 H215 V230 H260 V270 H305 V230 H350 V150 H395 V110 H440 V150 H485 V230 H530 V270 H575 V230 H620 V150 H665 V110 H710 V150 H755 V230 H805" />
+                <g class="sample-lines">
+                  <line x1="125" y1="70" x2="125" y2="300" /><circle cx="125" cy="126" r="6" />
+                  <line x1="170" y1="70" x2="170" y2="300" /><circle cx="170" cy="102" r="6" />
+                  <line x1="215" y1="70" x2="215" y2="300" /><circle cx="215" cy="190" r="6" />
+                  <line x1="260" y1="70" x2="260" y2="300" /><circle cx="260" cy="262" r="6" />
+                  <line x1="305" y1="70" x2="305" y2="300" /><circle cx="305" cy="258" r="6" />
+                  <line x1="350" y1="70" x2="350" y2="300" /><circle cx="350" cy="190" r="6" />
+                  <line x1="395" y1="70" x2="395" y2="300" /><circle cx="395" cy="118" r="6" />
+                  <line x1="440" y1="70" x2="440" y2="300" /><circle cx="440" cy="102" r="6" />
+                  <line x1="485" y1="70" x2="485" y2="300" /><circle cx="485" cy="190" r="6" />
+                  <line x1="530" y1="70" x2="530" y2="300" /><circle cx="530" cy="262" r="6" />
+                  <line x1="575" y1="70" x2="575" y2="300" /><circle cx="575" cy="258" r="6" />
+                  <line x1="620" y1="70" x2="620" y2="300" /><circle cx="620" cy="190" r="6" />
+                  <line x1="665" y1="70" x2="665" y2="300" /><circle cx="665" cy="118" r="6" />
+                  <line x1="710" y1="70" x2="710" y2="300" /><circle cx="710" cy="102" r="6" />
+                </g>
+                <line x1="125" y1="326" x2="170" y2="326" stroke="#69eee3" marker-end="url(#adcArrow)" />
+                <text class="ts-label" x="104" y="350">T<tspan baseline-shift="sub">s</tspan> = 1 / f<tspan baseline-shift="sub">s</tspan></text>
+                <line x1="820" y1="150" x2="820" y2="190" stroke="#f4c965" marker-end="url(#adcArrow)" />
+                <text x="835" y="176">Δ</text>
+                <text x="82" y="48">v(t)</text>
+                <text x="720" y="315">time</text>
+                <g class="adc-legend">
+                  <circle cx="330" cy="394" r="5" fill="#69eee3" /><text x="342" y="399">采样点</text>
+                  <line x1="445" y1="394" x2="485" y2="394" stroke="#f4c965" stroke-width="4" /><text x="497" y="399">量化阶梯</text>
+                  <line x1="640" y1="394" x2="680" y2="394" stroke="#ffffff" stroke-width="3" /><text x="692" y="399">模拟波形</text>
+                </g>
+                <text class="nyquist-badge" x="566" y="52">Nyquist: f<tspan baseline-shift="sub">s</tspan> &gt; 2 f<tspan baseline-shift="sub">max</tspan></text>
+              </svg>
+              <figcaption>
+                先取时间点，再把幅度落到最近的等级；时间间隔是
+                <math class="inline-mathml"><msub><mi>T</mi><mi>s</mi></msub></math>，幅度间隔是
+                <math class="inline-mathml"><mi>Δ</mi></math>。
+              </figcaption>
+            </figure>
+            <div class="adc-key-panel" aria-label="ADC 关键公式说明">
+              <article><b>采样</b><span><math class="inline-mathml"><mrow><mi>t</mi><mo>=</mo><mi>n</mi><msub><mi>T</mi><mi>s</mi></msub></mrow></math>，只在这些时刻读取电压。</span></article>
+              <article><b>量化</b><span><math class="inline-mathml"><mrow><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo><mo>=</mo><msub><mi>Q</mi><mi>B</mi></msub><mo>{</mo><mi>G</mi><msub><mi>v</mi><mtext>mic</mtext></msub><mo>(</mo><mi>n</mi><msub><mi>T</mi><mi>s</mi></msub><mo>)</mo><mo>}</mo></mrow></math>，<math class="inline-mathml"><msub><mi>Q</mi><mi>B</mi></msub></math> 表示 <math class="inline-mathml"><mi>B</mi></math> bit 量化器。</span></article>
+              <article><b>位深</b><span><math class="inline-mathml"><msup><mn>2</mn><mi>B</mi></msup></math> 个等级，<math class="inline-mathml"><mrow><mi>Δ</mi><mo>≈</mo><mfrac><mrow><mn>2</mn><msub><mi>V</mi><mtext>FS</mtext></msub></mrow><msup><mn>2</mn><mi>B</mi></msup></mfrac></mrow></math>。</span></article>
+              <article><b>dBFS</b><span>满幅为 <math class="inline-mathml"><mrow><mn>0</mn><mtext>&nbsp;dBFS</mtext></mrow></math>；样本峰值 <math class="inline-mathml"><mn>0.5</mn></math> 约为 <math class="inline-mathml"><mrow><mo>-</mo><mn>6</mn><mtext>&nbsp;dBFS</mtext></mrow></math>。</span></article>
+            </div>
+          </div>
+          <div class="adc-process-strip" aria-label="ADC 采样量化电路流程">
+            <span>Anti-alias LPF</span><i>→</i>
+            <span>Sample / Hold</span><i>→</i>
+            <span>Comparator</span><i>→</i>
+            <span>Quantizer</span><i>→</i>
+            <strong>Code</strong>
+          </div>
+          <div class="adc-diagram-grid" aria-label="多 bit ADC 与 1 bit sigma-delta ADC 图示对比">
+            <article class="adc-diagram-card">
+              <p class="card-label">传统多 bit PCM ADC</p>
+              <h4>一次采样，输出 B bit 数字码</h4>
+              <div class="adc-block-flow">
+                <span>S/H</span><i>→</i><span>SAR / Flash</span><i>→</i><span>B bit PCM</span>
+              </div>
+              <div class="sequence-example pcm-sequence" aria-label="PCM sequence example">
+                <strong>PCM <math class="inline-mathml"><mrow><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow></math>：对应图中 14 个蓝色采样点</strong>
+                <code>[ +2, +3, 0, -2, -3, -2, 0, +2, +3, 0, -2, -3, -2, +3 ]</code>
+              </div>
+              <p>每个采样点直接对应一个多 bit 幅度码；本例序列长度与图中的蓝色采样点数量一致。</p>
+            </article>
+            <article class="adc-diagram-card sigma-card">
+              <p class="card-label">1-bit σ-δ / PDM</p>
+              <h4>极高频率的 <math class="inline-mathml"><mrow><mn>1</mn><mtext>&nbsp;bit</mtext></mrow></math> 脉冲，靠密度表示幅度</h4>
+              <div class="sigma-loop">
+                <span><math class="inline-mathml"><mo>Σ</mo></math> 积分器</span><i>→</i><span><math class="inline-mathml"><mrow><mn>1</mn><mtext>&nbsp;bit</mtext></mrow></math> 比较器</span><i>→</i><span>PDM</span>
+                <em>反馈 <math class="inline-mathml"><mi>Δ</mi></math>：把上一次 <math class="inline-mathml"><mrow><mn>1</mn><mtext>&nbsp;bit</mtext></mrow></math> 输出减回输入端</em>
+              </div>
+              <div class="pdm-row" aria-label="PDM pulse density example">
+                <b></b><b></b><b></b><i></i><b></b><b></b><b></b><b></b><b></b><i></i><b></b><i></i><i></i><i></i><b></b><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b></b><i></i><b></b><i></i><b></b><i></i><b></b><b></b><b></b><i></i><b></b><b></b><b></b><b></b><b></b><i></i><b></b><i></i><i></i><i></i><b></b><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b></b><i></i><b></b><b></b><b></b><b></b>
+              </div>
+              <div class="sequence-example pdm-sequence" aria-label="Sigma delta PDM bit sequence example">
+                <strong>σ-δ / PDM bits：本例 <math class="inline-mathml"><mrow><mn>4</mn><mo>×</mo></mrow></math> 过采样，<math class="inline-mathml"><mrow><mn>56</mn><mtext>&nbsp;bit</mtext></mrow></math></strong>
+                <code>1110 1111 1010 0010 0000 0010 1010 1110 1111 1010 0010 0000 0010 1111</code>
+              </div>
+              <p>
+                PDM 的 bit 率通常远高于 PCM 采样率；这里示意为
+                <math class="inline-mathml">
+                  <mrow><msub><mi>f</mi><mtext>PDM</mtext></msub><mo>=</mo><mn>4</mn><msub><mi>f</mi><mtext>PCM</mtext></msub></mrow>
+                </math>，实际数字 MEMS 常更高。数字低通和抽取会把 PDM 转成 PCM。
+              </p>
+            </article>
+            <aside class="pdm-reading-note" aria-label="如何从 PCM 示意理解 PDM 序列">
+              <p class="card-label">如何读这两个序列</p>
+              <p>
+                上面的 PDM 串是为了读图而构造的<b>脉冲密度示意</b>，不是由 PCM 序列唯一严格推导出的结果。
+                真正的 σ-δ 调制器包含积分反馈，具体 bit 串还会受过采样倍数、调制器阶数、初始状态和反馈量化器定义影响。
+              </p>
+              <div class="density-map" aria-label="PCM amplitude to four-bit density blocks">
+                <span><b>+3</b><code>1111</code></span>
+                <span><b>+2</b><code>1110</code></span>
+                <span><b>0</b><code>1010</code></span>
+                <span><b>-2</b><code>0010</code></span>
+                <span><b>-3</b><code>0000</code></span>
+              </div>
+              <p>
+                在本例中，为了让同学能从图例读懂关系，我们把每个 PCM 样本替换成 4 个 PDM bit：
+                幅度越高，4-bit 小块中 <b>1</b> 越多；幅度越低，<b>0</b> 越多。
+                14 个 PCM 样本因此对应 14 组小块，共 56 个 PDM bit。
+              </p>
+            </aside>
+          </div>
+        </div>
+
+        <div class="level-reference" aria-label="三种分贝标度的参考对象">
+          <p class="card-label">不要把三种幅度参考混在一起</p>
+          <div>
+            <article><strong>dB SPL</strong><span>空气中的声压级</span><small>参考 <math class="inline-mathml"><mrow><mn>20</mn><mtext>&nbsp;μPa</mtext></mrow></math></small></article>
+            <article><strong>dBV/Pa</strong><span>麦克风灵敏度</span><small><math class="inline-mathml"><mrow><mn>1</mn><mtext>&nbsp;Pa</mtext></mrow></math> 输入产生的电压</small></article>
+            <article><strong>dBFS</strong><span>数字音频电平</span><small>参考 ADC/文件满幅</small></article>
+          </div>
+          <p class="calibration-note">只有知道麦克风灵敏度、前置增益和 ADC 标定关系，数字 <b>dBFS</b> 才能换算为现场 <b>dB SPL</b>。</p>
+        </div>
+        <div class="wave-interpretation">
+          <div>
+            <p class="card-label">读一张时域图时，看三件事</p>
+            <h3>横轴是时间，纵轴是幅度，外形是变化方式。</h3>
+          </div>
+          <ul>
+            <li><strong>幅度：</strong>不是“音高”；录音波形的纵轴通常是归一化数字值，校准后才能对应声压。</li>
+            <li><strong>周期：</strong>纯音会呈现稳定重复；周期越短，重复越快。</li>
+            <li><strong>包络：</strong>敲击会迅速升起再衰减，体现事件发生的时间结构。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="chapter-block mathematics">
+        <div class="section-heading">
+          <p>30-55 MIN / STATISTICS</p>
+          <h2>两个基础统计量：RMS 与 ZCR</h2>
+        </div>
+        <div class="stat-grid">
+          <article class="stat-card">
+            <div class="stat-title">
+              <span>RMS</span>
+              <h3>均方根：平均能量尺度</h3>
+            </div>
+            <div class="formula-display">
+              <math display="block">
+                <mrow>
+                  <mi>RMS</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <msqrt>
+                    <mfrac><mn>1</mn><mi>N</mi></mfrac>
+                    <munderover>
+                      <mo>Σ</mo>
+                      <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+                      <mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow>
+                    </munderover>
+                    <msup>
+                      <mrow><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow>
+                      <mn>2</mn>
+                    </msup>
+                  </msqrt>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              波形有正有负，直接求平均会相互抵消。先平方使其都为正，
+              再平均并开方，得到与原始幅度具有相同量纲的整体强度指标。
+            </p>
+            <div class="interpretation">
+              <strong>适合回答：</strong>这个时间片段整体有多强？敲击的衰减是否很快？
+            </div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-title">
+              <span>ZCR</span>
+              <h3>过零率：变化快慢的粗略线索</h3>
+            </div>
+            <div class="formula-display zcr">
+              <math display="block">
+                <mrow>
+                  <mi>ZCR</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <mfrac><mn>1</mn><mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow></mfrac>
+                  <munderover>
+                    <mo>Σ</mo>
+                    <mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow>
+                    <mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow>
+                  </munderover>
+                  <mi mathvariant="double-struck">1</mi>
+                  <mo>[</mo>
+                  <mi mathvariant="normal">sign</mi><mo>(</mo><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo><mo>)</mo>
+                  <mo>≠</mo>
+                  <mi mathvariant="normal">sign</mi><mo>(</mo><mi>x</mi><mo>[</mo><mi>n</mi><mo>-</mo><mn>1</mn><mo>]</mo><mo>)</mo>
+                  <mo>]</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              每当相邻样本的符号改变，波形就跨过零线一次。
+              粗糙噪声或较快振荡通常产生较高 ZCR；低频、平滑信号通常较低。
+            </p>
+            <div class="interpretation">
+              <strong>适合回答：</strong>波形是否快速翻转？它可能更噪声化还是更平滑？
+            </div>
+          </article>
+        </div>
+        <div class="stat-reminders">
+          <article><strong>分帧计算</strong><p>真实音频随时间变化，常把信号切成短帧，逐帧得到 RMS/ZCR 轨迹。</p></article>
+          <article><strong>尺度意识</strong><p>RMS 随录音增益变化；比较样本前应考虑音量归一化和录制条件。</p></article>
+          <article><strong>不要过度解读</strong><p>相同 RMS 或 ZCR 的声音仍可能听起来完全不同。</p></article>
+        </div>
+      </section>
+
+      <section class="chapter-block active-lab">
+        <div class="section-heading">
+          <p>55-70 MIN / OBSERVE</p>
+          <h2>互动观察：试听、看波形、读数字</h2>
+        </div>
+        <div class="lab-layout">
+          <div class="lab-console" id="featureLab">
+            <div class="profile-buttons" role="group" aria-label="选择声音样型">
+              <button class="profile active" type="button" data-profile="tone">持续纯音</button>
+              <button class="profile" type="button" data-profile="tap">短促敲击</button>
+              <button class="profile" type="button" data-profile="noise">摩擦噪声</button>
+            </div>
+            <div class="play-current">
+              <button id="playCurrentProfile" type="button">
+                <span aria-hidden="true">▶</span> 试听当前样型
+              </button>
+              <p id="currentPlayStatus" aria-live="polite">当前选择：持续纯音（正弦波）</p>
+            </div>
+            <canvas id="featureWave" aria-label="样型声音波形视图"></canvas>
+            <label class="amplitude-control" for="amplitude">
+              <span>输入幅度 <strong id="amplitudeLabel">60%</strong></span>
+              <input id="amplitude" type="range" min="15" max="100" value="60" />
+            </label>
+            <div class="metric-grid" aria-label="当前声音特征读数">
+              <p><span>Peak</span><strong id="peakMetric">0.00</strong><small>最大幅度</small></p>
+              <p><span>RMS</span><strong id="rmsMetric">0.00</strong><small>平均能量</small></p>
+              <p><span>ZCR</span><strong id="zcrMetric">0.00</strong><small>跨零变化率</small></p>
+            </div>
+          </div>
+          <aside class="lab-guide">
+            <p class="card-label">三个观察步骤</p>
+            <ol>
+              <li>试听持续纯音，并观察规则波形、稳定持续时间和较低 ZCR。</li>
+              <li>切换敲击：观察强起始、快速衰减，以及为什么 RMS 会降低。</li>
+              <li>切换噪声：观察密集翻转；尝试说明 ZCR 上升对应的听感。</li>
+            </ol>
+            <div class="formula experiment-prompt">
+              <p><strong>再做一个控制实验：</strong></p>
+              <p>只移动幅度滑块，不改变声音类型。RMS 会变，ZCR 是否也应显著改变？为什么？</p>
+            </div>
+            <p class="caution">本演示用合成信号突出概念。真实声音通常同时包含周期成分、瞬态与噪声。</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="chapter-block auditory-time">
+        <div class="section-heading">
+          <p>70-83 MIN / HUMAN HEARING</p>
+          <h2>耳朵也在时间中分析声音</h2>
+        </div>
+        <div class="auditory-grid">
+          <article>
+            <span>ONSET</span>
+            <h3>起始瞬态</h3>
+            <p>
+              敲击、拨弦、爆破音之所以容易被辨认，部分原因在于声音开始的一瞬间包含鲜明线索。
+              只看长期平均能量会淡化这种信息。
+            </p>
+          </article>
+          <article>
+            <span>ENVELOPE</span>
+            <h3>包络与节奏</h3>
+            <p>
+              响度随时间的起伏帮助我们感知语音节奏、音节边界和音乐律动。
+              RMS 的逐帧轨迹可以粗略描写这种包络。
+            </p>
+          </article>
+          <article>
+            <span>INTEGRATION</span>
+            <h3>短时整合</h3>
+            <p>
+              听觉不会逐采样点“阅读”声音，而是在短时间范围内整合能量与变化；
+              因而音频分析常采用窗口和帧作为基本单位。
+            </p>
+          </article>
+          <article>
+            <span>TIMING</span>
+            <h3>时间差线索</h3>
+            <p>
+              两耳接收声音的微小时差可以支持定位。虽然本章尚不展开空间听觉，
+              但它提醒我们：声音中的时间结构具有知觉意义。
+            </p>
+          </article>
+        </div>
+        <p class="auditory-note">
+          注意：人耳听觉远不等于 RMS 或 ZCR 计算器。这里的统计特征只是便于机器使用的低阶描述，
+          它们能够对应一部分听觉现象，却不能完整还原听觉表征。
+        </p>
+      </section>
+
+      <section class="chapter-block limits">
+        <div class="section-heading">
+          <p>83-90 MIN / WHY FREQUENCY</p>
+          <h2>只有时间统计，还缺少什么？</h2>
+        </div>
+        <div class="limit-layout">
+          <div class="limit-question">
+            <p class="card-label">本章最后一个问题</p>
+            <h3>两个声音的 RMS 很接近、ZCR 也接近，它们会听起来一样吗？</h3>
+            <p>
+              不会。长笛和纯音可能都平稳持续，两个音符也可能具有相似强度，
+              但它们的音高和音色仍明显不同。时域特征告诉我们“何时、整体多强、是否快速变化”，
+              却没有直接拆开声音由哪些频率成分构成。
+            </p>
+          </div>
+          <div class="missing-grid">
+            <article>
+              <strong>音高</strong>
+              <p>周期重复指向音高，但复杂声音需要更系统的频率描述。</p>
+            </article>
+            <article>
+              <strong>音色</strong>
+              <p>不同谐波构成决定音色，仅凭 RMS/ZCR 很难区分。</p>
+            </article>
+            <article>
+              <strong>共振峰与频带</strong>
+              <p>语音和环境声的辨识依赖能量集中在哪些频段。</p>
+            </article>
+          </div>
+        </div>
+        <div class="next-chapter">
+          <p class="chapter-code">NEXT / REQUIRED FOUNDATION 02</p>
+          <h2>下一章：<span>从时间轴进入频率世界</span></h2>
+          <p>
+            我们将引入周期、正弦基元、傅里叶分析与频谱，
+            解释机器如何回答本章尚未回答的问题：声音由什么组成？
+          </p>
+          <a class="reading-link" href="../../chapters/02-frequency-domain-processing/">进入第二章框架 →</a>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip">
+        <div>
+          <p class="card-label">本章参考来源</p>
+          <p>
+            `Audio Signal Processing for Machine Learning`：Sound and Waveforms；
+            Intensity, Loudness, and Timbre；Time-domain Audio Features；
+            RMS Energy and Zero-Crossing Rate。
+          </p>
+        </div>
+        <div>
+          <p class="card-label">延伸阅读</p>
+          <p>
+            Richard F. Lyon, <em>Human and Machine Hearing</em>, Part I:
+            Sound Analysis and Representation Overview / Human Hearing Overview。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="chapter-footer">
+      <span>AUDIO AI / REQUIRED FOUNDATION 01</span>
+      <a href="../../chapters/00-home/">返回课程大纲 V2</a>
+    </footer>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/chapter.js?v=20260602-1"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>
+
+
