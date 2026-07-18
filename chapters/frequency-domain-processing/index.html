@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 频域处理：从时域走向频域</title>
+    <meta
+      name="description"
+      content="从声压、采样序列与卷积出发，理解复正弦、傅里叶变换、DFT、频谱泄漏与 STFT。"
+    />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-4" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-2" />
+    <style>
+      .frequency-processing-page {
+        --content: 1740px;
+      }
+
+      .frequency-processing-page .chapter-hero {
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+        gap: clamp(36px, 5vw, 88px);
+      }
+
+      .frequency-processing-page .chapter-lead {
+        max-width: 820px;
+      }
+
+      .frequency-processing-page .mobile-line {
+        display: inline;
+      }
+
+      .chapter-outline {
+        margin-block: -18px 28px;
+      }
+
+      .frequency-processing-page .chapter-block {
+        padding: 44px 0;
+        scroll-margin-top: 92px;
+      }
+
+      .frequency-processing-page .section-heading {
+        grid-template-columns: minmax(150px, 180px) minmax(0, 1fr);
+        gap: clamp(22px, 2.4vw, 38px);
+        margin-bottom: 24px;
+      }
+
+      .frequency-processing-page .section-heading h2 {
+        max-width: 980px;
+        font-size: clamp(30px, 2.35vw, 42px);
+        line-height: 1.25;
+        letter-spacing: 0;
+      }
+
+      .fp-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
+        gap: clamp(22px, 2.5vw, 42px);
+        align-items: start;
+      }
+
+      .fp-grid.compact-right {
+        grid-template-columns: minmax(0, 0.92fr) minmax(380px, 1.08fr);
+      }
+
+      .fp-card,
+      .fp-figure,
+      .fp-note,
+      .fp-table-wrap {
+        border: 1px solid color-mix(in srgb, var(--cyan) 16%, transparent);
+        background: rgba(255, 255, 255, 0.68);
+        border-radius: 8px;
+        box-shadow: 0 18px 42px rgba(8, 42, 48, 0.06);
+      }
+
+      [data-theme="dark"] .fp-card,
+      [data-theme="dark"] .fp-figure,
+      [data-theme="dark"] .fp-note,
+      [data-theme="dark"] .fp-table-wrap {
+        background: rgba(14, 31, 36, 0.78);
+        border-color: rgba(105, 238, 227, 0.14);
+      }
+
+      .fp-card {
+        padding: clamp(22px, 2.4vw, 34px);
+      }
+
+      .fp-card h3,
+      .fp-card h4 {
+        margin: 0 0 12px;
+        font-family: var(--course-font-sans);
+        letter-spacing: 0;
+        line-height: 1.28;
+      }
+
+      .fp-card h3 {
+        font-size: var(--course-card-title-size, 21px);
+      }
+
+      .fp-card h4 {
+        font-size: var(--course-card-subtitle-size, 18px);
+      }
+
+      .fp-card p,
+      .fp-card li,
+      .fp-note p,
+      .fp-table {
+        color: var(--muted);
+        line-height: 1.76;
+        font-size: var(--course-text-body-size, 16px);
+      }
+
+      .fp-card ul,
+      .fp-card ol {
+        padding-left: 1.2em;
+        margin: 12px 0 0;
+      }
+
+      .fp-figure {
+        margin: 0;
+        padding: clamp(14px, 1.7vw, 22px);
+      }
+
+      .fp-figure img {
+        width: 100%;
+        display: block;
+        border-radius: 6px;
+      }
+
+      .fp-figure figcaption {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+        margin-top: 12px;
+      }
+
+      .fp-mini-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .fp-mini-grid article {
+        min-width: 0;
+        border-left: 3px solid color-mix(in srgb, var(--cyan) 42%, transparent);
+        padding: 4px 0 4px 12px;
+      }
+
+      .fp-mini-grid strong {
+        display: block;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+
+      .fp-mini-grid span {
+        display: block;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .fp-equation {
+        overflow-x: auto;
+        margin: 16px 0;
+        padding: 14px 16px;
+        background: color-mix(in srgb, var(--cyan) 7%, transparent);
+        border-radius: 8px;
+        font-family: var(--course-font-math);
+      }
+
+      .fp-equation math {
+        min-width: max-content;
+        color: var(--ink);
+        font-family: var(--course-font-math);
+        font-size: var(--course-math-display-size, 22px);
+      }
+
+      .fp-note {
+        padding: 18px 20px;
+        margin-top: 18px;
+      }
+
+      .fp-note strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--ink);
+      }
+
+      .fp-table-wrap {
+        overflow-x: auto;
+        padding: 4px;
+      }
+
+      .filter-example-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .filter-example-grid article {
+        min-width: 0;
+        border: 1px solid color-mix(in srgb, var(--cyan) 16%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--cyan) 5%, transparent);
+        padding: 18px;
+      }
+
+      .filter-example-grid h4 {
+        margin: 0 0 8px;
+        letter-spacing: 0;
+      }
+
+      .filter-example-grid p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.62;
+        font-size: 14px;
+      }
+
+      .filter-example-grid code {
+        color: var(--ink);
+      }
+
+      .fp-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+
+      .fp-table th,
+      .fp-table td {
+        text-align: left;
+        vertical-align: top;
+        padding: 14px 16px;
+        border-bottom: 1px solid color-mix(in srgb, var(--cyan) 12%, transparent);
+      }
+
+      .fp-table th {
+        color: var(--ink);
+        font-size: 14px;
+      }
+
+      .fp-table tr:last-child td,
+      .fp-table tr:last-child th {
+        border-bottom: 0;
+      }
+
+      .fp-details {
+        margin-top: 18px;
+      }
+
+      .fp-details summary {
+        cursor: pointer;
+        font-weight: 900;
+        color: var(--ink);
+      }
+
+      .complex-operator-grid .fp-equation {
+        margin: 10px 0 8px;
+        padding: 10px 8px;
+      }
+
+      .complex-operator-grid math {
+        font-size: var(--course-math-compact-size, 18px);
+      }
+
+      .complex-summary {
+        margin-bottom: 0;
+        padding: 14px 16px;
+        border-left: 3px solid color-mix(in srgb, var(--cyan) 52%, transparent);
+        background: color-mix(in srgb, var(--cyan) 7%, transparent);
+      }
+
+      .complex-summary strong {
+        display: inline;
+        margin: 0;
+      }
+
+      .route-map-figure img {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      @media (max-width: 1040px) {
+        .frequency-processing-page .chapter-hero,
+        .frequency-processing-page .section-heading,
+        .fp-grid,
+        .fp-grid.compact-right {
+          grid-template-columns: 1fr;
+        }
+
+        .fp-mini-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .filter-example-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        html,
+        body {
+          overflow-x: hidden;
+        }
+
+        body.frequency-processing-page main,
+        body.frequency-processing-page .chapter-nav,
+        body.frequency-processing-page .chapter-footer {
+          width: calc(100% - 40px) !important;
+          max-width: calc(100% - 40px) !important;
+        }
+
+        .frequency-processing-page .chapter-hero {
+          width: 100% !important;
+          max-width: 100% !important;
+          padding-top: 48px;
+          gap: 28px;
+        }
+
+        .frequency-processing-page .chapter-hero h1 {
+          font-size: clamp(48px, 15vw, 64px);
+          line-height: 1.05;
+          letter-spacing: 0;
+        }
+
+        .frequency-processing-page .chapter-lead {
+          width: 100% !important;
+          max-width: 100% !important;
+          font-size: 16px;
+          line-height: 1.8;
+        }
+
+        .frequency-processing-page .chapter-lead .mobile-line {
+          display: block;
+        }
+
+        .frequency-processing-page .brief-card {
+          min-width: 0;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        .frequency-processing-page .chapter-lead,
+        .frequency-processing-page .fp-card p,
+        .frequency-processing-page .fp-card li,
+        .frequency-processing-page .fp-note p {
+          overflow-wrap: anywhere;
+        }
+
+        .frequency-processing-page .inline-mathml {
+          max-width: 100%;
+          overflow-x: auto;
+          vertical-align: middle;
+        }
+
+        .theme-toggle {
+          right: 12px;
+          width: 44px;
+          height: 44px;
+          max-width: 44px;
+          padding: 0;
+          border-radius: 50%;
+          font-size: 0;
+          overflow: hidden;
+        }
+
+        .frequency-processing-page .chapter-block {
+          padding: 34px 0;
+        }
+
+        .frequency-processing-page .section-heading h2 {
+          font-size: 28px;
+        }
+
+        .fp-card {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body class="chapter-page lecture-page frequency-page frequency-processing-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回课程首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../session/sound-physics-sampling-spectrum/">返回导览</a>
+        <a href="../time-domain-audio/">时域</a>
+        <a href="../spatial-acoustic-features/">空间域</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="chapter-hero lecture-hero">
+        <div>
+          <p class="chapter-code">REQUIRED FOUNDATION / 02</p>
+          <h1>从时域走向<br /><span>频域处理</span></h1>
+          <p class="chapter-lead">
+            <span class="mobile-line">第一章已经把声音</span>
+            <span class="mobile-line">从声压场固定到麦克风位置，</span>
+            <span class="mobile-line">得到连续时间波形，</span>
+            <span class="mobile-line">再经 ADC 得到采样序列。</span>
+            <span class="mobile-line">这一页继续追问：</span>
+            <span class="mobile-line">记录下来的变化中，</span>
+            <span class="mobile-line">哪些变化慢、哪些变化快，</span>
+            <span class="mobile-line">系统怎样改变它们，</span>
+            <span class="mobile-line">机器又怎样得到频谱和声谱图。</span>
+          </p>
+        </div>
+        <aside class="brief-card" aria-label="本页路线">
+          <span class="card-label">本页路线</span>
+          <div class="brief-grid">
+            <p><strong>声压到序列</strong></p>
+            <p><strong>LTI 与卷积</strong></p>
+            <p><strong>复正弦基元</strong></p>
+            <p><strong>Fourier 投影</strong></p>
+            <p><strong>DFT / FFT</strong></p>
+            <p><strong>窗函数与泄漏</strong></p>
+            <p><strong>STFT 声谱图</strong></p>
+          </div>
+        </aside>
+      </section>
+
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#object">研究对象</a>
+        <a href="#convolution">卷积滤波</a>
+        <a href="#phasor">复正弦</a>
+        <a href="#fourier">傅里叶</a>
+        <a href="#dft">DFT</a>
+        <a href="#stft">STFT</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section id="overview" class="chapter-block">
+        <div class="section-heading">
+          <p>OVERVIEW</p>
+          <h2>频域不是另一段声音，而是同一段声音的另一组坐标</h2>
+        </div>
+        <div class="fp-grid compact-right">
+          <article class="fp-card">
+            <h3>这一页要解决的核心问题</h3>
+            <p>
+              时域波形告诉我们“声音在什么时候怎样变化”。频域进一步把这种变化拆成不同的旋转速度：
+              慢的成分对应低频，快的成分对应高频。理解频域以后，卷积滤波、频率响应、DFT、声谱图和后续 Mel 特征会连成一条线。
+            </p>
+            <div class="fp-mini-grid" aria-label="本页出口问题">
+              <article><strong>系统怎样改变声音？</strong><span>LTI 系统可由冲激响应描述，输出由卷积得到。</span></article>
+              <article><strong>为什么用复正弦？</strong><span>复正弦经过 LTI 系统后频率不变，只改变复增益。</span></article>
+              <article><strong>为什么需要 STFT？</strong><span>真实语音和音乐的频率组成随时间改变。</span></article>
+            </div>
+          </article>
+          <figure class="fp-figure route-map-figure">
+            <img src="media/frequency-domain-route.svg" alt="从物理声场、固定位置声压、采样序列走向卷积、DFT、STFT 和后续听觉特征的路线图" />
+            <figcaption>
+              前置知识：第一章的声压、采样和 Nyquist 条件。用于后续：第三章的听觉滤波器组、Mel 频谱和机器听觉特征。
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="object" class="chapter-block">
+        <div class="section-heading">
+          <p>OBJECT</p>
+          <h2>先把对象说清楚：从声压场到有限采样序列</h2>
+        </div>
+        <div class="fp-grid">
+          <article class="fp-card">
+            <h3>三个层次不要混在一起</h3>
+            <p>
+              物理上，声音是空间与时间共同变化的声压场。麦克风固定在位置
+              <math class="inline-mathml"><msub><mi mathvariant="bold">r</mi><mi>m</mi></msub></math>
+              后，我们观察到的是一个连续时间信号。ADC 再按采样周期
+              <math class="inline-mathml"><msub><mi>T</mi><mi>s</mi></msub></math>
+              把它变成离散序列。
+            </p>
+            <div class="fp-equation" id="eq-sampling-chain">
+              <math display="block">
+                <mrow>
+                  <mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                  <mo>&#x2192;</mo>
+                  <mi>p</mi><mo>(</mo><msub><mi mathvariant="bold">r</mi><mi>m</mi></msub><mo>,</mo><mi>t</mi><mo>)</mo>
+                  <mo>&#x2192;</mo>
+                  <mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                  <mo>=</mo>
+                  <mi>Q</mi><mo>{</mo><mi>G</mi><mi>p</mi><mo>(</mo><mi>n</mi><msub><mi>T</mi><mi>s</mi></msub><mo>)</mo><mo>}</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              复用定义：采样率
+              <math class="inline-mathml"><mrow><msub><mi>F</mi><mi>s</mi></msub><mo>=</mo><mn>1</mn><mo>/</mo><msub><mi>T</mi><mi>s</mi></msub></mrow></math>
+              ，理想采样要求
+              <math class="inline-mathml"><mrow><msub><mi>F</mi><mi>s</mi></msub><mo>&gt;</mo><mn>2</mn><msub><mi>f</mi><mi>max</mi></msub></mrow></math>
+              。这里的目标不是再解释“如何记录”，而是解释“记录以后如何分频率”。
+            </p>
+          </article>
+          <article class="fp-card">
+            <h3>符号小表</h3>
+            <ul>
+              <li><math class="inline-mathml"><mrow><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow></math>：离散时间音频序列。</li>
+              <li><math class="inline-mathml"><mrow><mi>h</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow></math>：系统或滤波器的冲激响应。</li>
+              <li><math class="inline-mathml"><mrow><mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo></mrow></math>：连续频率上的傅里叶表示。</li>
+              <li><math class="inline-mathml"><mrow><mi>X</mi><mo>[</mo><mi>k</mi><mo>]</mo></mrow></math>：DFT 在第 <math class="inline-mathml"><mi>k</mi></math> 个频率格点的系数。</li>
+              <li><math class="inline-mathml"><mrow><mi>X</mi><mo>[</mo><mi>m</mi><mo>,</mo><mi>k</mi><mo>]</mo></mrow></math>：STFT 中第 <math class="inline-mathml"><mi>m</mi></math> 帧、第 <math class="inline-mathml"><mi>k</mi></math> 个频率格点。</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="convolution" class="chapter-block">
+        <div class="section-heading">
+          <p>CONVOLUTION</p>
+          <h2>滤波器在时域上是什么：一个加权、延迟和相加的规则</h2>
+        </div>
+        <div class="fp-grid">
+          <article class="fp-card">
+            <h3>时域滤波器就是冲激响应，也可以看成一组权重</h3>
+            <p>
+              在离散时间里，一个滤波器可以由冲激响应
+              <math class="inline-mathml"><mrow><mi>h</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow></math>
+              描述。它不是神秘的黑箱，而是一串权重：当前输入、前一个输入、再前一个输入各乘多少，最后相加得到输出。
+              对 FIR 滤波器来说，这个规则特别直接。
+            </p>
+            <div class="fp-equation" id="eq-discrete-convolution">
+              <math display="block">
+                <mrow>
+                  <mi>y</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                  <mo>=</mo>
+                  <mo>(</mo><mi>x</mi><mo>*</mo><mi>h</mi><mo>)</mo><mo>[</mo><mi>n</mi><mo>]</mo>
+                  <mo>=</mo>
+                  <munderover><mo>&#x2211;</mo><mrow><mi>m</mi><mo>=</mo><mo>-</mo><mi>&#x221e;</mi></mrow><mi>&#x221e;</mi></munderover>
+                  <mi>x</mi><mo>[</mo><mi>m</mi><mo>]</mo>
+                  <mi>h</mi><mo>[</mo><mi>n</mi><mo>-</mo><mi>m</mi><mo>]</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              这条公式的读法是：把滤波器翻转并滑到当前时刻，找出与输入重叠的样本，逐点相乘，再把乘积相加。
+              因此“滤波”在时域上就是一组带延迟的加权求和；它在频域上才表现为低通、高通或带通。
+            </p>
+          </article>
+          <figure class="fp-figure">
+            <img src="media/convolution-sliding-animation.svg" alt="离散卷积中冲激响应翻转、滑动、相乘并累加的动画" />
+            <figcaption>
+              读法：输入序列固定，滤波器滑动；每停一格，重叠样本乘以权重并累加，形成底部的一个输出点。
+            </figcaption>
+          </figure>
+        </div>
+        <div class="filter-example-grid" aria-label="低通、高通和带通滤波器的时域例子">
+          <article>
+            <h4>低通：三点滑动平均</h4>
+            <div class="fp-equation">
+              <math display="block">
+                <mrow>
+                  <mi>h</mi><mo>=</mo>
+                  <mo>[</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>,</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>,</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>]</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              计算：
+              <math class="inline-mathml">
+                <mrow>
+                  <mi>y</mi><mo>[</mo><mi>n</mi><mo>]</mo><mo>=</mo>
+                  <mfrac>
+                    <mrow><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo><mo>+</mo><mi>x</mi><mo>[</mo><mi>n</mi><mo>-</mo><mn>1</mn><mo>]</mo><mo>+</mo><mi>x</mi><mo>[</mo><mi>n</mi><mo>-</mo><mn>2</mn><mo>]</mo></mrow>
+                    <mn>3</mn>
+                  </mfrac>
+                </mrow>
+              </math>
+              。相邻样本被平均，慢变化保留，快速起伏更容易被抵消。
+            </p>
+          </article>
+          <article>
+            <h4>高通：一阶差分</h4>
+            <div class="fp-equation">
+              <math display="block">
+                <mrow>
+                  <mi>h</mi><mo>=</mo><mo>[</mo><mn>1</mn><mo>,</mo><mo>-</mo><mn>1</mn><mo>]</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              计算：
+              <math class="inline-mathml">
+                <mrow><mi>y</mi><mo>[</mo><mi>n</mi><mo>]</mo><mo>=</mo><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo><mo>-</mo><mi>x</mi><mo>[</mo><mi>n</mi><mo>-</mo><mn>1</mn><mo>]</mo></mrow>
+              </math>
+              。常量或很慢的变化相减后接近 0，突变、边缘和快速振荡被突出。
+            </p>
+          </article>
+          <article>
+            <h4>带通：先去慢变化，再平滑过快变化</h4>
+            <div class="fp-equation">
+              <math display="block">
+                <mrow>
+                  <mi>x</mi>
+                  <mo>&#x2192;</mo>
+                  <msub><mi>h</mi><mi>HP</mi></msub>
+                  <mo>&#x2192;</mo>
+                  <msub><mi>h</mi><mi>LP</mi></msub>
+                  <mo>&#x2192;</mo>
+                  <mi>y</mi>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              一个易懂做法是级联高通和低通：先用差分去掉直流和慢漂移，再用短平均抑制太快的抖动。
+              这样留下的是一段中间频率范围。真实工程里会用更精确的 FIR/IIR 带通设计。
+            </p>
+          </article>
+        </div>
+        <div class="fp-note">
+          <strong>时域与频域的连接</strong>
+          <p>
+            同一个
+            <math class="inline-mathml"><mrow><mi>h</mi><mo>[</mo><mi>n</mi><mo>]</mo></mrow></math>
+            ，在时域看是加权求和，在频域看是频率响应
+            <math class="inline-mathml"><mrow><mi>H</mi><mo>(</mo><mi>f</mi><mo>)</mo></mrow></math>
+            。低通、高通和带通不是三种不同的“计算动作”，而是不同权重序列在频率轴上形成的不同选择效果。
+          </p>
+        </div>
+      </section>
+
+      <section id="phasor" class="chapter-block">
+        <div class="section-heading">
+          <p>PHASOR</p>
+          <h2>复正弦是频域的天然基元：幅度与相位装进一个数</h2>
+        </div>
+        <div class="fp-grid compact-right">
+          <article class="fp-card">
+            <h3>从真实余弦到复数表示</h3>
+            <p>
+              真实可测的声压可以写成余弦。为了同时记录振幅和相位，我们把它看成复旋转向量的实部：
+            </p>
+            <div class="fp-equation" id="eq-complex-sinusoid">
+              <math display="block">
+                <mrow>
+                  <mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <mi>Re</mi><mo>{</mo><mi>X</mi><msup><mi>e</mi><mrow><mi>j</mi><mi>&#x03c9;</mi><mi>t</mi></mrow></msup><mo>}</mo>
+                  <mo>,</mo>
+                  <mspace width="0.8em" />
+                  <mi>X</mi><mo>=</mo><mi>A</mi><msup><mi>e</mi><mrow><mi>j</mi><mi>&#x03c6;</mi></mrow></msup>
+                  <mo>,</mo>
+                  <mspace width="0.8em" />
+                  <mi>&#x03c9;</mi><mo>=</mo><mn>2</mn><mi>&#x03c0;</mi><mi>f</mi>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              <math class="inline-mathml"><mrow><mo>|</mo><mi>X</mi><mo>|</mo></mrow></math>
+              是振幅，
+              <math class="inline-mathml"><mrow><mi>arg</mi><mi>X</mi></mrow></math>
+              是相位。复数没有增加新的声学物理量；它让微分、积分和滤波都变得可计算。
+              复用公式：
+              <a class="reading-link" href="../spatial-acoustic-features/pressure-gradient-and-differential-array.html#complex-phasor-meaning">空间域附录中的复振幅解释</a>。
+            </p>
+          </article>
+          <figure class="fp-figure">
+            <img src="media/phasor-projection-animation.svg?v=20260718-1" alt="旋转复向量及其实部投影形成余弦波的动画" />
+            <figcaption>
+              旋转速度
+              <math class="inline-mathml"><mi>&#x03c9;</mi></math>
+              决定频率，初始角
+              <math class="inline-mathml"><mi>&#x03c6;</mi></math>
+              决定相位。LTI 系统对这类基元只改变复增益，不改变频率。
+            </figcaption>
+          </figure>
+        </div>
+        <div class="fp-note">
+          <strong>物理声学中的频域意义</strong>
+          <p>
+            对单频声场
+            <math class="inline-mathml"><mrow><mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi>t</mi><mo>)</mo><mo>=</mo><mi>Re</mi><mo>{</mo><mi>P</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>)</mo><msup><mi>e</mi><mrow><mi>j</mi><mi>&#x03c9;</mi><mi>t</mi></mrow></msup><mo>}</mo></mrow></math>
+            ，时间微分对应乘以
+            <math class="inline-mathml"><mrow><mi>j</mi><mi>&#x03c9;</mi></mrow></math>
+            。这就是频域把动态方程变简单的原因。
+          </p>
+          <details class="fp-details">
+            <summary>展开：使用复数的核心优势</summary>
+            <p>
+              若直接使用正弦和余弦，每次微分、积分都要同时追踪振幅和相位。
+              使用复指数后，在单频稳态条件下，时间微分、时间积分和空间微分都变成简单的乘法或除法：
+            </p>
+            <div class="fp-mini-grid complex-operator-grid" aria-label="复指数把三种微积分运算变为乘除法">
+              <article>
+                <strong>时间微分</strong>
+                <div class="fp-equation">
+                  <math display="block">
+                    <mrow>
+                      <mfrac><mo>&#x2202;</mo><mrow><mo>&#x2202;</mo><mi>t</mi></mrow></mfrac>
+                      <mo>&#x21d4;</mo>
+                      <mi>j</mi><mi>&#x03c9;</mi>
+                    </mrow>
+                  </math>
+                </div>
+                <span>对复指数求时间导数，只需乘以 <math class="inline-mathml"><mrow><mi>j</mi><mi>&#x03c9;</mi></mrow></math>。</span>
+              </article>
+              <article>
+                <strong>时间积分</strong>
+                <div class="fp-equation">
+                  <math display="block">
+                    <mrow>
+                      <mo>&#x222b;</mo><mi>d</mi><mi>t</mi>
+                      <mo>&#x21d4;</mo>
+                      <mfrac><mn>1</mn><mrow><mi>j</mi><mi>&#x03c9;</mi></mrow></mfrac>
+                    </mrow>
+                  </math>
+                </div>
+                <span>当 <math class="inline-mathml"><mrow><mi>&#x03c9;</mi><mo>&#x2260;</mo><mn>0</mn></mrow></math> 时，积分对应除以 <math class="inline-mathml"><mrow><mi>j</mi><mi>&#x03c9;</mi></mrow></math>；直流项与积分常数需另行处理。</span>
+              </article>
+              <article>
+                <strong>沿 +x 的空间微分</strong>
+                <div class="fp-equation">
+                  <math display="block">
+                    <mrow>
+                      <mfrac><mrow><mo>&#x2202;</mo><mi>P</mi></mrow><mrow><mo>&#x2202;</mo><mi>x</mi></mrow></mfrac>
+                      <mo>=</mo><mo>-</mo><mi>j</mi><mi>k</mi><mi>P</mi>
+                    </mrow>
+                  </math>
+                </div>
+                <span>这里采用沿 <math class="inline-mathml"><mrow><mo>+</mo><mi>x</mi></mrow></math> 传播的平面波约定 <math class="inline-mathml"><mrow><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msub><mi>P</mi><mn>0</mn></msub><msup><mi>e</mi><mrow><mo>-</mo><mi>j</mi><mi>k</mi><mi>x</mi></mrow></msup></mrow></math>。</span>
+              </article>
+            </div>
+            <p>因此，时域中的线性化动量方程（牛顿第二定律）</p>
+            <div class="fp-equation" id="eq-time-domain-momentum">
+              <math display="block">
+                <mrow>
+                  <mi>&#x03c1;</mi>
+                  <mfrac><mrow><mo>&#x2202;</mo><mi>u</mi></mrow><mrow><mo>&#x2202;</mo><mi>t</mi></mrow></mfrac>
+                  <mo>=</mo>
+                  <mo>-</mo>
+                  <mfrac><mrow><mo>&#x2202;</mo><mi>p</mi></mrow><mrow><mo>&#x2202;</mo><mi>x</mi></mrow></mfrac>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              在
+              <math class="inline-mathml"><mrow><mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo><mo>=</mo><mi>Re</mi><mo>{</mo><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo><msup><mi>e</mi><mrow><mi>j</mi><mi>&#x03c9;</mi><mi>t</mi></mrow></msup><mo>}</mo></mrow></math>
+              和
+              <math class="inline-mathml"><mrow><mi>u</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo><mo>=</mo><mi>Re</mi><mo>{</mo><mi>U</mi><mo>(</mo><mi>x</mi><mo>)</mo><msup><mi>e</mi><mrow><mi>j</mi><mi>&#x03c9;</mi><mi>t</mi></mrow></msup><mo>}</mo></mrow></math>
+              的约定下，可以直接变成复振幅之间的代数关系：
+            </p>
+            <div class="fp-equation" id="eq-frequency-domain-momentum">
+              <math display="block">
+                <mrow>
+                  <mi>j</mi><mi>&#x03c9;</mi><mi>&#x03c1;</mi><mi>U</mi>
+                  <mo>=</mo>
+                  <mo>-</mo>
+                  <mfrac><mrow><mo>&#x2202;</mo><mi>P</mi></mrow><mrow><mo>&#x2202;</mo><mi>x</mi></mrow></mfrac>
+                </mrow>
+              </math>
+            </div>
+            <p class="complex-summary">
+              <strong>一句话概括：</strong>复数表示把振幅和相位打包在
+              <math class="inline-mathml"><mrow><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow></math>
+              中，把微分和积分变成乘除法；计算完成后取实部，才得到真实声压。
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section id="fourier" class="chapter-block">
+        <div class="section-heading">
+          <p>FOURIER</p>
+          <h2>傅里叶变换：用复指数询问信号里有哪些旋转速度</h2>
+        </div>
+        <div class="fp-grid">
+          <article class="fp-card">
+            <h3>投影，也是相关性测量</h3>
+            <p>
+              拿一个频率为
+              <math class="inline-mathml"><mi>f</mi></math>
+              的复指数与信号相乘并跨时间累加，就像在问：“这段声音里有没有这个频率？强不强？相位在哪里？”
+              频率匹配时，累加后留下较大结果；频率不匹配时，正负摆动大体抵消。
+            </p>
+            <div class="fp-equation" id="eq-fourier-transform">
+              <math display="block">
+                <mrow>
+                  <mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <msubsup><mo>&#x222b;</mo><mrow><mo>-</mo><mi>&#x221e;</mi></mrow><mi>&#x221e;</mi></msubsup>
+                  <mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                  <msup><mi>e</mi><mrow><mo>-</mo><mi>j</mi><mn>2</mn><mi>&#x03c0;</mi><mi>f</mi><mi>t</mi></mrow></msup>
+                  <mi>d</mi><mi>t</mi>
+                </mrow>
+              </math>
+            </div>
+            <div class="fp-mini-grid">
+              <article><strong>模长</strong><span><math class="inline-mathml"><mrow><mo>|</mo><mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo><mo>|</mo></mrow></math> 表示该频率有多强。</span></article>
+              <article><strong>相位</strong><span><math class="inline-mathml"><mrow><mi>arg</mi><mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo></mrow></math> 表示该频率怎样对齐。</span></article>
+              <article>
+                <strong>功率</strong>
+                <span>
+                  <math class="inline-mathml">
+                    <msup>
+                      <mrow><mo>|</mo><mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo><mo>|</mo></mrow>
+                      <mn>2</mn>
+                    </msup>
+                  </math>
+                  描述能量分布。
+                </span>
+              </article>
+            </div>
+          </article>
+          <article class="fp-card">
+            <h3>为什么滤波在频域里更直观</h3>
+            <p>
+              时域中的卷积，在频域中变成乘法。滤波器的频率响应
+              <math class="inline-mathml"><mrow><mi>H</mi><mo>(</mo><mi>f</mi><mo>)</mo></mrow></math>
+              直接说明每个频率被放大、削弱或相移多少。
+            </p>
+            <div class="fp-equation" id="eq-convolution-theorem">
+              <math display="block">
+                <mrow>
+                  <mi>y</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>*</mo><mi>h</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                  <mo>&#x21d4;</mo>
+                  <mi>Y</mi><mo>(</mo><mi>f</mi><mo>)</mo><mo>=</mo><mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo><mi>H</mi><mo>(</mo><mi>f</mi><mo>)</mo>
+                </mrow>
+              </math>
+            </div>
+            <details class="fp-details">
+              <summary>展开：由卷积推到频谱相乘</summary>
+              <p>
+                从连续卷积
+                <math class="inline-mathml"><mrow><mi>y</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mo>&#x222b;</mo><mi>x</mi><mo>(</mo><mi>&#x03c4;</mi><mo>)</mo><mi>h</mi><mo>(</mo><mi>t</mi><mo>-</mo><mi>&#x03c4;</mi><mo>)</mo><mi>d</mi><mi>&#x03c4;</mi></mrow></math>
+                出发，对
+                <math class="inline-mathml"><mrow><mi>y</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math>
+                做傅里叶变换，并令
+                <math class="inline-mathml"><mrow><mi>u</mi><mo>=</mo><mi>t</mi><mo>-</mo><mi>&#x03c4;</mi></mrow></math>
+                ，积分可以分解成
+                <math class="inline-mathml"><mrow><mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo></mrow></math>
+                与
+                <math class="inline-mathml"><mrow><mi>H</mi><mo>(</mo><mi>f</mi><mo>)</mo></mrow></math>
+                的乘积。
+              </p>
+            </details>
+          </article>
+        </div>
+      </section>
+
+      <section id="dft" class="chapter-block">
+        <div class="section-heading">
+          <p>DFT</p>
+          <h2>计算机真正算的是有限序列在有限频率格点上的投影</h2>
+        </div>
+        <div class="fp-grid">
+          <article class="fp-card">
+            <h3>Fourier Transform、DFT 与 FFT 的分工</h3>
+            <p>
+              实际音频分析面对的是有限长度序列
+              <math class="inline-mathml"><mrow><mi>x</mi><mo>[</mo><mn>0</mn><mo>]</mo><mo>,</mo><mi>x</mi><mo>[</mo><mn>1</mn><mo>]</mo><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><mi>x</mi><mo>[</mo><mi>N</mi><mo>-</mo><mn>1</mn><mo>]</mo></mrow></math>
+              。DFT 把这
+              <math class="inline-mathml"><mi>N</mi></math>
+              个样本映射到
+              <math class="inline-mathml"><mi>N</mi></math>
+              个离散频率格点。
+            </p>
+            <div class="fp-equation" id="eq-dft">
+              <math display="block">
+                <mrow>
+                  <mi>X</mi><mo>[</mo><mi>k</mi><mo>]</mo>
+                  <mo>=</mo>
+                  <munderover><mo>&#x2211;</mo><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow></munderover>
+                  <mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                  <msup><mi>e</mi><mrow><mo>-</mo><mi>j</mi><mn>2</mn><mi>&#x03c0;</mi><mi>k</mi><mi>n</mi><mo>/</mo><mi>N</mi></mrow></msup>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              FFT 不是新的变换，而是快速计算 DFT 的算法。课堂解释频谱时，先说清楚
+              <math class="inline-mathml"><mi>k</mi></math>
+              是格点索引，不直接等于 Hz。
+            </p>
+          </article>
+          <article class="fp-card">
+            <h3>频率格点与分辨率</h3>
+            <div class="fp-equation" id="eq-bin-frequency">
+              <math display="block">
+                <mrow>
+                  <msub><mi>f</mi><mi>k</mi></msub>
+                  <mo>=</mo>
+                  <mfrac><mrow><mi>k</mi><msub><mi>F</mi><mi>s</mi></msub></mrow><mi>N</mi></mfrac>
+                  <mo>,</mo>
+                  <mspace width="0.9em" />
+                  <mi>&#x0394;</mi><mi>f</mi>
+                  <mo>=</mo>
+                  <mfrac><msub><mi>F</mi><mi>s</mi></msub><mi>N</mi></mfrac>
+                  <mo>=</mo>
+                  <mfrac><mn>1</mn><msub><mi>T</mi><mi>obs</mi></msub></mfrac>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              最高可表示频率由采样率决定；真正的频率分辨能力主要由有效观察时长和窗函数决定。
+              只做 zero-padding 会让图上的频率采样更密，但不会增加原记录中的真实信息。
+            </p>
+          </article>
+        </div>
+        <div class="fp-table-wrap" style="margin-top: 18px">
+          <table class="fp-table">
+            <thead>
+              <tr>
+                <th>改变什么</th>
+                <th>主要改变什么</th>
+                <th>不自动保证什么</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>增大采样率 <math class="inline-mathml"><msub><mi>F</mi><mi>s</mi></msub></math></td>
+                <td>可表示的最高频率提高。</td>
+                <td>不自动提高相邻低频的可分辨能力。</td>
+              </tr>
+              <tr>
+                <td>增大窗口长度 <math class="inline-mathml"><mi>N</mi></math></td>
+                <td>观察时间变长，频率格点变密。</td>
+                <td>不自动提高最高可表示频率。</td>
+              </tr>
+              <tr>
+                <td>只做 zero-padding</td>
+                <td>图上采样点更密，峰位置更容易插值。</td>
+                <td>不增加原始记录中的真实频率信息。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="stft" class="chapter-block">
+        <div class="section-heading">
+          <p>TIME-FREQUENCY</p>
+          <h2>真实声音会变：从整段频谱走向 STFT 与声谱图</h2>
+        </div>
+        <div class="fp-grid compact-right">
+          <article class="fp-card">
+            <h3>整段 DFT 只回答“有什么频率”，很难回答“何时出现”</h3>
+            <p>
+              语音、音乐和环境声通常不是稳定不变的。STFT 用滑动窗口反复做 DFT，把频率分析放回时间轴上。
+            </p>
+            <div class="fp-equation" id="eq-stft">
+              <math display="block">
+                <mrow>
+                  <mi>X</mi><mo>[</mo><mi>m</mi><mo>,</mo><mi>k</mi><mo>]</mo>
+                  <mo>=</mo>
+                  <munder><mo>&#x2211;</mo><mi>n</mi></munder>
+                  <mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                  <mi>w</mi><mo>[</mo><mi>n</mi><mo>-</mo><mi>m</mi><mi>R</mi><mo>]</mo>
+                  <msup><mi>e</mi><mrow><mo>-</mo><mi>j</mi><mn>2</mn><mi>&#x03c0;</mi><mi>k</mi><mi>n</mi><mo>/</mo><mi>N</mi></mrow></msup>
+                </mrow>
+              </math>
+            </div>
+            <ul>
+              <li><math class="inline-mathml"><mrow><mi>w</mi><mo>[</mo><mi>n</mi><mo>-</mo><mi>m</mi><mi>R</mi><mo>]</mo></mrow></math>：第 <math class="inline-mathml"><mi>m</mi></math> 帧的分析窗。</li>
+              <li><math class="inline-mathml"><mi>N</mi></math>：每帧 FFT 长度。</li>
+              <li><math class="inline-mathml"><mi>R</mi></math>：hop size。</li>
+              <li><math class="inline-mathml"><mrow><mo>|</mo><mi>X</mi><mo>[</mo><mi>m</mi><mo>,</mo><mi>k</mi><mo>]</mo><mo>|</mo></mrow></math>：时间帧和频率格点附近的强度。</li>
+            </ul>
+          </article>
+          <figure class="fp-figure">
+            <img src="media/stft-window-animation.svg" alt="STFT 中分析窗沿时间波形滑动，并逐帧形成声谱图的动画" />
+            <figcaption>
+              进入实验：
+              <a class="reading-link" href="../../labs/spectrum-stft/">频谱与 STFT 实验</a>
+              。拖动窗长时，观察“时间更清楚”与“频率更清楚”的取舍。
+            </figcaption>
+          </figure>
+        </div>
+        <div class="fp-table-wrap" style="margin-top: 18px">
+          <table class="fp-table">
+            <thead>
+              <tr>
+                <th>时间侧条件或操作</th>
+                <th>频率侧结果</th>
+                <th>直觉</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>时间连续、非周期</td>
+                <td>连续频谱 <math class="inline-mathml"><mrow><mi>X</mi><mo>(</mo><mi>f</mi><mo>)</mo></mrow></math></td>
+                <td>理论上所有频率都可以被询问。</td>
+              </tr>
+              <tr>
+                <td>时间周期</td>
+                <td>离散线谱</td>
+                <td>只在基频整数倍上有傅里叶级数系数。</td>
+              </tr>
+              <tr>
+                <td>时间采样</td>
+                <td>频谱周期复制</td>
+                <td>复制间隔为 <math class="inline-mathml"><msub><mi>F</mi><mi>s</mi></msub></math>；重叠就产生混叠。</td>
+              </tr>
+              <tr>
+                <td>时间截短或乘窗</td>
+                <td>原频谱与窗频谱卷积</td>
+                <td>截断导致主瓣、旁瓣与频谱泄漏。</td>
+              </tr>
+              <tr>
+                <td>频率采样</td>
+                <td>时间序列周期延拓</td>
+                <td>DFT 把有限记录视为一个隐含周期。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="route" class="chapter-block">
+        <div class="section-heading">
+          <p>ROUTE</p>
+          <h2>离开这一页时，要把频域处理放回课程路线</h2>
+        </div>
+        <div class="fp-grid">
+          <article class="fp-card">
+            <h3>本页收束</h3>
+            <ol>
+              <li>卷积解释 LTI 滤波器怎样把输入的延迟响应叠加起来。</li>
+              <li>复正弦是 LTI 系统的天然基元，输出保持同频，只改变幅度和相位。</li>
+              <li>傅里叶变换把信号投影到复指数上，得到每个频率的复系数。</li>
+              <li>DFT 是有限长度序列在有限频率格点上的计算形式，FFT 是它的快速算法。</li>
+              <li>STFT 用滑动窗口把“有什么频率”和“什么时候出现”重新连接起来。</li>
+            </ol>
+          </article>
+          <article class="fp-card">
+            <h3>学习路线与链接</h3>
+            <p>
+              前置知识：
+              <a class="reading-link" href="../time-domain-audio/">前置知识：回到时域音频</a>
+              ，复用采样、声压和波形定义。
+            </p>
+            <p>
+              进入实验：
+              <a class="reading-link" href="../../labs/spectrum-stft/">打开频谱与 STFT 实验</a>
+              ，用窗长、hop size 和不同声音检验频谱解释。
+            </p>
+            <p>
+              用于后续：
+              <a class="reading-link" href="../../session/">用于后续：查看已发布学习导览</a>
+              ，理解人耳频率选择性、等响度、Mel 频谱与机器特征。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip">
+        <div>
+          <p class="card-label">整合来源</p>
+          <p>
+            本页由 `frequency-domain-45min-courseware.md` 与同目录四个 SVG 素材整理为学生 HTML 页面；教师时间提示未放入正文。
+          </p>
+        </div>
+        <div>
+          <p class="card-label">边界</p>
+          <p>
+            Z 变换、极点零点、FFT 蝶形、STFT 逆变换、小波、Mel 和 MFCC 的详细计算不放在本页主线，留给后续专题或实验。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="chapter-footer">
+      <span>AUDIO AI / FREQUENCY DOMAIN PROCESSING</span>
+      <a href="../../session/sound-physics-sampling-spectrum/">回到声音物理与多域导览</a>
+    </footer>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/chapter.js?v=20260602-1"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>

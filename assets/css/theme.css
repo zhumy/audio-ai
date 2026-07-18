@@ -1,28 +1,54 @@
 :root {
   color-scheme: dark light;
+  --course-font-sans: Inter, "Microsoft YaHei", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+  --course-font-math: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+  --course-bg: #071117;
+  --course-surface: #0d1b21;
+  --course-surface-2: #11252b;
+  --course-ink: #f5f1e9;
+  --course-muted: #9fb1b0;
+  --course-primary: #69eee3;
+  --course-secondary: #f4c965;
+  --course-alert: #ff8e86;
+  --course-line: rgba(204, 230, 226, 0.14);
+  --course-text-body-size: clamp(15px, 1.05vw, 17px);
+  --course-card-title-size: clamp(19px, 1.25vw, 22px);
+  --course-card-subtitle-size: clamp(17px, 1.1vw, 20px);
+  --course-math-display-size: clamp(20px, 1.35vw, 24px);
+  --course-math-compact-size: clamp(17px, 1.1vw, 20px);
 }
 
 :root[data-theme="light"] {
-  --bg: #f6f7f2;
-  --surface: #ffffff;
-  --surface-2: #edf3f0;
+  --course-bg: #f6f7f2;
+  --course-surface: #ffffff;
+  --course-surface-2: #edf3f0;
+  --course-ink: #10191b;
+  --course-muted: #516466;
+  --course-primary: #087b78;
+  --course-secondary: #8f6500;
+  --course-alert: #b9473e;
+  --course-line: rgba(20, 42, 44, 0.17);
+  --bg: var(--course-bg);
+  --surface: var(--course-surface);
+  --surface-2: var(--course-surface-2);
   --surface-bright: #f7fbf8;
-  --ink: #10191b;
-  --muted: #516466;
-  --cyan: #087b78;
+  --ink: var(--course-ink);
+  --muted: var(--course-muted);
+  --cyan: var(--course-primary);
   --cyan-soft: rgba(8, 123, 120, 0.14);
   --cyan-dim: rgba(8, 123, 120, 0.12);
-  --gold: #8f6500;
-  --amber: #8f6500;
-  --line: rgba(20, 42, 44, 0.17);
+  --gold: var(--course-secondary);
+  --amber: var(--course-secondary);
+  --red: var(--course-alert);
+  --line: var(--course-line);
 }
 
 :root[data-theme="light"] body {
   background:
-    radial-gradient(circle at 78% 10%, rgba(8, 123, 120, 0.12), transparent 30%),
-    radial-gradient(circle at 12% 42%, rgba(143, 101, 0, 0.08), transparent 27%),
-    var(--bg);
-  color: var(--ink);
+    radial-gradient(circle at 78% 10%, color-mix(in srgb, var(--course-primary) 12%, transparent), transparent 30%),
+    radial-gradient(circle at 12% 42%, color-mix(in srgb, var(--course-secondary) 8%, transparent), transparent 27%),
+    var(--course-bg);
+  color: var(--course-ink);
 }
 
 :root[data-theme="light"] body::after,

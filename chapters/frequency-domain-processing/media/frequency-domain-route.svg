@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+  <title id="title">从物理声场走向频域和时频表示</title>
+  <desc id="desc">声压场在固定位置形成时间信号，经采样成为离散序列。序列既可通过卷积滤波，也可通过DFT得到频谱，再通过滑动窗口得到STFT，供听觉滤波器组和机器特征使用。</desc>
+  <style>
+    text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #10191b; text-anchor: middle; }
+    .box { fill: #edf3f0; stroke: #087b78; stroke-width: 2.5; rx: 12; }
+    .accent, .next { fill: #f7f1df; stroke: #8f6500; }
+    .arrow { stroke: #607175; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    .arrow-head { fill: #607175; }
+    .main { font-size: 19px; font-weight: 700; }
+    .sub { font-size: 14px; }
+    @media (prefers-color-scheme: dark) {
+      text { fill: #f5f1e9; }
+      .box { fill: #11252b; stroke: #69eee3; }
+      .accent, .next { fill: #2f2a1b; stroke: #f4c965; }
+      .arrow { stroke: #7f9291; }
+      .arrow-head { fill: #7f9291; }
+    }
+  </style>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="arrow-head" d="M0,0 L10,5 L0,10 Z"/></marker></defs>
+  <rect class="box" x="20" y="86" width="155" height="88"/>
+  <text class="main" x="97" y="121">声压场</text><text class="sub" x="97" y="148">p(r,t)</text>
+  <path class="arrow" d="M175 130 H210"/>
+  <rect class="box" x="210" y="86" width="155" height="88"/>
+  <text class="main" x="287" y="121">固定位置</text><text class="sub" x="287" y="148">p(t)</text>
+  <path class="arrow" d="M365 130 H400"/>
+  <rect class="box" x="400" y="86" width="155" height="88"/>
+  <text class="main" x="477" y="121">采样序列</text><text class="sub" x="477" y="148">x[n]</text>
+  <path class="arrow" d="M555 112 C595 112 595 58 635 58"/>
+  <path class="arrow" d="M555 148 C595 148 595 213 635 213"/>
+  <rect class="accent" x="635" y="18" width="175" height="80" rx="12"/>
+  <text class="main" x="722" y="50">时域卷积</text><text class="sub" x="722" y="76">y=x*h</text>
+  <rect class="accent" x="635" y="173" width="175" height="80" rx="12"/>
+  <text class="main" x="722" y="205">DFT / FFT</text><text class="sub" x="722" y="231">X[k]</text>
+  <path class="arrow" d="M810 58 H850"/>
+  <rect class="accent" x="850" y="18" width="175" height="80" rx="12"/>
+  <text class="main" x="937" y="50">频域相乘</text><text class="sub" x="937" y="76">Y=XH</text>
+  <path class="arrow" d="M810 213 H850"/>
+  <rect class="accent" x="850" y="173" width="175" height="80" rx="12"/>
+  <text class="main" x="937" y="205">滑窗重复DFT</text><text class="sub" x="937" y="231">STFT X[m,k]</text>
+  <path class="arrow" d="M1025 213 H1060"/>
+  <rect class="next" x="1060" y="159" width="125" height="108" rx="12"/>
+  <text class="main" x="1122" y="195">后续</text>
+  <text class="sub" x="1122" y="222">听觉滤波器组</text>
+  <text class="sub" x="1122" y="244">Mel / 机器特征</text>
+  <text class="sub" x="600" y="289">同一段声音：时间表示、频率表示与时间—频率表示</text>
+</svg>

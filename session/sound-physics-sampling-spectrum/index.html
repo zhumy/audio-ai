@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 声音物理与多域表示导览</title>
+    <meta name="description" content="从宏观关系理解声音物理、时域、空间域和频域，并进入完整章节。" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-2" />
+    <link rel="stylesheet" href="../../assets/css/route.css?v=20260718-1" />
+  </head>
+  <body class="route-page" data-session-route="sound-physics-sampling-spectrum">
+    <header class="route-header">
+      <a class="route-brand" href="../../">AUDIO <strong>AI</strong></a>
+      <nav aria-label="课程导航"><a href="../">全部导览</a><a href="../../syllabus/">课程大纲</a></nav>
+    </header>
+
+    <nav class="route-dock" aria-label="本导览关系跳转" data-session-route-nav>
+      <span>关系导航</span>
+      <div class="route-dock-links">
+        <a href="#overview">全貌</a>
+        <a href="../../chapters/time-domain-audio/">时域</a>
+        <a href="../../chapters/spatial-acoustic-features/">空间域</a>
+        <a href="../../chapters/frequency-domain-processing/">频域</a>
+        <a href="#next">下一步</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="route-hero" id="overview">
+        <p class="route-eyebrow">SESSION / RELATIONSHIP GUIDE</p>
+        <h1>一个声音事件，<br /><span>为什么需要多个观察维度？</span></h1>
+        <p>
+          声音从物理世界进入计算机后，可以沿时间、空间和频率建立不同表示。
+          本页只解释这些知识为什么相连、先后如何衔接；具体定义、公式和推导请进入对应 Chapter。
+        </p>
+        <div class="session-notice">
+          本导览不是三个 Chapter 的摘要或替代品。链接将带你进入完整内容，并尽量定位到关系发生的位置。
+        </div>
+      </section>
+
+      <section class="route-section" id="domains" aria-labelledby="domainsTitle">
+        <div class="route-section-heading">
+          <div><p>THREE CONNECTED VIEWS</p><h2 id="domainsTitle">从共同对象走向三个问题</h2></div>
+        </div>
+        <div class="relation-grid">
+          <article class="relation-card">
+            <p class="relation-label">先建立时间序列</p>
+            <h3>时域：声音怎样随时间变化？</h3>
+            <p>从物理声音进入传感器和数字序列，为后续空间比较与频率分析提供共同输入。</p>
+            <ul>
+              <li><a href="../../chapters/time-domain-audio/#signal-chain">进入：物理声音到数字序列<small class="link-preview">查看完整换能与采样内容。</small></a></li>
+              <li><a href="../../chapters/time-domain-audio/#time-statistics">进入：时域统计量<small class="link-preview">查看 RMS、ZCR 及其适用边界。</small></a></li>
+            </ul>
+          </article>
+
+          <article class="relation-card">
+            <p class="relation-label">换一个维度</p>
+            <h3>空间域：同一时刻或成分在不同位置怎样变化？</h3>
+            <p>当问题从单点记录转向位置、方向与阵列，学习对象由一条时间序列扩展为空间中的关系。</p>
+            <ul>
+              <li><a href="../../chapters/spatial-acoustic-features/#field">进入：声压场<small class="link-preview">查看空间研究对象和坐标关系。</small></a></li>
+              <li><a href="../../chapters/spatial-acoustic-features/#differential">进入：双麦差分<small class="link-preview">查看空间差异如何进入阵列处理。</small></a></li>
+            </ul>
+          </article>
+
+          <article class="relation-card">
+            <p class="relation-label">换一种表示</p>
+            <h3>频域：声音由哪些变化尺度组成？</h3>
+            <p>频域不是另一段声音，而是对同一信号提出组成、分布和局部变化的问题。</p>
+            <ul>
+              <li><a href="../../chapters/frequency-domain-processing/#overview">进入：频域全貌<small class="link-preview">先看时域到频域的完整路线。</small></a></li>
+              <li><a href="../../chapters/frequency-domain-processing/#dft">进入：DFT<small class="link-preview">查看离散频率表示的完整推导。</small></a></li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="relation-bridge" aria-label="三个维度之间的衔接">
+          <article><strong>时间 → 空间</strong><p>从一个测量点走向多个位置和方向。</p></article>
+          <article><strong>时间 → 频率</strong><p>从变化轨迹走向组成与局部分布。</p></article>
+          <article><strong>空间 ↔ 频率</strong><p>阵列与空间表示会随频率呈现不同性质。</p></article>
+        </div>
+      </section>
+
+      <section class="route-section route-principle" id="next">
+        <div><p>NEXT USE</p><h2>这些表示之后用在哪里？</h2></div>
+        <p>
+          时域、空间域和频域表示将成为听觉组织、特征设计、机器学习模型和评价方法的输入。
+          后续内容尚未达到公开标准时，本页不建立空白链接；发布后再登记进当前学习路径。
+        </p>
+      </section>
+    </main>
+
+    <footer class="route-footer"><span>Session 只组织关系，Chapter 负责完整知识</span><a href="../">返回学习导览</a></footer>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>

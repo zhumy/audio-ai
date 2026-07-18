@@ -1,14 +1,15 @@
 :root {
-  --bg: #071117;
-  --surface: #0d1b21;
-  --surface-2: #11252b;
-  --ink: #f5f1e9;
-  --muted: #9fb1b0;
-  --cyan: #69eee3;
+  --bg: var(--course-bg, #071117);
+  --surface: var(--course-surface, #0d1b21);
+  --surface-2: var(--course-surface-2, #11252b);
+  --ink: var(--course-ink, #f5f1e9);
+  --muted: var(--course-muted, #9fb1b0);
+  --cyan: var(--course-primary, #69eee3);
   --cyan-dim: rgba(105, 238, 227, 0.12);
-  --gold: #f4c965;
+  --gold: var(--course-secondary, #f4c965);
   --gold-dim: rgba(244, 201, 101, 0.12);
-  --line: rgba(204, 230, 226, 0.14);
+  --red: var(--course-alert, #ff8e86);
+  --line: var(--course-line, rgba(204, 230, 226, 0.14));
   --content: 1200px;
 }
 
@@ -20,10 +21,10 @@ body {
   min-width: 320px;
   margin: 0;
   color: var(--ink);
-  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  font-family: var(--course-font-sans, "Microsoft YaHei", "PingFang SC", sans-serif);
   background:
-    radial-gradient(circle at 78% 4%, rgba(38, 133, 131, 0.21), transparent 25%),
-    radial-gradient(circle at 12% 18%, rgba(105, 238, 227, 0.05), transparent 22%),
+    radial-gradient(circle at 78% 4%, color-mix(in srgb, var(--cyan) 21%, transparent), transparent 25%),
+    radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--cyan) 5%, transparent), transparent 22%),
     var(--bg);
 }
 
@@ -1493,6 +1494,12 @@ ol li::before {
   font-size: 13px;
 }
 
+.definition-card code {
+  color: var(--cyan);
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.95em;
+}
+
 .equation small {
   color: var(--muted);
   font: 12px/1.6 "Microsoft YaHei", "PingFang SC", sans-serif;
@@ -2555,20 +2562,25 @@ ol li::before {
   border-radius: 14px;
   color: var(--ink);
   background: rgba(105, 238, 227, 0.045);
-  font: 500 14px/1.8 "Cambria Math", "STIX Two Math", "Times New Roman", "Microsoft YaHei", serif;
+  font-family: var(--course-font-math, "Cambria Math", "STIX Two Math", "Times New Roman", serif);
+  font-size: var(--course-math-compact-size, 18px);
+  font-weight: 500;
+  line-height: 1.55;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .equation math {
   color: var(--ink);
-  font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
-  font-size: 1.08em;
+  font-family: var(--course-font-math, "Cambria Math", "STIX Two Math", "Times New Roman", serif);
+  font-size: var(--course-math-display-size, 24px);
 }
 
 .inline-mathml {
   display: inline-block;
   margin: 0 0.12em;
   color: var(--ink);
-  font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+  font-family: var(--course-font-math, "Cambria Math", "STIX Two Math", "Times New Roman", serif);
   font-size: 1.02em;
   vertical-align: -0.12em;
 }
@@ -2671,20 +2683,23 @@ ol li::before {
   padding: 17px 16px;
   color: var(--cyan);
   background: rgba(105, 238, 227, 0.07);
-  font: 500 22px/1.45 "Cambria Math", "Times New Roman", serif;
+  font-family: var(--course-font-math, "Cambria Math", "STIX Two Math", "Times New Roman", serif);
+  font-size: var(--course-math-display-size, 24px);
+  font-weight: 500;
+  line-height: 1.45;
 }
 
 .formula-display math {
   width: 100%;
   color: var(--cyan);
-  font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+  font-family: var(--course-font-math, "Cambria Math", "STIX Two Math", "Times New Roman", serif);
   font-size: 1em;
   overflow-x: auto;
   overflow-y: hidden;
 }
 
 .formula-display.zcr {
-  font-size: 18px;
+  font-size: var(--course-math-compact-size, 18px);
 }
 
 .formula-display .fraction {
@@ -2876,6 +2891,13 @@ ol li::before {
   line-height: 1.85;
 }
 
+.next-chapter > p:not(.chapter-code) {
+  max-width: 730px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
 .reading-strip {
   padding-top: 43px;
   padding-bottom: 52px;
@@ -2897,6 +2919,10 @@ ol li::before {
   gap: 10px;
 }
 
+.frequency-domain-page {
+  --content: 1760px;
+}
+
 .frequency-page .chapter-hero > *,
 .frequency-page .opening-grid > *,
 .frequency-page .section-heading > *,
@@ -2904,10 +2930,145 @@ ol li::before {
 .frequency-page .brief-card,
 .frequency-page .definition-card,
 .frequency-page .band-card,
+.frequency-page .process-steps article,
 .frequency-page .filter-plan article,
+.frequency-page .tonotopy-figure,
+.frequency-page .filterbank-figure,
 .frequency-page .loudness-notes article,
 .frequency-page .checkout-grid article {
   min-width: 0;
+}
+
+.frequency-domain-page .chapter-block {
+  padding: 46px 0;
+}
+
+.frequency-domain-page .chapter-hero {
+  grid-template-columns: minmax(0, 1fr) 382px;
+  gap: clamp(48px, 6vw, 116px);
+}
+
+.frequency-domain-page .chapter-lead {
+  max-width: 880px;
+}
+
+.frequency-domain-page .section-heading {
+  margin-bottom: 26px;
+  grid-template-columns: minmax(150px, 180px) minmax(0, 1fr);
+  gap: clamp(24px, 2.6vw, 40px);
+}
+
+.frequency-domain-page .section-heading h2 {
+  max-width: 100%;
+  font-size: clamp(30px, 2.45vw, 42px);
+  line-height: 1.28;
+  letter-spacing: -0.035em;
+  overflow-wrap: normal;
+  word-break: normal;
+  text-wrap: balance;
+}
+
+.frequency-domain-page .section-heading p {
+  white-space: nowrap;
+}
+
+.frequency-domain-page .module-heading {
+  margin-bottom: 18px;
+  grid-template-columns: minmax(360px, 420px) minmax(0, 800px);
+  column-gap: clamp(24px, 2vw, 36px);
+  justify-content: start;
+  align-items: start;
+}
+
+.frequency-domain-page .module-heading h3 {
+  max-width: 680px;
+  margin-top: 16px;
+  font-size: clamp(24px, 1.86vw, 32px);
+  line-height: 1.26;
+  overflow-wrap: normal;
+  word-break: normal;
+  text-wrap: balance;
+}
+
+.frequency-domain-page .module-heading p {
+  max-width: 800px;
+  font-size: 15px;
+  line-height: 1.78;
+}
+
+.frequency-domain-page .challenge-grid {
+  align-items: start;
+}
+
+.frequency-domain-page .pressure-cycle-layout {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.frequency-domain-page .pressure-cycle-layout > .question-panel,
+.frequency-domain-page .pressure-cycle-layout > .spectrum-sketch {
+  height: 100%;
+}
+
+.frequency-domain-page .pressure-cycle-layout > .spectrum-sketch {
+  display: flex;
+  flex-direction: column;
+}
+
+.frequency-domain-page .pressure-cycle-layout > .spectrum-sketch svg {
+  flex: 1;
+  min-height: 340px;
+}
+
+.frequency-domain-page .spectrum-sketch {
+  padding: 18px;
+}
+
+.frequency-domain-page .frequency-roadmap {
+  margin: 18px 0 8px;
+}
+
+.frequency-domain-page .frequency-roadmap article,
+.frequency-domain-page .definition-card {
+  padding: 18px 16px;
+}
+
+.frequency-domain-page .fourier-grid .definition-card,
+.frequency-domain-page .band-card {
+  min-height: 0;
+}
+
+.frequency-domain-page .band-card {
+  padding: 22px 20px;
+}
+
+.frequency-domain-page .band-card h3 {
+  margin: 28px 0 12px;
+  font-size: 22px;
+}
+
+.frequency-domain-page .definition-card p:last-child,
+.frequency-domain-page .question-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.euler-equation {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.euler-equation span {
+  color: var(--cyan);
+  font: 700 11px/1.5 "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+.euler-equation math {
+  font-size: 1.16em;
 }
 
 .frequency-prompt-list article {
@@ -2930,7 +3091,10 @@ ol li::before {
 }
 
 .spectrum-sketch,
-.equal-loudness-figure {
+.equal-loudness-figure,
+.auditory-process-figure,
+.tonotopy-figure,
+.filterbank-figure {
   margin: 0;
   padding: 22px;
   border: 1px solid rgba(105, 238, 227, 0.2);
@@ -2940,7 +3104,10 @@ ol li::before {
 }
 
 .spectrum-sketch svg,
-.equal-loudness-figure svg {
+.equal-loudness-figure svg,
+.auditory-process-figure svg,
+.tonotopy-figure svg,
+.filterbank-figure svg {
   display: block;
   width: 100%;
   height: auto;
@@ -2948,13 +3115,17 @@ ol li::before {
 }
 
 .spectrum-sketch line,
-.equal-loudness-figure line {
+.equal-loudness-figure line,
+.filterbank-figure line {
   stroke: rgba(245, 241, 233, 0.36);
   stroke-width: 1.5;
 }
 
 .spectrum-sketch text,
-.equal-loudness-figure text {
+.equal-loudness-figure text,
+.auditory-process-figure text,
+.tonotopy-figure text,
+.filterbank-figure text {
   fill: var(--muted);
   font-size: 15px;
   font-weight: 700;
@@ -2980,6 +3151,7 @@ ol li::before {
 .frequency-roadmap,
 .fourier-grid,
 .band-map,
+.process-steps,
 .filter-plan,
 .checkout-grid {
   display: grid;
@@ -2998,18 +3170,21 @@ ol li::before {
 }
 
 .frequency-roadmap span,
+.process-steps span,
 .loudness-notes span {
   color: var(--gold);
   font: 700 11px/1 "Segoe UI", Arial, sans-serif;
   letter-spacing: 0.16em;
 }
 
-.frequency-roadmap h4 {
+.frequency-roadmap h4,
+.process-steps h3 {
   margin: 13px 0 10px;
   font-size: 17px;
 }
 
 .frequency-roadmap p,
+.process-steps p,
 .filter-plan p,
 .chapter-plan li,
 .checkout-grid span {
@@ -3081,7 +3256,10 @@ ol li::before {
 .band-card p,
 .frequency-note p,
 .loudness-notes p,
-.equal-loudness-figure figcaption {
+.equal-loudness-figure figcaption,
+.auditory-process-figure figcaption,
+.tonotopy-figure figcaption,
+.filterbank-figure figcaption {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
@@ -3130,7 +3308,10 @@ ol li::before {
   align-items: stretch;
 }
 
-.equal-loudness-figure figcaption {
+.equal-loudness-figure figcaption,
+.auditory-process-figure figcaption,
+.tonotopy-figure figcaption,
+.filterbank-figure figcaption {
   margin-top: 15px;
 }
 
@@ -3167,6 +3348,146 @@ ol li::before {
   margin: 14px 0 9px;
   font-size: 16px;
   line-height: 1.45;
+}
+
+.process-layout,
+.tonotopy-layout,
+.filterbank-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.process-steps {
+  grid-template-columns: 1fr;
+}
+
+.process-steps article {
+  padding: 18px 18px 17px;
+  border-left: 3px solid rgba(105, 238, 227, 0.42);
+  background: var(--surface);
+}
+
+.process-steps article:nth-child(2n) {
+  border-left-color: rgba(244, 201, 101, 0.48);
+}
+
+.auditory-process-figure .hearing-wave,
+.auditory-process-figure .outer-ear,
+.auditory-process-figure .cochlea-shell,
+.auditory-process-figure .cochlea-core {
+  fill: none;
+  stroke: url(#processWave);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 7;
+}
+
+.auditory-process-figure .hearing-arrow {
+  fill: none;
+  marker-end: url(#processArrow);
+  stroke: var(--cyan);
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.auditory-process-figure .ear-canal,
+.auditory-process-figure .eardrum,
+.auditory-process-figure .nerve-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-linecap: round;
+  stroke-width: 5;
+}
+
+.auditory-process-figure .ossicles circle,
+.auditory-process-figure .ossicles path {
+  fill: rgba(244, 201, 101, 0.14);
+  stroke: var(--gold);
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.tonotopy-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.tonotopy-layout .frequency-roadmap {
+  margin-top: 18px;
+}
+
+.cochlea-band,
+.cochlea-band-inner {
+  fill: none;
+  stroke: url(#cochleaGradient);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cochlea-band {
+  stroke-width: 22;
+}
+
+.cochlea-band-inner {
+  opacity: 0.65;
+  stroke-width: 5;
+}
+
+.tone-dot {
+  stroke: rgba(245, 241, 233, 0.82);
+  stroke-width: 3;
+}
+
+.high-tone {
+  fill: var(--cyan);
+}
+
+.mid-tone {
+  fill: var(--ink);
+}
+
+.low-tone {
+  fill: var(--gold);
+}
+
+.tone-arrow {
+  fill: none;
+  stroke: rgba(245, 241, 233, 0.45);
+  stroke-dasharray: 8 10;
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.filterbank-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.filterbank-layout .filter-plan {
+  margin-top: 18px;
+}
+
+.filter-curve {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 5;
+}
+
+.filter-curve.curve-a,
+.filter-curve.curve-c,
+.filter-curve.curve-e {
+  stroke: var(--cyan);
+}
+
+.filter-curve.curve-b,
+.filter-curve.curve-d {
+  stroke: var(--gold);
+}
+
+.mel-bin {
+  fill: rgba(105, 238, 227, 0.17);
+  stroke: rgba(105, 238, 227, 0.42);
+  stroke-width: 2;
 }
 
 .filter-plan {
@@ -3218,9 +3539,39 @@ ol li::before {
   body.frequency-page .chapter-nav,
   body.frequency-page main,
   body.frequency-page .chapter-footer {
-    width: 100%;
-    padding-right: 20px;
-    padding-left: 20px;
+    width: min(calc(100% - 40px), var(--content));
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .frequency-domain-page .section-heading,
+  .frequency-domain-page .module-heading {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .frequency-domain-page .chapter-hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .frequency-domain-page .pressure-cycle-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .frequency-domain-page .module-heading {
+    column-gap: 0;
+  }
+
+  .frequency-domain-page .module-heading p {
+    max-width: none;
+  }
+
+  .frequency-domain-page .section-heading h2,
+  .frequency-domain-page .module-heading h3 {
+    overflow-wrap: normal;
+    word-break: normal;
+    text-wrap: balance;
   }
 
   .frequency-page h1,
@@ -3231,11 +3582,24 @@ ol li::before {
   .frequency-page span,
   .frequency-page li {
     overflow-wrap: anywhere;
+    word-break: normal;
+    line-break: loose;
+  }
+
+  .frequency-domain-page .section-heading h2,
+  .frequency-domain-page .module-heading h3 {
+    overflow-wrap: normal;
+    word-break: normal;
+    text-wrap: balance;
   }
 
   .chapter-hero,
   .challenge-grid,
   .opening-grid,
+  .process-layout,
+  .tonotopy-layout,
+  .filterbank-layout,
+  .loudness-layout,
   .lab-layout,
   .board-layout,
   .rubric-layout,
@@ -3320,9 +3684,9 @@ ol li::before {
   body.frequency-page .chapter-nav,
   body.frequency-page main,
   body.frequency-page .chapter-footer {
-    width: 100%;
-    padding-right: 20px;
-    padding-left: 20px;
+    width: min(calc(100% - 40px), var(--content));
+    padding-right: 0;
+    padding-left: 0;
   }
 
   .chapter-nav {
@@ -3336,6 +3700,19 @@ ol li::before {
   .chapter-hero,
   .chapter-block {
     padding: 48px 0;
+  }
+
+  .frequency-domain-page .chapter-block {
+    padding: 44px 0;
+  }
+
+  .frequency-domain-page .euler-equation {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .frequency-domain-page .pressure-cycle-layout > .spectrum-sketch svg {
+    min-height: 0;
   }
 
   h1 {
@@ -3362,7 +3739,11 @@ ol li::before {
   .frequency-definitions,
   .fourier-grid,
   .band-map,
+  .process-layout,
+  .tonotopy-layout,
+  .filterbank-layout,
   .loudness-layout,
+  .process-steps,
   .filter-plan,
   .checkout-grid {
     grid-template-columns: 1fr;
@@ -3402,10 +3783,29 @@ ol li::before {
     overflow-wrap: anywhere;
   }
 
+  .frequency-domain-page .section-heading h2,
+  .frequency-domain-page .module-heading h3 {
+    overflow-wrap: normal;
+    word-break: normal;
+    text-wrap: balance;
+  }
+
   .frequency-page .question-panel,
   .frequency-page .spectrum-sketch,
-  .frequency-page .equal-loudness-figure {
+  .frequency-page .equal-loudness-figure,
+  .frequency-page .auditory-process-figure,
+  .frequency-page .tonotopy-figure,
+  .frequency-page .filterbank-figure {
     padding: 20px 16px;
+  }
+
+  .frequency-page .question-panel h3 {
+    font-size: 22px;
+    line-height: 1.5;
+  }
+
+  .frequency-page .equation math {
+    min-width: max-content;
   }
 
   .transduction-path {
@@ -3521,5 +3921,107 @@ ol li::before {
   .chapter-footer {
     flex-direction: column;
     gap: 14px;
+  }
+}
+/* Shared semantic outline used by all authoritative Chapter pages. */
+html,
+body.chapter-page {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.chapter-page main,
+.chapter-page main > *,
+.chapter-hero > *,
+.chapter-block > * {
+  min-width: 0;
+}
+
+.chapter-page img,
+.chapter-page svg,
+.chapter-page canvas {
+  max-width: 100%;
+}
+
+.chapter-outline {
+  --chapter-outline-width: min(1160px, calc(100vw - 40px));
+  position: sticky;
+  top: 12px;
+  z-index: 45;
+  width: var(--chapter-outline-width);
+  margin-block: 58px 0;
+  margin-inline: calc((100% - var(--chapter-outline-width)) / 2);
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(105, 238, 227, 0.24);
+  border-radius: 999px;
+  background: rgba(7, 17, 23, 0.9);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  scrollbar-width: thin;
+}
+
+:root[data-theme="light"] .chapter-outline {
+  border-color: rgba(8, 123, 120, 0.28);
+  background: rgba(234, 243, 240, 0.94);
+  box-shadow: 0 14px 36px rgba(31, 45, 47, 0.13);
+}
+
+:root[data-theme="light"] .chapter-outline a {
+  color: #10191b;
+}
+
+:root[data-theme="dark"] .chapter-outline a {
+  color: #f5f1e9;
+}
+
+.chapter-page main section[id],
+.chapter-page main article[id] {
+  scroll-margin-top: 96px;
+}
+
+.chapter-outline a {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  color: var(--ink, #f5f1e9);
+  background: transparent;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.chapter-outline a:hover,
+.chapter-outline a:focus-visible {
+  color: var(--bg, #071117);
+  background: var(--cyan, #69eee3);
+  border-color: var(--cyan, #69eee3);
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .chapter-nav {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .chapter-links {
+    max-width: 62vw;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .chapter-outline {
+    --chapter-outline-width: calc(100vw - 24px);
+    top: 8px;
+    margin-top: 18px;
+    border-radius: 16px;
   }
 }

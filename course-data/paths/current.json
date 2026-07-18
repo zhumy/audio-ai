@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "path_id": "current",
+  "title": "当前公开学习路径",
+  "description": "课程顺序可以随大纲调整；这里仅登记当前公开且可连续学习的内容。",
+  "items": [
+    {
+      "sequence": 1,
+      "content_id": "sound-physics-sampling-spectrum",
+      "role": "宏观导览"
+    },
+    {
+      "sequence": 2,
+      "content_id": "time-domain-audio",
+      "role": "完整知识"
+    },
+    {
+      "sequence": 3,
+      "content_id": "spatial-acoustic-features",
+      "role": "完整知识"
+    },
+    {
+      "sequence": 4,
+      "content_id": "frequency-domain-processing",
+      "role": "完整知识"
+    }
+  ]
+}

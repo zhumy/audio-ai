@@ -8,8 +8,8 @@
       name="description"
       content="90 分钟必修基础章节：从空气机械波、电容式麦克风与数字采样，进入波形、RMS、ZCR 与听觉时间线索。"
     />
-    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260601-3" />
-    <link rel="stylesheet" href="../../assets/css/theme.css" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-4" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-2" />
   </head>
   <body class="chapter-page lecture-page">
     <header class="chapter-nav">
@@ -18,16 +18,27 @@
         AUDIO <b>AI</b>
       </a>
       <nav class="chapter-links" aria-label="课程导航">
-        <a href="../../chapters/00-home/">大纲 V2</a>
-        <a href="../../chapters/02-frequency-domain-processing/">第二章</a>
-        <a href="../../chapters/00-home/#roadmap">实践样章</a>
+        <a href="../../session/sound-physics-sampling-spectrum/">返回导览</a>
+        <a href="../spatial-acoustic-features/">空间域</a>
+        <a href="../frequency-domain-processing/">频域</a>
       </nav>
     </header>
 
     <main>
-      <section class="chapter-hero lecture-hero">
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#listen-first">先听现象</a>
+        <a href="#signal-chain">物理与采样</a>
+        <a href="#time-statistics">时域统计</a>
+        <a href="#time-lab">互动观察</a>
+        <a href="#auditory-time">听觉时间线索</a>
+        <a href="#limits">表示边界</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section class="chapter-hero lecture-hero" id="overview">
         <div>
-          <p class="chapter-code">REQUIRED FOUNDATION / 01 / 90 MINUTES</p>
+          <p class="chapter-code">REQUIRED FOUNDATION / 01</p>
           <h1>从波形到<br /><span>时域特征</span></h1>
           <p class="chapter-lead">
             声音首先是以空气为介质传播的机械波。机器接收的是换能、采样后的数列，
@@ -48,9 +59,9 @@
         </aside>
       </section>
 
-      <section class="chapter-block opening-listen">
+      <section class="chapter-block opening-listen" id="listen-first">
         <div class="section-heading">
-          <p>00-10 MIN / LISTEN FIRST</p>
+          <p>LISTEN FIRST</p>
           <h2>听到不同，究竟哪里不同？</h2>
         </div>
         <div class="opening-grid">
@@ -101,9 +112,9 @@
         </div>
       </section>
 
-      <section class="chapter-block physics">
+      <section class="chapter-block physics" id="signal-chain">
         <div class="section-heading">
-          <p>10-30 MIN / SIGNAL CHAIN</p>
+          <p>SIGNAL CHAIN</p>
           <h2>从空气机械波，到数字音频序列</h2>
         </div>
         <div class="signal-chain" aria-label="声音进入计算机的信号链">
@@ -1058,9 +1069,9 @@
         </div>
       </section>
 
-      <section class="chapter-block mathematics">
+      <section class="chapter-block mathematics" id="time-statistics">
         <div class="section-heading">
-          <p>30-55 MIN / STATISTICS</p>
+          <p>STATISTICS</p>
           <h2>两个基础统计量：RMS 与 ZCR</h2>
         </div>
         <div class="stat-grid">
@@ -1138,9 +1149,9 @@
         </div>
       </section>
 
-      <section class="chapter-block active-lab">
+      <section class="chapter-block active-lab" id="time-lab">
         <div class="section-heading">
-          <p>55-70 MIN / OBSERVE</p>
+          <p>OBSERVE</p>
           <h2>互动观察：试听、看波形、读数字</h2>
         </div>
         <div class="lab-layout">
@@ -1183,9 +1194,9 @@
         </div>
       </section>
 
-      <section class="chapter-block auditory-time">
+      <section class="chapter-block auditory-time" id="auditory-time">
         <div class="section-heading">
-          <p>70-83 MIN / HUMAN HEARING</p>
+          <p>HUMAN HEARING</p>
           <h2>耳朵也在时间中分析声音</h2>
         </div>
         <div class="auditory-grid">
@@ -1228,9 +1239,9 @@
         </p>
       </section>
 
-      <section class="chapter-block limits">
+      <section class="chapter-block limits" id="limits">
         <div class="section-heading">
-          <p>83-90 MIN / WHY FREQUENCY</p>
+          <p>WHY FREQUENCY</p>
           <h2>只有时间统计，还缺少什么？</h2>
         </div>
         <div class="limit-layout">
@@ -1265,11 +1276,11 @@
             我们将引入周期、正弦基元、傅里叶分析与频谱，
             解释机器如何回答本章尚未回答的问题：声音由什么组成？
           </p>
-          <a class="reading-link" href="../../chapters/02-frequency-domain-processing/">进入第二章框架 →</a>
+          <a class="reading-link" href="../frequency-domain-processing/">用于后续：进入完整频域章节 →</a>
         </div>
       </section>
 
-      <section class="chapter-block reading-strip">
+      <section class="chapter-block reading-strip" id="route">
         <div>
           <p class="card-label">本章参考来源</p>
           <p>
@@ -1289,8 +1300,8 @@
     </main>
 
     <footer class="chapter-footer">
-      <span>AUDIO AI / REQUIRED FOUNDATION 01</span>
-      <a href="../../chapters/00-home/">返回课程大纲 V2</a>
+      <span>AUDIO AI / TIME DOMAIN AUDIO</span>
+      <a href="../../session/sound-physics-sampling-spectrum/">回到声音物理与多域导览</a>
     </footer>
     <script src="../../assets/js/theme.js"></script>
     <script src="../../assets/js/chapter.js?v=20260602-1"></script>

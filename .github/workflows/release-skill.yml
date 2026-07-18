@@ -1,0 +1,24 @@
+name: Package course skill
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "course-*"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Package repository skill
+        run: cd .agents/skills && zip -r ../../build-audio-ai-course.zip build-audio-ai-course
+      - name: Upload skill artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-audio-ai-course
+          path: build-audio-ai-course.zip

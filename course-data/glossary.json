@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "policy": "共享定义由课程负责人和对应领域负责人共同审查；Agent 只标记冲突，不自动裁决。",
+  "concepts": []
+}

@@ -1,85 +1,53 @@
 # Audio AI for Human and Machine
 
-这是 `Audio AI` 课程的 GitHub Pages 发布目录。当前版本采用纯静态结构，适合直接从 GitHub Pages 发布。
+这是“人与机器听觉 / Audio AI for Human and Machine”课程的公开静态网站仓库。仓库当前发布已经成熟的课程导览与基础主题，同时为后续大纲调整、多人维护和课程版本演进保留稳定结构。
 
-## 发布方式
+## 当前公开内容
 
-1. 将 `Audio_AI_for_Human_and_Machine/` 作为仓库根目录，或复制其内容到仓库根目录。
-2. 在 GitHub 仓库中进入 `Settings -> Pages`。
-3. 选择 `Deploy from a branch`。
-4. 分支选择 `main`，目录选择 `/ (root)`。
-5. 保存后，GitHub Pages 会从根目录的 `index.html` 发布课程入口。
+- [课程首页](./index.html)
+- [声音物理与多域表示导览](./session/sound-physics-sampling-spectrum/)
+- [时域音频](./chapters/time-domain-audio/)
+- [空间声学特征](./chapters/spatial-acoustic-features/)
+- [频域处理](./chapters/frequency-domain-processing/)
+- [课程大纲入口](./syllabus/)
 
-如果这个目录只是大仓库中的子目录，也可以在 GitHub Actions 中把该目录作为发布源。
-
-## 目录约定
+## 信息架构
 
 ```text
 .
-├── index.html                         # GitHub Pages 默认入口，跳转到 00-home
-├── chapters/
-│   ├── 00-home/                       # 课程首页，也作为独立章节维护
-│   ├── 01-time-domain-audio/          # 第 1 章：时域音频
-│   └── 02-frequency-domain-processing/# 第 2 章：频域处理
-├── assets/
-│   ├── css/                           # 统一视觉主题与章节样式
-│   ├── js/                            # 统一交互脚本
-│   ├── images/                        # 图片素材
-│   ├── audio/                         # 小型音频样本
-│   ├── video/                         # 小型视频或封面
-│   └── data/                          # 实验数据
-└── references/                        # 参考资料，可放轻量索引或外链
+├── index.html                     # 课程首页
+├── course-data/                   # 机器可读目录、路径、术语与符号
+├── syllabus/                      # 人可读课程大纲
+├── session/                       # 大纲驱动的宏观导览与关系组织
+├── chapters/                      # 具体知识的唯一权威页面
+├── labs/                          # 可复用实验
+├── projects/                      # 综合项目
+├── assets/                        # 全站共享样式、脚本与媒体
+├── docs/                          # 架构与教师维护说明
+├── .agents/skills/                # 仓库共享 Codex Skill
+└── .github/                       # 审查、责任人与发布工作流
 ```
 
-## 扩展建议
+核心边界：Session 只解释知识点之间的宏观关系、前置与后续，并提供可见的上下文跳转；定义、公式、推导、例题和具体知识解释全部由 Chapter 负责。
 
-- 每个新章节都新建一个 `chapters/chXX-topic/index.html`。
-- 每章如需独立音频、字幕、讲稿，可放入该章节自己的 `media/`、`notes.md`、`script.md`。
-- 大型视频不建议直接放 GitHub 仓库，建议使用 Bilibili、YouTube、Vimeo 或对象存储，并在页面中嵌入。
-- 共享视觉和交互能力放在 `assets/css/` 与 `assets/js/`，避免每章重复维护。
+## 本地预览
 
-## 访问统计
+在仓库根目录运行：
 
-GitHub Pages 本身适合发布静态课程页，但不直接提供完整的访问来源、地域、章节浏览量统计。
-当前站点已经预留统一统计入口：
-
-- `assets/js/analytics-config.js`：填写统计平台和站点 ID。
-- `assets/js/analytics.js`：统一加载统计脚本，支持 Cloudflare Web Analytics、Umami、Plausible、GA4。
-
-默认配置为关闭状态：
-
-```js
-window.AudioAIAnalytics = {
-  enabled: false,
-  provider: "",
-  siteId: "",
-  scriptSrc: "",
-};
+```powershell
+python -m http.server 4173
 ```
 
-推荐选择：
+然后打开 `http://127.0.0.1:4173/`。不要直接双击 HTML 代替本地服务器预览，因为相对链接、模块和浏览器安全策略可能表现不同。
 
-- 面向教学发布、希望轻量和隐私友好：Cloudflare Web Analytics。
-- 希望自己掌控数据：Umami，可以自托管，也可以使用云服务。
-- 希望报表简洁、重视来源和页面浏览：Plausible。
-- 希望和广告、搜索、复杂事件分析打通：GA4，但配置和隐私说明更复杂。
+## 修改与审查
 
-启用示例：
+请先阅读：
 
-```js
-window.AudioAIAnalytics = {
-  enabled: true,
-  provider: "cloudflare",
-  siteId: "YOUR_CLOUDFLARE_TOKEN",
-  scriptSrc: "",
-};
-```
+- [CONTRIBUTING.md](./CONTRIBUTING.md)：给教师和贡献者的维护流程；
+- [AGENTS.md](./AGENTS.md)：给 Codex/Agent 的仓库规则；
+- [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)：网站长期架构；
+- [docs/skill-installation.md](./docs/skill-installation.md)：课程 Skill 的安装、更新与分发；
+- [.agents/skills/build-audio-ai-course/SKILL.md](./.agents/skills/build-audio-ai-course/SKILL.md)：课程专用 Skill。
 
-为了记录“大家从哪里访问”，发布链接时建议使用 UTM 参数：
-
-```text
-https://your-name.github.io/audio-ai/?utm_source=wechat&utm_medium=share&utm_campaign=first_release
-https://your-name.github.io/audio-ai/chapters/01-time-domain-audio/?utm_source=class&utm_medium=qr&utm_campaign=week1
-```
-
-这样统计平台可以区分访问来源、分享渠道、课程周次和具体章节。
+所有正式修改通过分支和 Pull Request 审查。GitHub Pages 只在结构检查通过后部署。

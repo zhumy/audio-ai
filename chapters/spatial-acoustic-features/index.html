@@ -1,0 +1,2060 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>声音的空域特征：声压、质点振速与 Ambisonics | Audio AI</title>
+    <meta
+      name="description"
+      content="从声压场 p(r,t) 出发，用空间梯度解释质点振速、球面波远场近似、双麦克风差分阵列的 8 字响应，并引出三维声矢量、FoA 与高阶 Ambisonics。"
+    />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-4" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-2" />
+    <style>
+      :root {
+        color-scheme: dark light;
+        --surface-bright: #142a32;
+        --muted-2: #7f9291;
+        --cyan-soft: rgba(105, 238, 227, 0.16);
+        --gold-dim: color-mix(in srgb, var(--gold) 12%, transparent);
+        --amber: var(--gold);
+        --green: #8ee6ad;
+        --red: var(--course-alert, #ff8e86);
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
+      }
+
+      :root[data-theme="light"] {
+        --surface-bright: #f7fbf8;
+        --muted-2: #607175;
+        --cyan-soft: rgba(8, 123, 120, 0.14);
+        --gold-dim: color-mix(in srgb, var(--gold) 11%, transparent);
+        --green: #24764a;
+        --shadow: 0 20px 50px rgba(31, 45, 47, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        line-height: 1.72;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 14px 5vw;
+        border-bottom: 1px solid var(--line);
+        background: color-mix(in srgb, var(--bg) 84%, transparent);
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        color: var(--ink);
+        text-decoration: none;
+        letter-spacing: 0.08em;
+        font-weight: 800;
+      }
+
+      .brand b { color: var(--cyan); }
+
+      .chapter-outline {
+        flex-wrap: nowrap;
+        margin-block: 0 34px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .chapter-outline::-webkit-scrollbar { display: none; }
+
+      .jump-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex: 0 0 auto;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+      }
+
+      .jump-link:hover {
+        color: var(--ink);
+        background: var(--cyan-dim);
+      }
+
+      main {
+        width: min(1120px, 92vw);
+        margin: 0 auto;
+        padding: 58px 0 80px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+        align-items: center;
+        gap: clamp(26px, 5vw, 64px);
+        min-height: 520px;
+      }
+
+      .eyebrow,
+      .section-kicker {
+        margin: 0 0 10px;
+        color: var(--gold);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        line-height: 1.16;
+      }
+
+      h1 {
+        max-width: 780px;
+        font-size: clamp(42px, 8vw, 86px);
+        letter-spacing: -0.055em;
+      }
+
+      h1 span { color: var(--cyan); }
+
+      h2 {
+        font-size: clamp(28px, 4vw, 48px);
+        letter-spacing: -0.035em;
+      }
+
+      h3 {
+        margin-top: 24px;
+        color: var(--ink);
+        font-size: 21px;
+      }
+
+      .lead {
+        max-width: 780px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: clamp(16px, 2vw, 20px);
+      }
+
+      .hero-card,
+      .panel,
+      .card,
+      .flow-card,
+      .animation-card,
+      .verdict {
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        background:
+          linear-gradient(145deg, var(--cyan-dim), transparent 46%),
+          var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-card {
+        padding: 26px;
+      }
+
+      .hero-card p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .equation {
+        margin: 18px 0;
+        padding: 18px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--surface-2) 58%, transparent);
+      }
+
+      .equation.small {
+        padding: 14px;
+      }
+
+      .inline-mathml {
+        display: inline math;
+        math-style: compact;
+        margin: 0 0.08em;
+      }
+
+      .equation math {
+        display: block math;
+        math-style: normal;
+        color: var(--ink);
+        font-size: var(--course-math-display-size, 24px);
+      }
+
+      .equation.small math {
+        font-size: var(--course-math-compact-size, 18px);
+      }
+
+      .lesson-section {
+        margin-top: 68px;
+        scroll-margin-top: 90px;
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 18px;
+        align-items: start;
+        margin-bottom: 22px;
+      }
+
+      .section-number {
+        color: color-mix(in srgb, var(--cyan) 48%, transparent);
+        font: 900 44px/1 Inter, sans-serif;
+      }
+
+      .section-intro {
+        max-width: 880px;
+        margin: 0 0 22px;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .panel {
+        padding: clamp(22px, 4vw, 34px);
+      }
+
+      .grid-2,
+      .grid-3 {
+        display: grid;
+        gap: 18px;
+      }
+
+      .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+      .card,
+      .flow-card {
+        padding: 20px;
+      }
+
+      .card h3,
+      .flow-card h3 {
+        margin-top: 0;
+      }
+
+      .card p,
+      .flow-card p {
+        margin: 10px 0 0;
+        color: var(--muted);
+      }
+
+      .key-point,
+      .warning,
+      .success {
+        margin: 18px 0 0;
+        padding: 16px 18px;
+        border-left: 4px solid var(--gold);
+        border-radius: 8px 16px 16px 8px;
+        color: var(--muted);
+        background: var(--gold-dim);
+      }
+
+      .warning {
+        border-left-color: var(--red);
+        background: color-mix(in srgb, var(--red) 10%, transparent);
+      }
+
+      .success {
+        border-left-color: var(--green);
+        background: color-mix(in srgb, var(--green) 10%, transparent);
+      }
+
+      .key-point b,
+      .warning b,
+      .success b { color: var(--ink); }
+
+      details {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--surface-2) 64%, transparent);
+      }
+
+      summary {
+        cursor: pointer;
+        padding: 15px 18px;
+        color: var(--cyan);
+        font-weight: 800;
+      }
+
+      .details-body {
+        padding: 0 18px 18px;
+        color: var(--muted);
+      }
+
+      .details-body p { margin: 10px 0; }
+
+      .identity {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        gap: 12px;
+        align-items: center;
+        margin: 20px 0;
+      }
+
+      .identity span {
+        padding: 16px;
+        border-radius: 16px;
+        color: var(--ink);
+        background: var(--surface-2);
+        text-align: center;
+      }
+
+      .identity i {
+        color: var(--gold);
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .animation-card {
+        padding: 22px;
+      }
+
+      .dipole-figure {
+        width: 100%;
+        max-width: 560px;
+        display: block;
+        margin: 8px auto 0;
+      }
+
+      .axis-line {
+        stroke: color-mix(in srgb, var(--ink) 28%, transparent);
+        stroke-width: 1.5;
+      }
+
+      .lobe-positive {
+        fill: color-mix(in srgb, var(--cyan) 26%, transparent);
+        stroke: var(--cyan);
+        stroke-width: 2.5;
+      }
+
+      .lobe-negative {
+        fill: color-mix(in srgb, var(--gold) 22%, transparent);
+        stroke: var(--gold);
+        stroke-width: 2.5;
+      }
+
+      .wave-front {
+        stroke: color-mix(in srgb, var(--ink) 24%, transparent);
+        stroke-width: 2;
+        stroke-dasharray: 7 8;
+      }
+
+      .incident-ray {
+        stroke: var(--red);
+        stroke-width: 2;
+        stroke-dasharray: 5 7;
+        stroke-linecap: round;
+      }
+
+      .source-dot {
+        fill: var(--red);
+        filter: drop-shadow(0 0 8px color-mix(in srgb, var(--red) 62%, transparent));
+      }
+
+      .response-vector {
+        stroke: var(--cyan);
+        stroke-width: 5;
+        stroke-linecap: round;
+        transition: stroke 120ms linear;
+      }
+
+      .response-vector[data-polarity="negative"] {
+        stroke: var(--gold);
+      }
+
+      .response-dot {
+        fill: var(--cyan);
+        stroke: var(--surface);
+        stroke-width: 2;
+        filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cyan) 58%, transparent));
+        transition: fill 120ms linear;
+      }
+
+      .response-dot[data-polarity="negative"] {
+        fill: var(--gold);
+        filter: drop-shadow(0 0 8px color-mix(in srgb, var(--gold) 58%, transparent));
+      }
+
+      .response-readout {
+        fill: var(--muted);
+        font-size: 13px;
+      }
+
+      .caption {
+        margin: 12px 0 0;
+        color: var(--muted-2);
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .comparison-table th {
+        color: var(--cyan);
+        background: var(--cyan-dim);
+      }
+
+      .comparison-table td { color: var(--muted); }
+      .comparison-table tr:last-child td { border-bottom: 0; }
+
+      .hoa-order-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 18px 0;
+      }
+
+      .hoa-order-strip span {
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        color: var(--muted);
+        background: var(--surface-2);
+        text-align: center;
+      }
+
+      .hoa-order-strip b {
+        display: block;
+        color: var(--ink);
+        font-size: 18px;
+      }
+
+      .hoa-formula-group + .hoa-formula-group { margin-top: 24px; }
+
+      .hoa-formula-group h4 {
+        margin: 0 0 10px;
+        color: var(--cyan);
+        font-size: 16px;
+      }
+
+      .hoa-basis-equations math {
+        min-width: max-content;
+        text-align: left;
+      }
+
+      .hoa-visualizer {
+        margin-top: 22px;
+        padding: clamp(18px, 3vw, 28px);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--surface-bright);
+        box-shadow: var(--shadow);
+      }
+
+      .hoa-visualizer-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 16px;
+      }
+
+      .hoa-visualizer-head h4 {
+        margin: 2px 0 0;
+        color: var(--ink);
+        font-size: clamp(20px, 2.4vw, 28px);
+      }
+
+      .hoa-visualizer-head p {
+        margin: 0;
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .hoa-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .hoa-control {
+        display: grid;
+        gap: 4px;
+        color: var(--muted-2);
+        font-size: 12px;
+      }
+
+      .hoa-control select,
+      .hoa-toggle {
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        color: var(--ink);
+        background: var(--surface-2);
+        font: inherit;
+      }
+
+      .hoa-control select {
+        min-width: 92px;
+        padding: 8px 34px 8px 12px;
+      }
+
+      .hoa-toggle {
+        padding: 8px 14px;
+        cursor: pointer;
+      }
+
+      .hoa-control select:focus-visible,
+      .hoa-toggle:focus-visible {
+        outline: 3px solid var(--cyan-dim);
+        outline-offset: 2px;
+      }
+
+      .hoa-stage {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background:
+          radial-gradient(circle at 50% 46%, var(--cyan-dim), transparent 42%),
+          var(--surface-2);
+      }
+
+      .hoa-canvas {
+        display: block;
+        width: 100%;
+        height: 450px;
+      }
+
+      .hoa-visualizer-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .hoa-current math { color: var(--ink); }
+
+      .hoa-legend {
+        display: inline-flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
+      .hoa-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+
+      .hoa-legend i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--cyan);
+        box-shadow: 0 0 10px color-mix(in srgb, var(--cyan) 50%, transparent);
+      }
+
+      .hoa-legend .negative i {
+        background: var(--gold);
+        box-shadow: 0 0 10px color-mix(in srgb, var(--gold) 50%, transparent);
+      }
+
+      .hoa-animation-note {
+        margin: 12px 0 0;
+        color: var(--muted-2);
+        font-size: 14px;
+      }
+
+      .verdict {
+        margin-top: 70px;
+        padding: clamp(24px, 5vw, 44px);
+        border-color: color-mix(in srgb, var(--gold) 24%, transparent);
+        background:
+          radial-gradient(circle at 10% 15%, var(--gold-dim), transparent 28%),
+          var(--surface);
+      }
+
+      :root[data-theme="light"] .topbar {
+        background: rgba(246, 247, 242, 0.86);
+      }
+
+      :root[data-theme="light"] .hero-card,
+      :root[data-theme="light"] .panel,
+      :root[data-theme="light"] .card,
+      :root[data-theme="light"] .flow-card,
+      :root[data-theme="light"] .animation-card,
+      :root[data-theme="light"] .verdict {
+        background-color: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      :root[data-theme="light"] .equation,
+      :root[data-theme="light"] details {
+        background: rgba(8, 123, 120, 0.045);
+      }
+
+      :root[data-theme="light"] .identity span {
+        background: var(--surface-2);
+      }
+
+      :root[data-theme="light"] .key-point {
+        background: rgba(143, 101, 0, 0.09);
+      }
+
+      :root[data-theme="light"] .warning {
+        background: rgba(185, 71, 62, 0.075);
+      }
+
+      :root[data-theme="light"] .success {
+        background: rgba(36, 118, 74, 0.075);
+      }
+
+      .verdict h2 { color: var(--gold); }
+      .verdict ul { margin: 18px 0 0; padding-left: 22px; color: var(--muted); }
+      .verdict li + li { margin-top: 8px; }
+
+      footer {
+        padding: 26px 5vw 40px;
+        border-top: 1px solid var(--line);
+        color: var(--muted-2);
+        text-align: center;
+        font-size: 12px;
+      }
+
+      @media (max-width: 860px) {
+        .hero,
+        .grid-2,
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+
+        .identity {
+          grid-template-columns: 1fr;
+        }
+
+        .identity i {
+          transform: rotate(90deg);
+          text-align: center;
+        }
+
+        .hoa-visualizer-head {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .hoa-controls { justify-content: flex-start; }
+      }
+
+      @media (max-width: 560px) {
+        .topbar nav { display: none; }
+        main { width: min(94vw, 1120px); padding-top: 42px; }
+        .dipole-figure text:not(.response-readout) { font-size: 15px; }
+        .dipole-figure .response-readout { font-size: 14px; }
+        .hoa-order-strip { grid-template-columns: 1fr; }
+        .hoa-controls { display: grid; grid-template-columns: 1fr 1fr; }
+        .hoa-control select { width: 100%; }
+        .hoa-toggle { grid-column: 1 / -1; }
+        .hoa-canvas { height: 350px; }
+        .hoa-visualizer-foot { align-items: flex-start; flex-direction: column; }
+        .hoa-legend { justify-content: flex-start; }
+        .section-heading { grid-template-columns: 1fr; gap: 5px; }
+        .section-number { font-size: 28px; }
+        .comparison-table { display: block; overflow-x: auto; white-space: nowrap; }
+      }
+    </style>
+  </head>
+  <body class="chapter-page lecture-page spatial-domain-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../session/sound-physics-sampling-spectrum/">返回导览</a>
+        <a href="../time-domain-audio/">时域</a>
+        <a href="../frequency-domain-processing/">频域</a>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#field">声压场</a>
+        <a href="#velocity">质点振速</a>
+        <a href="#spherical">球面波</a>
+        <a href="#differential">双麦差分</a>
+        <a href="#vector-foa">FoA / HOA</a>
+        <a href="#omega-k">符号附录</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Spatial domain · Pressure field · Particle velocity</p>
+          <h1>声音的<span>空域特征</span></h1>
+          <p class="lead">
+            声音不是只随时间起伏的一条曲线。更完整的对象是
+            <math class="inline-mathml">
+              <mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+            </math>：
+            每一个空间位置
+            <math class="inline-mathml"><mi mathvariant="bold">r</mi></math>
+            都有自己的声压。空间上的变化方向，就是声压梯度；它推动空气质点运动，形成质点振速。
+          </p>
+        </div>
+
+        <aside class="hero-card">
+          <p class="section-kicker">Core chain</p>
+          <div class="identity" style="grid-template-columns: 1fr; margin: 0">
+            <span>声压场<br /><math class="inline-mathml"><mi>P</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>)</mo></math></span>
+            <i>↓ 空间微分</i>
+            <span>声压梯度<br /><math class="inline-mathml"><mo>∇</mo><mi>P</mi></math></span>
+            <i>↓ 牛顿第二定律</i>
+            <span>质点振速<br /><math class="inline-mathml"><mi mathvariant="bold">U</mi></math></span>
+          </div>
+          <p style="margin-top: 18px">
+            阵列信号处理里的“两只麦克风相减”，本质上就是用有限差分近似这个空间微分。
+          </p>
+        </aside>
+      </section>
+
+      <section class="lesson-section" id="field">
+        <div class="section-heading">
+          <span class="section-number">01</span>
+          <div>
+            <p class="section-kicker">Pressure as a spatial field</p>
+            <h2>从波动方程看：声压首先是空间中的场</h2>
+          </div>
+        </div>
+
+        <p class="section-intro">
+          一个麦克风只记录某一点的
+          <math class="inline-mathml"><mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo></math>。
+          但声波真正存在于空间里，应该写成
+          <math class="inline-mathml"><mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi>t</mi><mo>)</mo></math>。
+          单个声压值是标量，没有箭头；“方向性”来自它在空间中的分布，也就是
+          <math class="inline-mathml"><mo>∇</mo><mi>p</mi></math>。
+        </p>
+
+        <div class="panel">
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <msup><mo>∇</mo><mn>2</mn></msup>
+              <mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+              <mo>−</mo>
+              <mfrac><mn>1</mn><msup><mi>c</mi><mn>2</mn></msup></mfrac>
+              <mfrac>
+                <mrow><msup><mo>∂</mo><mn>2</mn></msup><mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi>t</mi><mo>)</mo></mrow>
+                <mrow><mo>∂</mo><msup><mi>t</mi><mn>2</mn></msup></mrow>
+              </mfrac>
+              <mo>=</mo><mn>0</mn>
+            </mrow></math>
+          </div>
+
+          <div class="grid-2">
+            <article class="card">
+              <h3>时间变化</h3>
+              <p>
+                固定一个位置听，
+                <math class="inline-mathml"><mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo></math>
+                描述那里压力如何随时间上下振荡。
+              </p>
+            </article>
+            <article class="card">
+              <h3>空间变化</h3>
+              <p>
+                固定一个时刻看，
+                <math class="inline-mathml"><mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>)</mo></math>
+                描述不同位置的压力高低；它的空间变化率
+                <math class="inline-mathml"><mo>∇</mo><mi>p</mi></math>
+                才真正带有方向信息。
+              </p>
+            </article>
+          </div>
+
+          <div class="key-point">
+            <b>一句话：</b>声压本身不是矢量；但声压场在空间中的“坡度”
+            <math class="inline-mathml"><mo>∇</mo><mi>p</mi></math>
+            是矢量。空气质点会被这个压力坡度推着走。
+          </div>
+
+          <details>
+            <summary>折叠推导：为什么单频声场常写成复振幅？</summary>
+            <div class="details-body">
+              <p>对于角频率为
+                <math class="inline-mathml"><mi>ω</mi></math>
+                的单频声场，可写成：</p>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <mi>Re</mi><mo>{</mo>
+                  <mi>P</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>)</mo>
+                  <msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup>
+                  <mo>}</mo>
+                </mrow></math>
+              </div>
+              <p>
+                这里
+                <math class="inline-mathml"><mi>P</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>)</mo></math>
+                打包了空间中每一点的振幅和相位。计算时用复数，最后取实部，得到真实声压。
+              </p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="velocity">
+        <div class="section-heading">
+          <span class="section-number">02</span>
+          <div>
+            <p class="section-kicker">Physical meaning of gradient</p>
+            <h2>质点振速：声压空间梯度的物理含义</h2>
+          </div>
+        </div>
+
+        <p class="section-intro">
+          取一小块空气：左边压力大、右边压力小，它就会被推向右边。
+          这正是牛顿第二定律在声学里的形式。声压梯度先决定质点加速度；对单频声场，用复振幅表示后，就得到质点振速。
+        </p>
+
+        <div class="panel">
+          <div class="grid-2">
+            <article class="flow-card">
+              <h3>时域形式</h3>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mi>ρ</mi>
+                  <mfrac>
+                    <mrow><mo>∂</mo><mi mathvariant="bold">u</mi></mrow>
+                    <mrow><mo>∂</mo><mi>t</mi></mrow>
+                  </mfrac>
+                  <mo>=</mo><mo>−</mo><mo>∇</mo><mi>p</mi>
+                </mrow></math>
+              </div>
+              <p>
+                压力往哪个方向下降最快，空气质点就往哪个方向加速。
+              </p>
+            </article>
+
+            <article class="flow-card">
+              <h3>单频复振幅形式</h3>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mi>j</mi><mi>ω</mi><mi>ρ</mi><mi mathvariant="bold">U</mi>
+                  <mo>=</mo><mo>−</mo><mo>∇</mo><mi>P</mi>
+                </mrow></math>
+              </div>
+              <p>
+                时间微分变成乘
+                <math class="inline-mathml"><mi>j</mi><mi>ω</mi></math>，
+                所以速度由梯度除以
+                <math class="inline-mathml"><mi>j</mi><mi>ω</mi><mi>ρ</mi></math>
+                得到。
+              </p>
+            </article>
+          </div>
+
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <mi mathvariant="bold">U</mi>
+              <mo>=</mo><mo>−</mo>
+              <mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac>
+              <mo>∇</mo><mi>P</mi>
+            </mrow></math>
+          </div>
+
+          <div class="success">
+            <b>这就是“质点振速”的位置：</b>它不是声压对时间的一阶导，也不是声压本身；
+            它由声压的空间梯度决定，并且多出
+            <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>
+            这个时间积分因子。
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="spherical">
+        <div class="section-heading">
+          <span class="section-number">03</span>
+          <div>
+            <p class="section-kicker">Spherical wave</p>
+            <h2>球面波：径向梯度如何给出径向质点振速</h2>
+          </div>
+        </div>
+
+        <p class="section-intro">
+          点声源向外辐射时，声压不只随相位
+          <math class="inline-mathml"><mo>−</mo><mi>k</mi><mi>r</mi></math>
+          变化，还会随距离
+          <math class="inline-mathml"><mi>r</mi></math>
+          扩散衰减。因此球面波比平面波多了一个近场项。
+        </p>
+
+        <div class="panel">
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+              <mo>=</mo>
+              <mfrac>
+                <mrow><mi>A</mi><msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>k</mi><mi>r</mi></mrow></msup></mrow>
+                <mi>r</mi>
+              </mfrac>
+              <mo>,</mo>
+              <mspace width="1em"></mspace>
+              <mi>k</mi><mo>=</mo><mfrac><mi>ω</mi><mi>c</mi></mfrac>
+            </mrow></math>
+          </div>
+
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <msub><mi>U</mi><mi>r</mi></msub>
+              <mo>=</mo>
+              <mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac>
+              <mo>[</mo>
+              <mn>1</mn><mo>+</mo>
+              <mfrac><mn>1</mn><mrow><mi>j</mi><mi>k</mi><mi>r</mi></mrow></mfrac>
+              <mo>]</mo>
+            </mrow></math>
+          </div>
+
+          <div class="grid-2">
+            <article class="card">
+              <h3>远场：
+                <math class="inline-mathml"><mi>k</mi><mi>r</mi><mo>≫</mo><mn>1</mn></math>
+              </h3>
+              <p>
+                近场项
+                <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>k</mi><mi>r</mi></mrow></mfrac></math>
+                很小，因此
+                <math class="inline-mathml"><msub><mi>U</mi><mi>r</mi></msub><mo>≈</mo><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac></math>。
+                局部看起来像平面行波。
+              </p>
+            </article>
+            <article class="card">
+              <h3>近场：
+                <math class="inline-mathml"><mi>k</mi><mi>r</mi></math>
+                不大
+              </h3>
+              <p>
+                球面扩散造成的
+                <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>k</mi><mi>r</mi></mrow></mfrac></math>
+                不可忽略，声压与质点振速不再简单同相。
+              </p>
+            </article>
+          </div>
+
+          <details>
+            <summary>折叠推导：从球面波声压到径向质点振速</summary>
+            <div class="details-body">
+              <p>对径向
+                <math class="inline-mathml"><mi>r</mi></math>
+                求空间微分：</p>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mfrac><mrow><mi>d</mi><mi>P</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac>
+                  <mo>=</mo>
+                  <mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+                  <mo>[</mo><mo>−</mo><mi>j</mi><mi>k</mi><mo>−</mo><mfrac><mn>1</mn><mi>r</mi></mfrac><mo>]</mo>
+                </mrow></math>
+              </div>
+              <p>代入
+                <math class="inline-mathml"><msub><mi>U</mi><mi>r</mi></msub><mo>=</mo><mo>−</mo><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac><mfrac><mrow><mi>d</mi><mi>P</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac></math>，
+                并使用
+                <math class="inline-mathml"><mi>k</mi><mo>=</mo><mfrac><mi>ω</mi><mi>c</mi></mfrac></math>，
+                得到正文中的结论。</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="differential">
+        <div class="section-heading">
+          <span class="section-number">04</span>
+          <div>
+            <p class="section-kicker">Differential array as spatial derivative</p>
+            <h2>两颗麦克风差分：用离散采样近似空间微分</h2>
+          </div>
+        </div>
+
+        <p class="section-intro">
+          阵列信号处理里的差分阵列，就是把两个位置的声压相减。
+          如果两点距离足够小，
+          <math class="inline-mathml"><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac></math>
+          就是在近似声压沿基线方向的空间导数。
+        </p>
+
+        <div class="panel">
+          <div class="identity">
+            <span>两个压力麦克风<br />采样
+              <math class="inline-mathml"><mi>P</mi><mo>(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>)</mo></math>、
+              <math class="inline-mathml"><mi>P</mi><mo>(</mo><msub><mi>x</mi><mn>2</mn></msub><mo>)</mo></math>
+            </span>
+            <i>→</i>
+            <span>相减<br />
+              <math class="inline-mathml"><mi>Δ</mi><mi>P</mi></math>
+            </span>
+            <i>→</i>
+            <span>除以间距<br />
+              <math class="inline-mathml"><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac><mo>≈</mo><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>s</mi></mrow></mfrac></math>
+            </span>
+          </div>
+
+          <div class="grid-2">
+            <article class="card">
+              <h3>平面波假设</h3>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <msub><mi>P</mi><mn>0</mn></msub>
+                  <msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>k</mi><mi>x</mi><mi>cos</mi><mi>θ</mi></mrow></msup>
+                </mrow></math>
+              </div>
+              <p>
+                <math class="inline-mathml"><mi>θ</mi></math>
+                是声波传播方向与麦克风基线之间的夹角。
+              </p>
+            </article>
+
+            <article class="card">
+              <h3>精确差分响应</h3>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mi>Δ</mi><mi>P</mi>
+                  <mo>=</mo><mo>−</mo><mn>2</mn><mi>j</mi><msub><mi>P</mi><mn>0</mn></msub>
+                  <mi>sin</mi>
+                  <mo>(</mo><mfrac><mrow><mi>k</mi><mi>d</mi><mi>cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac><mo>)</mo>
+                </mrow></math>
+              </div>
+              <p>
+                低频或小间距时，
+                <math class="inline-mathml"><mi>k</mi><mi>d</mi><mo>≪</mo><mn>1</mn></math>，
+                可近似为一阶空间微分。
+              </p>
+            </article>
+          </div>
+
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <mi>Δ</mi><mi>P</mi>
+              <mo>≈</mo><mo>−</mo><mi>j</mi><mi>k</mi><mi>d</mi><mi>cos</mi><mi>θ</mi>
+              <mo>·</mo><msub><mi>P</mi><mn>0</mn></msub>
+            </mrow></math>
+          </div>
+
+          <div class="success">
+            <b>结论：</b>理想一阶差分阵列的有符号方向响应与
+            <math class="inline-mathml"><mi>cos</mi><mi>θ</mi></math>
+            成正比。因此正前方最大，侧向为零，正后方幅度相同但相位反号，这就是 8 字形响应。
+          </div>
+
+          <div class="animation-card" aria-label="一阶差分阵列八字形响应动画">
+            <div class="equation small" role="math">
+              <math display="block">
+                <mtable columnalign="center">
+                  <mtr><mtd><mrow>
+                    <mi>H</mi><mo>(</mo><mi>θ</mi><mo>)</mo>
+                    <mo>=</mo>
+                    <mfrac>
+                      <mrow><mi>Δ</mi><mi>P</mi></mrow>
+                      <mrow><mo>−</mo><mi>j</mi><mi>k</mi><mi>d</mi><msub><mi>P</mi><mn>0</mn></msub></mrow>
+                    </mfrac>
+                    <mo>≈</mo><mi mathvariant="normal">cos</mi><mo>⁡</mo><mi>θ</mi>
+                  </mrow></mtd></mtr>
+                  <mtr><mtd><mrow>
+                    <mi>r</mi><mo>(</mo><mi>θ</mi><mo>)</mo>
+                    <mo>=</mo><mo>|</mo><mi>H</mi><mo>(</mo><mi>θ</mi><mo>)</mo><mo>|</mo>
+                    <mo>=</mo><mo>|</mo><mi mathvariant="normal">cos</mi><mo>⁡</mo><mi>θ</mi><mo>|</mo>
+                  </mrow></mtd></mtr>
+                </mtable>
+              </math>
+            </div>
+            <svg class="dipole-figure" viewBox="0 0 420 270" role="img" aria-labelledby="dipoleTitle dipoleDesc" data-dipole-animation>
+              <title id="dipoleTitle">两麦克风差分阵列的 8 字形方向响应</title>
+              <desc id="dipoleDesc">按归一化半径等于余弦绝对值绘制的两个相切圆。虚线表示入射角，粗线端点严格按余弦响应运动。</desc>
+              <line class="axis-line" x1="20" y1="120" x2="400" y2="120" />
+              <line class="axis-line" x1="210" y1="20" x2="210" y2="220" />
+              <circle class="lobe-positive" cx="300" cy="120" r="90" />
+              <circle class="lobe-negative" cx="120" cy="120" r="90" />
+
+              <line class="response-vector" x1="210" y1="120" x2="390" y2="120" data-response-vector />
+              <circle class="response-dot" cx="390" cy="120" r="6" data-response-dot />
+
+              <g class="incident-direction" data-incident-direction>
+                <line class="incident-ray" x1="210" y1="120" x2="315" y2="120" />
+                <circle class="source-dot" cx="315" cy="120" r="5" />
+                <line class="wave-front" x1="275" y1="86" x2="275" y2="154" />
+                <line class="wave-front" x1="292" y1="86" x2="292" y2="154" />
+                <line class="wave-front" x1="309" y1="86" x2="309" y2="154" />
+              </g>
+
+              <circle cx="210" cy="120" r="4" fill="var(--ink)" />
+              <circle cx="180" cy="120" r="5" fill="var(--cyan)" />
+              <circle cx="240" cy="120" r="5" fill="var(--cyan)" />
+              <text x="164" y="106" fill="var(--muted)" font-size="12">mic 1</text>
+              <text x="246" y="106" fill="var(--muted)" font-size="12">mic 2</text>
+              <text x="392" y="112" fill="var(--cyan)" font-size="13">+s</text>
+              <text x="24" y="112" fill="var(--gold)" font-size="13">−s</text>
+              <text x="286" y="24" fill="var(--cyan)" font-size="14">前向瓣：同号</text>
+              <text x="48" y="24" fill="var(--gold)" font-size="14">后向瓣：反号</text>
+              <text class="response-readout" x="210" y="252" text-anchor="middle" data-response-readout>θ = 0°　归一化有符号响应 = +1.00</text>
+            </svg>
+            <p class="caption">
+              红色虚线只表示入射角；粗色线的长度严格等于
+              <math class="inline-mathml"><mo>|</mo><mi mathvariant="normal">cos</mi><mo>⁡</mo><mi>θ</mi><mo>|</mo></math>，
+              端点因此沿两个相切圆运动。青色与金色分别表示
+              <math class="inline-mathml"><mi mathvariant="normal">cos</mi><mo>⁡</mo><mi>θ</mi></math>
+              的正号与负号；负号对应额外的
+              <math class="inline-mathml"><mi>π</mi></math>
+              相位反转。
+            </p>
+          </div>
+
+          <details>
+            <summary>折叠推导：两麦克风差分为什么得到 cosθ？</summary>
+            <div class="details-body">
+              <p>设两只麦克风在中心两侧：</p>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <msub><mi>x</mi><mn>1</mn></msub><mo>=</mo><mo>−</mo><mfrac><mi>d</mi><mn>2</mn></mfrac>
+                  <mo>,</mo>
+                  <mspace width="1em"></mspace>
+                  <msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><mfrac><mi>d</mi><mn>2</mn></mfrac>
+                </mrow></math>
+              </div>
+              <p>代入平面波并相减：</p>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mi>Δ</mi><mi>P</mi><mo>=</mo><msub><mi>P</mi><mn>2</mn></msub><mo>−</mo><msub><mi>P</mi><mn>1</mn></msub>
+                  <mo>=</mo>
+                  <msub><mi>P</mi><mn>0</mn></msub>
+                  <mo>(</mo>
+                  <msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mfrac><mrow><mi>k</mi><mi>d</mi><mi>cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac></mrow></msup>
+                  <mo>−</mo>
+                  <msup><mi>e</mi><mrow><mi>j</mi><mfrac><mrow><mi>k</mi><mi>d</mi><mi>cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac></mrow></msup>
+                  <mo>)</mo>
+                </mrow></math>
+              </div>
+              <p>利用
+                <math class="inline-mathml"><msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>a</mi></mrow></msup><mo>−</mo><msup><mi>e</mi><mrow><mi>j</mi><mi>a</mi></mrow></msup><mo>=</mo><mo>−</mo><mn>2</mn><mi>j</mi><mi>sin</mi><mi>a</mi></math>，
+                并在
+                <math class="inline-mathml"><mi>k</mi><mi>d</mi><mo>≪</mo><mn>1</mn></math>
+                时令
+                <math class="inline-mathml"><mi>sin</mi><mi>z</mi><mo>≈</mo><mi>z</mi></math>，
+                就得到
+                <math class="inline-mathml"><mi>Δ</mi><mi>P</mi><mo>≈</mo><mo>−</mo><mi>j</mi><mi>k</mi><mi>d</mi><mi>cos</mi><mi>θ</mi><msub><mi>P</mi><mn>0</mn></msub></math>。
+              </p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="vector-foa">
+        <div class="section-heading">
+          <span class="section-number">05</span>
+          <div>
+            <p class="section-kicker">Vector field · FoA · HOA</p>
+            <h2>从一条基线扩展到三维声矢量，再到 Ambisonics</h2>
+          </div>
+        </div>
+
+        <p class="section-intro">
+          一条双麦克风基线只能给一个方向的空间导数。完整的三维质点振速需要
+          <math class="inline-mathml"><mi>x</mi></math>、
+          <math class="inline-mathml"><mi>y</mi></math>、
+          <math class="inline-mathml"><mi>z</mi></math>
+          三个独立方向的声压梯度。
+        </p>
+
+        <div class="panel">
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <mi mathvariant="bold">U</mi>
+              <mo>=</mo>
+              <mrow><mo>[</mo><mtable>
+                <mtr><mtd><msub><mi>U</mi><mi>x</mi></msub></mtd></mtr>
+                <mtr><mtd><msub><mi>U</mi><mi>y</mi></msub></mtd></mtr>
+                <mtr><mtd><msub><mi>U</mi><mi>z</mi></msub></mtd></mtr>
+              </mtable><mo>]</mo></mrow>
+              <mo>=</mo><mo>−</mo>
+              <mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac>
+              <mrow><mo>[</mo><mtable>
+                <mtr><mtd><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac></mtd></mtr>
+                <mtr><mtd><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>y</mi></mrow></mfrac></mtd></mtr>
+                <mtr><mtd><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>z</mi></mrow></mfrac></mtd></mtr>
+              </mtable><mo>]</mo></mrow>
+            </mrow></math>
+          </div>
+
+          <div class="grid-3">
+            <article class="card">
+              <h3>一条基线</h3>
+              <p>
+                得到基线方向
+                <math class="inline-mathml"><mi>s</mi></math>
+                上的速度分量：
+                <math class="inline-mathml"><msub><mi>U</mi><mi>s</mi></msub><mo>=</mo><mover accent="true"><mi mathvariant="bold">e</mi><mo>^</mo></mover><mo>·</mo><mi mathvariant="bold">U</mi></math>。
+              </p>
+            </article>
+            <article class="card">
+              <h3>三条独立基线</h3>
+              <p>
+                才能反推出完整的
+                <math class="inline-mathml"><mo>∇</mo><mi>P</mi></math>
+                和
+                <math class="inline-mathml"><mi mathvariant="bold">U</mi></math>。
+              </p>
+            </article>
+            <article class="card">
+              <h3>声压 + 声矢量</h3>
+              <p>
+                一个标量
+                <math class="inline-mathml"><mi>P</mi></math>
+                加三个一阶方向分量，是理解 FoA 的直观入口。
+              </p>
+            </article>
+          </div>
+
+          <h3>FoA：0 阶压力 + 1 阶方向</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>分量</th><th>空间意义</th><th>常见直观解释</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><math class="inline-mathml"><mi>W</mi></math></td>
+                <td>0 阶，全向标量</td>
+                <td>与声压/全向麦克风最接近</td>
+              </tr>
+              <tr>
+                <td><math class="inline-mathml"><mi>X</mi></math></td>
+                <td>1 阶，前后 8 字形</td>
+                <td>对应
+                  <math class="inline-mathml"><mi>x</mi></math>
+                  方向的一阶空间特征</td>
+              </tr>
+              <tr>
+                <td><math class="inline-mathml"><mi>Y</mi></math></td>
+                <td>1 阶，左右 8 字形</td>
+                <td>对应
+                  <math class="inline-mathml"><mi>y</mi></math>
+                  方向的一阶空间特征</td>
+              </tr>
+              <tr>
+                <td><math class="inline-mathml"><mi>Z</mi></math></td>
+                <td>1 阶，上下 8 字形</td>
+                <td>对应
+                  <math class="inline-mathml"><mi>z</mi></math>
+                  方向的一阶空间特征</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="warning">
+            <b>注意：</b>FoA 的
+            <math class="inline-mathml"><mi>W</mi><mo>,</mo><mi>X</mi><mo>,</mo><mi>Y</mi><mo>,</mo><mi>Z</mi></math>
+            是一种编码约定，具体归一化、坐标方向和声学标定会随格式而变。
+            但物理直觉很稳定：0 阶描述“这里有多响”，1 阶描述“空间一阶方向性”。
+          </div>
+
+          <h3>HOA：更高阶的空间形状</h3>
+          <p style="color: var(--muted)">
+            高阶 Ambisonics 不是简单增加几个“方向通道”，而是用越来越精细的球谐基函数描述整个球面上的声压分布。
+            阶数
+            <math class="inline-mathml"><mi>n</mi></math>
+            决定角度结构的复杂程度；同一阶中的
+            <math class="inline-mathml"><mi>m</mi></math>
+            决定这类结构在球面上的取向。系数
+            <math class="inline-mathml"><msub><mi>a</mi><mrow><mi>n</mi><mi>m</mi></mrow></msub></math>
+            表示当前声场中含有多少对应的基函数。
+          </p>
+
+          <div class="equation" id="eq-hoa-expansion" role="math">
+            <math display="block">
+              <mtable columnalign="center" rowspacing="0.7em">
+                <mtr><mtd><mrow>
+                  <mi>P</mi><mo>(</mo><mi>Ω</mi><mo>)</mo>
+                  <mo>≈</mo>
+                  <munderover>
+                    <mo>∑</mo>
+                    <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+                    <mi>N</mi>
+                  </munderover>
+                  <munderover>
+                    <mo>∑</mo>
+                    <mrow><mi>m</mi><mo>=</mo><mo>−</mo><mi>n</mi></mrow>
+                    <mi>n</mi>
+                  </munderover>
+                  <msub><mi>a</mi><mrow><mi>n</mi><mi>m</mi></mrow></msub>
+                  <msubsup><mi>Y</mi><mi>n</mi><mi>m</mi></msubsup>
+                  <mo>(</mo><mi>Ω</mi><mo>)</mo>
+                </mrow></mtd></mtr>
+                <mtr><mtd><mrow>
+                  <msub><mi>M</mi><mi>N</mi></msub>
+                  <mo>=</mo>
+                  <munderover>
+                    <mo>∑</mo>
+                    <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+                    <mi>N</mi>
+                  </munderover>
+                  <mo>(</mo><mn>2</mn><mi>n</mi><mo>+</mo><mn>1</mn><mo>)</mo>
+                  <mo>=</mo><msup><mrow><mo>(</mo><mi>N</mi><mo>+</mo><mn>1</mn><mo>)</mo></mrow><mn>2</mn></msup>
+                </mrow></mtd></mtr>
+              </mtable>
+            </math>
+          </div>
+
+          <div class="hoa-order-strip" aria-label="一至三阶球谐基函数数量">
+            <span><b>1 阶：3 个</b>方向性最粗，形成三组正交 8 字形</span>
+            <span><b>2 阶：5 个</b>增加环形与四瓣结构</span>
+            <span><b>3 阶：7 个</b>出现更多节点与更细角度结构</span>
+          </div>
+
+          <div class="key-point">
+            <b>怎样读这一展开式：</b>每一项
+            <math class="inline-mathml">
+              <msub><mi>a</mi><mrow><mi>n</mi><mi>m</mi></mrow></msub>
+              <msubsup><mi>Y</mi><mi>n</mi><mi>m</mi></msubsup><mo>(</mo><mi>Ω</mi><mo>)</mo>
+            </math>
+            都是一幅“球面方向图”乘以它在当前声场中的权重。把同阶、不同
+            <math class="inline-mathml"><mi>m</mi></math>
+            的方向图相加，再把各阶相加，就得到对声场空间分布的近似。
+          </div>
+
+          <details id="hoa-basis-formulas">
+            <summary>展开公式：1—3 阶实球谐基函数（ACN / SN3D，共 15 项）</summary>
+            <div class="details-body">
+              <p>
+                本页采用 Ambisonics 常见的实球谐与 ACN/SN3D 约定。令
+                <math class="inline-mathml"><mi>θ</mi></math>
+                为绕
+                <math class="inline-mathml"><mi>z</mi></math>
+                轴的方位角，
+                <math class="inline-mathml"><mi>φ</mi></math>
+                为仰角，并把方向
+                <math class="inline-mathml"><mi>Ω</mi></math>
+                写成单位球上的方向余弦：
+              </p>
+
+              <div class="equation small" role="math">
+                <math display="block">
+                  <mtable columnalign="center" rowspacing="0.65em">
+                    <mtr><mtd><mrow>
+                      <mi>x</mi><mo>=</mo><mi mathvariant="normal">cos</mi><mo>⁡</mo><mi>φ</mi><mi mathvariant="normal">cos</mi><mo>⁡</mo><mi>θ</mi>
+                      <mo>,</mo><mspace width="0.9em"></mspace>
+                      <mi>y</mi><mo>=</mo><mi mathvariant="normal">cos</mi><mo>⁡</mo><mi>φ</mi><mi mathvariant="normal">sin</mi><mo>⁡</mo><mi>θ</mi>
+                      <mo>,</mo><mspace width="0.9em"></mspace>
+                      <mi>z</mi><mo>=</mo><mi mathvariant="normal">sin</mi><mo>⁡</mo><mi>φ</mi>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><msup><mi>y</mi><mn>2</mn></msup><mo>+</mo><msup><mi>z</mi><mn>2</mn></msup><mo>=</mo><mn>1</mn>
+                    </mrow></mtd></mtr>
+                  </mtable>
+                </math>
+              </div>
+
+              <div class="hoa-formula-group">
+                <h4>1 阶：3 个基函数</h4>
+                <div class="equation small hoa-basis-equations" role="math">
+                  <math display="block"><mtable columnalign="left" rowspacing="0.7em">
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>1</mn><mo>,</mo><mo>−</mo><mn>1</mn></mrow></msub>
+                      <msubsup><mi>Y</mi><mn>1</mn><mrow><mo>−</mo><mn>1</mn></mrow></msubsup>
+                      <mo>=</mo><msub><mi>a</mi><mrow><mn>1</mn><mo>,</mo><mo>−</mo><mn>1</mn></mrow></msub><mi>y</mi>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>1</mn><mo>,</mo><mn>0</mn></mrow></msub>
+                      <msubsup><mi>Y</mi><mn>1</mn><mn>0</mn></msubsup>
+                      <mo>=</mo><msub><mi>a</mi><mrow><mn>1</mn><mo>,</mo><mn>0</mn></mrow></msub><mi>z</mi>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>1</mn><mo>,</mo><mn>1</mn></mrow></msub>
+                      <msubsup><mi>Y</mi><mn>1</mn><mn>1</mn></msubsup>
+                      <mo>=</mo><msub><mi>a</mi><mrow><mn>1</mn><mo>,</mo><mn>1</mn></mrow></msub><mi>x</mi>
+                    </mrow></mtd></mtr>
+                  </mtable></math>
+                </div>
+              </div>
+
+              <div class="hoa-formula-group">
+                <h4>2 阶：5 个基函数</h4>
+                <div class="equation small hoa-basis-equations" role="math">
+                  <math display="block"><mtable columnalign="left" rowspacing="0.7em">
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mo>−</mo><mn>2</mn></mrow></msub><msubsup><mi>Y</mi><mn>2</mn><mrow><mo>−</mo><mn>2</mn></mrow></msubsup>
+                      <mo>=</mo><msqrt><mn>3</mn></msqrt><msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mo>−</mo><mn>2</mn></mrow></msub><mi>x</mi><mi>y</mi>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mo>−</mo><mn>1</mn></mrow></msub><msubsup><mi>Y</mi><mn>2</mn><mrow><mo>−</mo><mn>1</mn></mrow></msubsup>
+                      <mo>=</mo><msqrt><mn>3</mn></msqrt><msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mo>−</mo><mn>1</mn></mrow></msub><mi>y</mi><mi>z</mi>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mn>0</mn></mrow></msub><msubsup><mi>Y</mi><mn>2</mn><mn>0</mn></msubsup>
+                      <mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mn>0</mn></mrow></msub>
+                      <mo>(</mo><mn>3</mn><msup><mi>z</mi><mn>2</mn></msup><mo>−</mo><mn>1</mn><mo>)</mo>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mn>1</mn></mrow></msub><msubsup><mi>Y</mi><mn>2</mn><mn>1</mn></msubsup>
+                      <mo>=</mo><msqrt><mn>3</mn></msqrt><msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mn>1</mn></mrow></msub><mi>x</mi><mi>z</mi>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mn>2</mn></mrow></msub><msubsup><mi>Y</mi><mn>2</mn><mn>2</mn></msubsup>
+                      <mo>=</mo><mfrac><msqrt><mn>3</mn></msqrt><mn>2</mn></mfrac><msub><mi>a</mi><mrow><mn>2</mn><mo>,</mo><mn>2</mn></mrow></msub>
+                      <mo>(</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><msup><mi>y</mi><mn>2</mn></msup><mo>)</mo>
+                    </mrow></mtd></mtr>
+                  </mtable></math>
+                </div>
+              </div>
+
+              <div class="hoa-formula-group">
+                <h4>3 阶：7 个基函数</h4>
+                <div class="equation small hoa-basis-equations" role="math">
+                  <math display="block"><mtable columnalign="left" rowspacing="0.7em">
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mo>−</mo><mn>3</mn></mrow></msub><msubsup><mi>Y</mi><mn>3</mn><mrow><mo>−</mo><mn>3</mn></mrow></msubsup>
+                      <mo>=</mo><msqrt><mfrac><mn>5</mn><mn>8</mn></mfrac></msqrt><msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mo>−</mo><mn>3</mn></mrow></msub><mi>y</mi>
+                      <mo>(</mo><mn>3</mn><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><msup><mi>y</mi><mn>2</mn></msup><mo>)</mo>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mo>−</mo><mn>2</mn></mrow></msub><msubsup><mi>Y</mi><mn>3</mn><mrow><mo>−</mo><mn>2</mn></mrow></msubsup>
+                      <mo>=</mo><msqrt><mn>15</mn></msqrt><msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mo>−</mo><mn>2</mn></mrow></msub><mi>x</mi><mi>y</mi><mi>z</mi>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mo>−</mo><mn>1</mn></mrow></msub><msubsup><mi>Y</mi><mn>3</mn><mrow><mo>−</mo><mn>1</mn></mrow></msubsup>
+                      <mo>=</mo><msqrt><mfrac><mn>3</mn><mn>8</mn></mfrac></msqrt><msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mo>−</mo><mn>1</mn></mrow></msub><mi>y</mi>
+                      <mo>(</mo><mn>5</mn><msup><mi>z</mi><mn>2</mn></msup><mo>−</mo><mn>1</mn><mo>)</mo>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mn>0</mn></mrow></msub><msubsup><mi>Y</mi><mn>3</mn><mn>0</mn></msubsup>
+                      <mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mn>0</mn></mrow></msub><mi>z</mi>
+                      <mo>(</mo><mn>5</mn><msup><mi>z</mi><mn>2</mn></msup><mo>−</mo><mn>3</mn><mo>)</mo>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mn>1</mn></mrow></msub><msubsup><mi>Y</mi><mn>3</mn><mn>1</mn></msubsup>
+                      <mo>=</mo><msqrt><mfrac><mn>3</mn><mn>8</mn></mfrac></msqrt><msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mn>1</mn></mrow></msub><mi>x</mi>
+                      <mo>(</mo><mn>5</mn><msup><mi>z</mi><mn>2</mn></msup><mo>−</mo><mn>1</mn><mo>)</mo>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mn>2</mn></mrow></msub><msubsup><mi>Y</mi><mn>3</mn><mn>2</mn></msubsup>
+                      <mo>=</mo><mfrac><msqrt><mn>15</mn></msqrt><mn>2</mn></mfrac><msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mn>2</mn></mrow></msub><mi>z</mi>
+                      <mo>(</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><msup><mi>y</mi><mn>2</mn></msup><mo>)</mo>
+                    </mrow></mtd></mtr>
+                    <mtr><mtd><mrow>
+                      <msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mn>3</mn></mrow></msub><msubsup><mi>Y</mi><mn>3</mn><mn>3</mn></msubsup>
+                      <mo>=</mo><msqrt><mfrac><mn>5</mn><mn>8</mn></mfrac></msqrt><msub><mi>a</mi><mrow><mn>3</mn><mo>,</mo><mn>3</mn></mrow></msub><mi>x</mi>
+                      <mo>(</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>3</mn><msup><mi>y</mi><mn>2</mn></msup><mo>)</mo>
+                    </mrow></mtd></mtr>
+                  </mtable></math>
+                </div>
+              </div>
+
+              <div class="warning">
+                <b>约定边界：</b>若软件使用 N3D、FuMa 或不同坐标方向，通道顺序、常数比例或整体正负号可能改变；
+                但每阶基函数数量、节点结构和可表达的角度复杂度不变。
+              </div>
+            </div>
+          </details>
+
+          <div class="hoa-visualizer" data-hoa-visualizer>
+            <div class="hoa-visualizer-head">
+              <div>
+                <p>3D spherical-harmonic basis</p>
+                <h4>1—3 阶基函数三维动画</h4>
+              </div>
+              <div class="hoa-controls" aria-label="球谐基函数动画控制">
+                <label class="hoa-control" for="hoa-order">
+                  阶数 n
+                  <select id="hoa-order" data-hoa-order>
+                    <option value="1">1 阶</option>
+                    <option value="2">2 阶</option>
+                    <option value="3">3 阶</option>
+                  </select>
+                </label>
+                <label class="hoa-control" for="hoa-mode">
+                  模态 m
+                  <select id="hoa-mode" data-hoa-mode>
+                    <option value="-1">m = −1</option>
+                    <option value="0">m = 0</option>
+                    <option value="1" selected>m = 1</option>
+                  </select>
+                </label>
+                <button class="hoa-toggle" type="button" data-hoa-toggle aria-pressed="false">暂停旋转</button>
+              </div>
+            </div>
+
+            <div class="hoa-stage">
+              <canvas
+                class="hoa-canvas"
+                data-hoa-canvas
+                role="img"
+                aria-label="一阶 m 等于 1 的实球谐基函数三维旋转图"
+              >浏览器不支持 Canvas，无法显示三维球谐动画。</canvas>
+            </div>
+
+            <div class="hoa-visualizer-foot">
+              <span class="hoa-current">
+                当前显示：
+                <math class="inline-mathml">
+                  <msub><mi>a</mi><mrow><mtext data-hoa-current-n>1</mtext><mo>,</mo><mtext data-hoa-current-m>1</mtext></mrow></msub>
+                  <msubsup><mi>Y</mi><mtext data-hoa-current-n>1</mtext><mtext data-hoa-current-m>1</mtext></msubsup>
+                </math>
+              </span>
+              <span class="hoa-legend" aria-label="颜色图例">
+                <span><i></i>正值</span>
+                <span class="negative"><i></i>负值</span>
+              </span>
+            </div>
+            <p class="hoa-animation-note">
+              动画取
+              <math class="inline-mathml"><msub><mi>a</mi><mrow><mi>n</mi><mi>m</mi></mrow></msub><mo>=</mo><mn>1</mn></math>，
+              并把每个方向的归一化半径画成
+              <math class="inline-mathml">
+                <mi>r</mi><mo>(</mo><mi>Ω</mi><mo>)</mo>
+                <mo>=</mo>
+                <mfrac>
+                  <mrow><mo>|</mo><msubsup><mi>Y</mi><mi>n</mi><mi>m</mi></msubsup><mo>(</mo><mi>Ω</mi><mo>)</mo><mo>|</mo></mrow>
+                  <mrow><msub><mi mathvariant="normal">max</mi><mi>Ω</mi></msub><mo>|</mo><msubsup><mi>Y</mi><mi>n</mi><mi>m</mi></msubsup><mo>(</mo><mi>Ω</mi><mo>)</mo><mo>|</mo></mrow>
+                </mfrac>
+              </math>。
+              <span data-hoa-description>1 阶基函数只有一条节点平面，因此呈现两个相反符号的瓣。</span>
+            </p>
+          </div>
+
+          <div class="success">
+            <b>从差分阵列到 Ambisonics 的连接：</b>双麦差分给出一个 8 字形一阶空间分量；
+            三个正交的一阶分量加上全向声压，就构成 FoA 的直观骨架；
+            HOA 则是在此基础上加入更高阶空间基函数。
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="omega-k">
+        <div class="section-heading">
+          <span class="section-number">附</span>
+          <div>
+            <p class="section-kicker">Time phase · Spatial phase</p>
+            <h2>
+              <math class="inline-mathml"><mi>ω</mi></math>
+              与
+              <math class="inline-mathml"><mi>k</mi></math>：
+              时间转一圈，空间走一圈
+            </h2>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="grid-2">
+            <article class="card">
+              <h3>
+                <math class="inline-mathml"><mi>ω</mi></math>：时间上的相位角速度
+              </h3>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mi>T</mi><mo>=</mo><mfrac><mn>1</mn><mi>f</mi></mfrac>
+                  <mo>,</mo>
+                  <mspace width="0.8em"></mspace>
+                  <mi>ω</mi><mo>=</mo><mn>2</mn><mi>π</mi><mi>f</mi>
+                  <mo>,</mo>
+                  <mspace width="0.8em"></mspace>
+                  <mi>ω</mi><mi>T</mi><mo>=</mo><mn>2</mn><mi>π</mi>
+                </mrow></math>
+              </div>
+            </article>
+            <article class="card">
+              <h3>
+                <math class="inline-mathml"><mi>k</mi></math>：空间上的相位变化率
+              </h3>
+              <div class="equation small" role="math">
+                <math display="block"><mrow>
+                  <mi>k</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mi>π</mi></mrow><mi>λ</mi></mfrac>
+                  <mo>=</mo><mfrac><mi>ω</mi><mi>c</mi></mfrac>
+                  <mo>,</mo>
+                  <mspace width="0.8em"></mspace>
+                  <mi>k</mi><mi>λ</mi><mo>=</mo><mn>2</mn><mi>π</mi>
+                </mrow></math>
+              </div>
+            </article>
+          </div>
+
+          <div class="key-point">
+            以空气中 1 kHz 声波为例，若
+            <math class="inline-mathml"><mi>c</mi><mo>≈</mo><mn>343</mn><mtext> m/s</mtext></math>，
+            则
+            <math class="inline-mathml"><mi>T</mi><mo>=</mo><mn>1</mn><mtext> ms</mtext></math>，
+            <math class="inline-mathml"><mi>λ</mi><mo>≈</mo><mn>0.343</mn><mtext> m</mtext></math>。
+            也就是说：时间过 1 ms 转一圈，空间走 34.3 cm 转一圈。
+          </div>
+        </div>
+      </section>
+
+      <section class="verdict" id="route">
+        <p class="section-kicker">Final map</p>
+        <h2>这条空域主线可以这样记</h2>
+        <ul>
+          <li>
+            声压
+            <math class="inline-mathml"><mi>p</mi><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi>t</mi><mo>)</mo></math>
+            是空间中的标量场；方向信息藏在
+            <math class="inline-mathml"><mo>∇</mo><mi>p</mi></math>
+            里。
+          </li>
+          <li>
+            质点振速
+            <math class="inline-mathml"><mi mathvariant="bold">U</mi></math>
+            是声压空间梯度通过牛顿第二定律产生的物理速度。
+          </li>
+          <li>
+            球面波给出
+            <math class="inline-mathml"><msub><mi>U</mi><mi>r</mi></msub><mo>=</mo><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac><mo>(</mo><mn>1</mn><mo>+</mo><mfrac><mn>1</mn><mrow><mi>j</mi><mi>k</mi><mi>r</mi></mrow></mfrac><mo>)</mo></math>；
+            远场退化为
+            <math class="inline-mathml"><msub><mi>U</mi><mi>r</mi></msub><mo>≈</mo><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac></math>。
+          </li>
+          <li>
+            双麦差分是空间微分的离散实现；小间距下方向响应是
+            <math class="inline-mathml"><mi>cos</mi><mi>θ</mi></math>
+            ，即 8 字形。
+          </li>
+          <li>
+            三个独立方向的一阶空间特征引出三维声矢量与 FoA；更高阶空间结构就是 HOA。
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="chapter-footer"><span>AUDIO AI / SPATIAL ACOUSTIC FEATURES</span><a href="../../session/sound-physics-sampling-spectrum/">回到声音物理与多域导览</a></footer>
+    <script src="../../assets/js/theme.js"></script>
+    <script>
+      (() => {
+        const svg = document.querySelector("[data-dipole-animation]");
+        if (!svg) return;
+
+        const incidentDirection = svg.querySelector("[data-incident-direction]");
+        const responseVector = svg.querySelector("[data-response-vector]");
+        const responseDot = svg.querySelector("[data-response-dot]");
+        const responseReadout = svg.querySelector("[data-response-readout]");
+        const centerX = 210;
+        const centerY = 120;
+        const maximumRadius = 180;
+        const period = 12000;
+
+        function render(thetaDegrees) {
+          const theta = thetaDegrees * Math.PI / 180;
+          const signedResponse = Math.cos(theta);
+          const radius = maximumRadius * Math.abs(signedResponse);
+          const x = centerX + radius * Math.cos(theta);
+          const y = centerY - radius * Math.sin(theta);
+          const polarity = signedResponse < 0 ? "negative" : "positive";
+
+          incidentDirection.setAttribute("transform", `rotate(${-thetaDegrees} ${centerX} ${centerY})`);
+          responseVector.setAttribute("x2", x.toFixed(3));
+          responseVector.setAttribute("y2", y.toFixed(3));
+          responseVector.dataset.polarity = polarity;
+          responseDot.setAttribute("cx", x.toFixed(3));
+          responseDot.setAttribute("cy", y.toFixed(3));
+          responseDot.dataset.polarity = polarity;
+          responseReadout.textContent = `θ = ${Math.round(thetaDegrees)}°　归一化有符号响应 = ${signedResponse >= 0 ? "+" : ""}${signedResponse.toFixed(2)}`;
+        }
+
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reducedMotion) {
+          render(35);
+          return;
+        }
+
+        const start = performance.now();
+        let visible = true;
+        let previousFrame = 0;
+        if ("IntersectionObserver" in window) {
+          const observer = new IntersectionObserver((entries) => {
+            visible = entries[0]?.isIntersecting ?? true;
+          }, { rootMargin: "120px" });
+          observer.observe(svg);
+        }
+
+        function animate(now) {
+          if (visible && now - previousFrame >= 33) {
+            render(((now - start) % period) / period * 360);
+            previousFrame = now;
+          }
+          requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+      })();
+
+      (() => {
+        const root = document.querySelector("[data-hoa-visualizer]");
+        if (!root) return;
+
+        const canvas = root.querySelector("[data-hoa-canvas]");
+        const context = canvas.getContext("2d");
+        const orderSelect = root.querySelector("[data-hoa-order]");
+        const modeSelect = root.querySelector("[data-hoa-mode]");
+        const toggle = root.querySelector("[data-hoa-toggle]");
+        const currentOrder = root.querySelectorAll("[data-hoa-current-n]");
+        const currentMode = root.querySelectorAll("[data-hoa-current-m]");
+        const description = root.querySelector("[data-hoa-description]");
+        if (!context || !orderSelect || !modeSelect || !toggle) return;
+
+        const modesByOrder = {
+          1: [-1, 0, 1],
+          2: [-2, -1, 0, 1, 2],
+          3: [-3, -2, -1, 0, 1, 2, 3],
+        };
+        const descriptions = {
+          1: "1 阶基函数只有一条节点平面，因此呈现两个相反符号的瓣。",
+          2: "2 阶出现更多节点，形成环形或四瓣结构，可以描述更细的角度变化。",
+          3: "3 阶进一步增加节点与瓣数，能表达比 1、2 阶更精细的球面方向结构。",
+        };
+        const squareRoot3 = Math.sqrt(3);
+        const squareRoot15 = Math.sqrt(15);
+        const squareRoot3Over8 = Math.sqrt(3 / 8);
+        const squareRoot5Over8 = Math.sqrt(5 / 8);
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let order = Number(orderSelect.value);
+        let mode = Number(modeSelect.value);
+        let mesh = null;
+        let rotation = 0.45;
+        let paused = reducedMotion;
+        let visible = true;
+        let previousTime = performance.now();
+        let previousRenderTime = 0;
+
+        function realSphericalHarmonic(n, m, x, y, z) {
+          if (n === 1) {
+            if (m === -1) return y;
+            if (m === 0) return z;
+            return x;
+          }
+
+          if (n === 2) {
+            if (m === -2) return squareRoot3 * x * y;
+            if (m === -1) return squareRoot3 * y * z;
+            if (m === 0) return 0.5 * (3 * z * z - 1);
+            if (m === 1) return squareRoot3 * x * z;
+            return 0.5 * squareRoot3 * (x * x - y * y);
+          }
+
+          if (m === -3) return squareRoot5Over8 * y * (3 * x * x - y * y);
+          if (m === -2) return squareRoot15 * x * y * z;
+          if (m === -1) return squareRoot3Over8 * y * (5 * z * z - 1);
+          if (m === 0) return 0.5 * z * (5 * z * z - 3);
+          if (m === 1) return squareRoot3Over8 * x * (5 * z * z - 1);
+          if (m === 2) return 0.5 * squareRoot15 * z * (x * x - y * y);
+          return squareRoot5Over8 * x * (x * x - 3 * y * y);
+        }
+
+        function buildMesh() {
+          const latitudeSteps = 14;
+          const longitudeSteps = 28;
+          const samples = [];
+          let maximum = 0;
+
+          for (let latitudeIndex = 0; latitudeIndex <= latitudeSteps; latitudeIndex += 1) {
+            const elevation = -Math.PI / 2 + Math.PI * latitudeIndex / latitudeSteps;
+            const cosElevation = Math.cos(elevation);
+            const z = Math.sin(elevation);
+
+            for (let longitudeIndex = 0; longitudeIndex < longitudeSteps; longitudeIndex += 1) {
+              const azimuth = 2 * Math.PI * longitudeIndex / longitudeSteps;
+              const x = cosElevation * Math.cos(azimuth);
+              const y = cosElevation * Math.sin(azimuth);
+              const value = realSphericalHarmonic(order, mode, x, y, z);
+              maximum = Math.max(maximum, Math.abs(value));
+              samples.push({ x, y, z, value });
+            }
+          }
+
+          const safeMaximum = maximum || 1;
+          const vertices = samples.map((sample) => {
+            const radius = Math.abs(sample.value) / safeMaximum;
+            return {
+              x: sample.x * radius,
+              y: sample.y * radius,
+              z: sample.z * radius,
+              value: sample.value,
+            };
+          });
+          const triangles = [];
+
+          for (let latitudeIndex = 0; latitudeIndex < latitudeSteps; latitudeIndex += 1) {
+            for (let longitudeIndex = 0; longitudeIndex < longitudeSteps; longitudeIndex += 1) {
+              const nextLongitude = (longitudeIndex + 1) % longitudeSteps;
+              const a = latitudeIndex * longitudeSteps + longitudeIndex;
+              const b = latitudeIndex * longitudeSteps + nextLongitude;
+              const c = (latitudeIndex + 1) * longitudeSteps + longitudeIndex;
+              const d = (latitudeIndex + 1) * longitudeSteps + nextLongitude;
+              triangles.push([a, c, d], [a, d, b]);
+            }
+          }
+
+          return { vertices, triangles };
+        }
+
+        function rotatePoint(point, yaw, pitch) {
+          const cosYaw = Math.cos(yaw);
+          const sinYaw = Math.sin(yaw);
+          const x = point.x * cosYaw - point.y * sinYaw;
+          const horizontalDepth = point.x * sinYaw + point.y * cosYaw;
+          const cosPitch = Math.cos(pitch);
+          const sinPitch = Math.sin(pitch);
+          return {
+            x,
+            y: point.z * cosPitch - horizontalDepth * sinPitch,
+            z: horizontalDepth * cosPitch + point.z * sinPitch,
+          };
+        }
+
+        function projectPoint(point, width, height, scale) {
+          const cameraDistance = 3.5;
+          const perspective = cameraDistance / (cameraDistance - point.z);
+          return {
+            x: width / 2 + point.x * scale * perspective,
+            y: height / 2 - point.y * scale * perspective,
+            z: point.z,
+          };
+        }
+
+        function palette() {
+          const light = document.documentElement.dataset.theme === "light";
+          return light
+            ? {
+                positive: "#087b78",
+                negative: "#8f6500",
+                axis: "rgba(16, 25, 27, 0.38)",
+                axisText: "#516466",
+                guide: "rgba(8, 123, 120, 0.20)",
+              }
+            : {
+                positive: "#69eee3",
+                negative: "#f4c965",
+                axis: "rgba(245, 241, 233, 0.34)",
+                axisText: "#9fb1b0",
+                guide: "rgba(105, 238, 227, 0.18)",
+              };
+        }
+
+        function resizeCanvas() {
+          const rectangle = canvas.getBoundingClientRect();
+          const width = Math.max(1, rectangle.width);
+          const height = Math.max(1, rectangle.height);
+          const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+          const backingWidth = Math.round(width * pixelRatio);
+          const backingHeight = Math.round(height * pixelRatio);
+
+          if (canvas.width !== backingWidth || canvas.height !== backingHeight) {
+            canvas.width = backingWidth;
+            canvas.height = backingHeight;
+          }
+          context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+          return { width, height };
+        }
+
+        function drawGuideCircle(axis, width, height, scale, pitch, colors) {
+          context.beginPath();
+          for (let index = 0; index <= 72; index += 1) {
+            const angle = 2 * Math.PI * index / 72;
+            const point = axis === "xy"
+              ? { x: Math.cos(angle), y: Math.sin(angle), z: 0 }
+              : axis === "xz"
+                ? { x: Math.cos(angle), y: 0, z: Math.sin(angle) }
+                : { x: 0, y: Math.cos(angle), z: Math.sin(angle) };
+            const projected = projectPoint(rotatePoint(point, rotation, pitch), width, height, scale);
+            if (index === 0) context.moveTo(projected.x, projected.y);
+            else context.lineTo(projected.x, projected.y);
+          }
+          context.strokeStyle = colors.guide;
+          context.lineWidth = 1;
+          context.setLineDash([4, 6]);
+          context.stroke();
+          context.setLineDash([]);
+        }
+
+        function drawAxes(width, height, scale, pitch, colors) {
+          const origin = projectPoint(rotatePoint({ x: 0, y: 0, z: 0 }, rotation, pitch), width, height, scale);
+          const axes = [
+            { label: "x", point: { x: 1.18, y: 0, z: 0 } },
+            { label: "y", point: { x: 0, y: 1.18, z: 0 } },
+            { label: "z", point: { x: 0, y: 0, z: 1.18 } },
+          ];
+
+          context.lineWidth = 1.4;
+          context.font = '600 13px Inter, "Microsoft YaHei", sans-serif';
+          context.textAlign = "center";
+          context.textBaseline = "middle";
+
+          axes.forEach((axis) => {
+            const end = projectPoint(rotatePoint(axis.point, rotation, pitch), width, height, scale);
+            context.beginPath();
+            context.moveTo(origin.x, origin.y);
+            context.lineTo(end.x, end.y);
+            context.strokeStyle = colors.axis;
+            context.stroke();
+            context.fillStyle = colors.axisText;
+            context.fillText(axis.label, end.x, end.y);
+          });
+
+          context.beginPath();
+          context.arc(origin.x, origin.y, 3, 0, 2 * Math.PI);
+          context.fillStyle = colors.axisText;
+          context.fill();
+        }
+
+        function render() {
+          if (!mesh) return;
+          const { width, height } = resizeCanvas();
+          const scale = Math.min(width, height) * 0.34;
+          const pitch = 0.48;
+          const colors = palette();
+          context.clearRect(0, 0, width, height);
+
+          drawGuideCircle("xy", width, height, scale, pitch, colors);
+          drawGuideCircle("xz", width, height, scale, pitch, colors);
+          drawGuideCircle("yz", width, height, scale, pitch, colors);
+
+          const projectedVertices = mesh.vertices.map((vertex) => {
+            const rotated = rotatePoint(vertex, rotation, pitch);
+            const projected = projectPoint(rotated, width, height, scale);
+            return { ...projected, value: vertex.value };
+          });
+          const projectedTriangles = mesh.triangles.map((indices) => {
+            const points = indices.map((index) => projectedVertices[index]);
+            return {
+              points,
+              depth: (points[0].z + points[1].z + points[2].z) / 3,
+              value: (points[0].value + points[1].value + points[2].value) / 3,
+            };
+          }).sort((first, second) => first.depth - second.depth);
+
+          projectedTriangles.forEach((triangle) => {
+            const color = triangle.value < 0 ? colors.negative : colors.positive;
+            const depthLight = Math.max(0, Math.min(1, (triangle.depth + 1.1) / 2.2));
+            context.beginPath();
+            context.moveTo(triangle.points[0].x, triangle.points[0].y);
+            context.lineTo(triangle.points[1].x, triangle.points[1].y);
+            context.lineTo(triangle.points[2].x, triangle.points[2].y);
+            context.closePath();
+            context.globalAlpha = 0.18 + depthLight * 0.28;
+            context.fillStyle = color;
+            context.fill();
+            context.globalAlpha = 0.22 + depthLight * 0.22;
+            context.strokeStyle = color;
+            context.lineWidth = 0.65;
+            context.stroke();
+          });
+          context.globalAlpha = 1;
+          drawAxes(width, height, scale, pitch, colors);
+        }
+
+        function formattedMode(value) {
+          return value < 0 ? `−${Math.abs(value)}` : String(value);
+        }
+
+        function updateReadout() {
+          const formatted = formattedMode(mode);
+          currentOrder.forEach((element) => { element.textContent = String(order); });
+          currentMode.forEach((element) => { element.textContent = formatted; });
+          description.textContent = descriptions[order];
+          canvas.setAttribute("aria-label", `${order} 阶 m 等于 ${mode} 的实球谐基函数三维旋转图`);
+        }
+
+        function updateSelection() {
+          order = Number(orderSelect.value);
+          mode = Number(modeSelect.value);
+          mesh = buildMesh();
+          updateReadout();
+          render();
+        }
+
+        function populateModes() {
+          order = Number(orderSelect.value);
+          modeSelect.replaceChildren();
+          modesByOrder[order].forEach((value) => {
+            const option = document.createElement("option");
+            option.value = String(value);
+            option.textContent = `m = ${formattedMode(value)}`;
+            if (value === 0) option.selected = true;
+            modeSelect.append(option);
+          });
+          updateSelection();
+        }
+
+        orderSelect.addEventListener("change", populateModes);
+        modeSelect.addEventListener("change", updateSelection);
+        toggle.addEventListener("click", () => {
+          paused = !paused;
+          toggle.textContent = paused ? "继续旋转" : "暂停旋转";
+          toggle.setAttribute("aria-pressed", String(paused));
+        });
+
+        if (reducedMotion) {
+          toggle.textContent = "开始旋转";
+          toggle.setAttribute("aria-pressed", "true");
+        }
+
+        if ("IntersectionObserver" in window) {
+          const observer = new IntersectionObserver((entries) => {
+            visible = entries[0]?.isIntersecting ?? true;
+          }, { rootMargin: "120px" });
+          observer.observe(canvas);
+        }
+
+        let resizeFrame = 0;
+        window.addEventListener("resize", () => {
+          cancelAnimationFrame(resizeFrame);
+          resizeFrame = requestAnimationFrame(() => { render(); });
+        }, { passive: true });
+
+        const themeObserver = new MutationObserver(() => { render(); });
+        themeObserver.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        });
+
+        mesh = buildMesh();
+        updateReadout();
+        render();
+
+        function animateHoa(now) {
+          const elapsed = Math.min(64, now - previousTime);
+          previousTime = now;
+          if (!paused) rotation += elapsed * 0.00023;
+          if (visible && !paused && now - previousRenderTime >= 33) {
+            render();
+            previousRenderTime = now;
+          }
+          requestAnimationFrame(animateHoa);
+        }
+        requestAnimationFrame(animateHoa);
+      })();
+    </script>
+  </body>
+</html>
