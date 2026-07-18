@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 音高、音色与符号音频</title>
+    <meta name="description" content="从音高、十二平均律、MIDI、缺失基频到音色与合成听辨，理解频率关系如何变成音乐和声音表示。" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-7" />
+  </head>
+  <body class="chapter-page lecture-page courseware-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../session/auditory-psychoacoustics-route/">WEEK3 导览</a>
+        <a href="../auditory-system-psychoacoustics/">心理声学</a>
+        <a href="../audio-feature-representations/">音频特征</a>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#pitch">音高</a>
+        <a href="#equal-temperament">十二平均律</a>
+        <a href="#missing-fundamental">缺失基频</a>
+        <a href="#timbre">音色</a>
+        <a href="#synthesis-practice">合成听辨</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section class="chapter-hero lecture-hero" id="overview">
+        <div>
+          <p class="chapter-code">DRAFT CHAPTER / WEEK3 SOURCE</p>
+          <h1>音高、音色与<br /><span>符号音频</span></h1>
+          <p class="chapter-lead">
+            WEEK3 源课件里的音高和音色已经从听觉系统转向“频率关系如何被组织成音乐和合成控制”。
+            因此这里单独成章，保留十二平均律、MIDI、缺失基频和谐波音色的互动听辨。
+          </p>
+        </div>
+        <aside class="brief-card">
+          <span class="card-label">本章转换</span>
+          <p><strong>输入</strong>：基频、谐波、包络和频率比例。</p>
+          <p><strong>表示</strong>：音高、音色、半音、MIDI。</p>
+          <p><strong>实践</strong>：播放与画布观察同音高不同音色。</p>
+        </aside>
+      </section>
+
+      <section class="chapter-block" id="pitch">
+        <div class="section-heading">
+          <p>PITCH</p>
+          <h2>音高：频率相关，但不等于频率</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>把频率关系听成“高低”</h3>
+            <p>
+              源课件使用基频、谐波数量和缺失基频开关，让学生看到：音高依赖周期与谐波组织，
+              但听到的音高不一定等于某个单独频率成分。
+            </p>
+            <div class="cw-control-row">
+              <label>相对 A4 的半音距离 <b id="semitoneText">0</b>
+                <input id="semitoneFromA4" data-pitch-control type="range" min="-12" max="24" step="1" value="0" />
+              </label>
+              <label>谐波数量 <b id="harmonicCountText">5</b>
+                <input id="pitchHarmonics" data-pitch-control type="range" min="1" max="10" step="1" value="5" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <canvas id="pitchCanvas" class="cw-canvas" aria-label="音高示例的波形与谐波谱图"></canvas>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="pianoFreqText">440.00 Hz</strong><span>十二平均律频率</span></p>
+              <p class="cw-metric"><strong id="midiNoteText">MIDI 69</strong><span>符号音频编号</span></p>
+              <p class="cw-metric"><strong id="pianoNoteText">A4</strong><span>当前琴键</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="equal-temperament">
+        <div class="section-heading">
+          <p>LOG FREQUENCY</p>
+          <h2>十二平均律与 MIDI：把比例变成符号</h2>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>八度</h3>
+            <p>频率乘以 2，对应升高一个八度。这个比例关系比绝对 Hz 更接近音乐组织。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>半音</h3>
+            <p>十二平均律把一个八度分成 12 个相等比例的半音，每一步频率比为 2 的 1/12 次方。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>MIDI</h3>
+            <p>MIDI 把音名和频率关系映射为整数编号，便于合成器和机器表示使用。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="missing-fundamental">
+        <div class="section-heading">
+          <p>MISSING FUNDAMENTAL</p>
+          <h2>缺失基频：听见的音高可能来自谐波组织</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>去掉 H1 再听</h3>
+            <p>
+              打开缺失基频后，画布会压低 H1，并保留高阶谐波。这个观察来自源课件的 pitch 实验：
+              音高判断可以来自周期结构，而不只是某一个频谱峰。
+            </p>
+            <label class="cw-chip"><input id="missingFundamental" type="checkbox" /> 缺失基频，只播放高阶谐波</label>
+            <div class="cw-button-row">
+              <button id="playPitch" type="button">播放当前音高示例</button>
+            </div>
+          </article>
+          <article class="cw-card">
+            <h3>课堂检查</h3>
+            <p>如果 H1 不在信号里，但 H2、H3、H4 仍然形成规则间隔，人耳仍可能听到对应的基频音高。</p>
+            <p class="cw-note">这是音高感知与频谱表示之间很适合讨论的分岔点。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="timbre">
+        <div class="section-heading">
+          <p>TIMBRE</p>
+          <h2>音色：同一音高为什么听起来不像同一种声音</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>谐波能量与起音包络</h3>
+            <p>
+              源课件的音色实验通过 H1-H5 能量和起音速度控制，让学生比较“同一音高，不同频谱包络和时间包络”的听感差异。
+            </p>
+            <div class="cw-control-row">
+              <label>H1 <b id="h1Text">100%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="100" /></label>
+              <label>H2 <b id="h2Text">40%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="40" /></label>
+              <label>H3 <b id="h3Text">20%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="20" /></label>
+              <label>H4 <b id="h4Text">10%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="10" /></label>
+              <label>H5 <b id="h5Text">5%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="5" /></label>
+              <label>起音速度 <b id="attackText">30 ms</b><input id="attackMs" data-timbre-control type="range" min="5" max="220" value="30" /></label>
+            </div>
+            <div class="cw-button-row">
+              <button id="playTimbre" type="button">播放当前音色</button>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <canvas id="timbreCanvas" class="cw-canvas" aria-label="音色示例的波形、包络与谐波谱图"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="synthesis-practice">
+        <div class="section-heading">
+          <p>PRACTICE</p>
+          <h2>合成听辨：把参数变化听出来</h2>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>先看图</h3>
+            <p>观察波形周期、谐波柱状图和包络形状，先预测声音会变高、变暗、变亮还是变硬。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>再播放</h3>
+            <p>使用浏览器音频播放当前设置。第一次播放需要用户点击，符合浏览器自动播放策略。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>再解释</h3>
+            <p>把“听起来像什么”落回基频、谐波和包络，而不是只停留在形容词。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip" id="route">
+        <p class="card-label">学习路线</p>
+        <h2>从心理声学拆出，服务后续表示</h2>
+        <p>本章仍属于 WEEK3 源课件的内容，但它的对象已经转向音乐/符号/合成表示，适合被后续多次复用。</p>
+        <div class="cw-route-row">
+          <a href="../../session/auditory-psychoacoustics-route/">回到 WEEK3 导览</a>
+          <a href="../auditory-system-psychoacoustics/">回到听觉系统与心理声学</a>
+          <a href="../audio-feature-representations/">进入音频特征表示</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/week3-week4-courseware.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>

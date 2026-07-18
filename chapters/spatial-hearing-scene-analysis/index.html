@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 空间听觉与场景组织</title>
+    <meta name="description" content="从 ITD/ILD、HRTF、IACC、优先效应到听觉场景分析，理解人如何把波形组织成方向、空间和对象。" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-7" />
+  </head>
+  <body class="chapter-page lecture-page courseware-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../session/spatial-scene-feature-route/">WEEK4 导览</a>
+        <a href="../audio-feature-representations/">音频特征</a>
+        <a href="../../session/">全部导览</a>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#binaural-cues">ITD/ILD</a>
+        <a href="#hrtf">HRTF</a>
+        <a href="#iacc">IACC</a>
+        <a href="#precedence">优先效应</a>
+        <a href="#scene-analysis">场景组织</a>
+        <a href="#complex-boundaries">复杂边界</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section class="chapter-hero lecture-hero" id="overview">
+        <div>
+          <p class="chapter-code">DRAFT CHAPTER / WEEK4 SOURCE</p>
+          <h1>空间听觉与<br /><span>场景组织</span></h1>
+          <p class="chapter-lead">
+            WEEK4 源课件从一个问题开始：同一条波形，为什么能听出空间和对象？本章保留这个问题，
+            依次组织 ITD/ILD、HRTF、IACC、优先效应和 ASA。
+          </p>
+          <div class="cw-chip-row">
+            <span class="cw-chip">双耳线索</span>
+            <span class="cw-chip">HRTF / SOFA</span>
+            <span class="cw-chip">IACC / 优先效应</span>
+            <span class="cw-chip">Auditory Scene Analysis</span>
+          </div>
+        </div>
+        <aside class="brief-card">
+          <span class="card-label">本章转换</span>
+          <p><strong>输入</strong>：左右耳信号、方向、反射和频谱线索。</p>
+          <p><strong>组织</strong>：定位、外部化、宽度、融合与分组。</p>
+          <p><strong>边界</strong>：个体差异、混响、复杂声和视觉影响。</p>
+        </aside>
+      </section>
+
+      <section class="chapter-block" id="binaural-cues">
+        <div class="section-heading">
+          <p>BINAURAL CUES</p>
+          <h2>ITD 与 ILD 如何给出左右方向</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>时间差与强度差</h3>
+            <p>
+              源课件用方位角和频率滑块观察双耳线索。低频下到达时间差更稳定，高频下头影导致的强度差更明显。
+            </p>
+            <div class="cw-control-row">
+              <label>声源方位角 <b id="azimuthText">35°</b>
+                <input id="azimuth" data-spatial-control type="range" min="-80" max="80" step="1" value="35" />
+              </label>
+              <label>频率 <b id="cueFreqText">1000 Hz</b>
+                <input id="cueFreq" data-spatial-control type="range" min="125" max="8000" step="25" value="1000" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="binauralDiagram" class="cw-visual" data-label="声源方位与双耳时间差、强度差示意"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="itdReadout">0.36 ms</strong><span>估计 ITD</span></p>
+              <p class="cw-metric"><strong id="ildReadout">4.1 dB</strong><span>估计 ILD</span></p>
+              <p class="cw-metric"><strong id="dominantCue">ITD + ILD</strong><span>当前更可用的定位线索</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="hrtf">
+        <div class="section-heading">
+          <p>HRTF</p>
+          <h2>耳廓、耳道与个性化空间音频</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>方向相关谱线索</h3>
+            <p>
+              HRTF 把方向、仰角和个体耳廓差异变成左右耳频响。这里用课程配色重绘源课件中的 HRTF 谱线索示意。
+            </p>
+            <div class="cw-control-row">
+              <label>虚拟方位 <b id="hrtfAzText">35°</b>
+                <input id="hrtfAz" data-spatial-control type="range" min="-90" max="90" step="5" value="35" />
+              </label>
+              <label>仰角 <b id="hrtfElevText">25°</b>
+                <input id="hrtfElev" data-spatial-control type="range" min="-40" max="70" step="5" value="25" />
+              </label>
+              <label>个体差异 <b id="listenerText">listener B</b>
+                <input id="listener" data-spatial-control type="range" min="0" max="3" step="1" value="1" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="hrtfDiagram" class="cw-visual" data-label="方向和个体差异引起的 HRTF 频谱变化"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="notchReadout">7.2 kHz</strong><span>耳廓谱凹陷位置</span></p>
+              <p class="cw-metric"><strong id="externalReadout">中等外部化</strong><span>个体匹配度提示</span></p>
+              <p class="cw-metric"><strong>SOFA</strong><span>HRTF 数据交换格式</span></p>
+            </div>
+          </div>
+        </div>
+        <section class="cw-card" id="hrtf-data">
+          <h3>SOFA 与开放 HRTF 数据集</h3>
+          <p>
+            源课件把 SOFA 和数据集放在 HRTF 后面，作为工程案例。本章第一版先保留关系：HRTF 不只是概念，
+            还会以数据格式和测量库进入空间音频渲染。
+          </p>
+        </section>
+      </section>
+
+      <section class="chapter-block" id="iacc">
+        <div class="section-heading">
+          <p>IACC</p>
+          <h2>双耳相关性如何影响声像宽度和空间感</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>相关性与宽度</h3>
+            <p>
+              左右耳信号越相似，声像越容易集中；相关性降低时，空间包围感和宽度增强，但定位清晰度可能下降。
+            </p>
+            <label>左右耳相关性 <b id="iaccText">0.55</b>
+              <input id="iaccValue" data-spatial-control type="range" min="0" max="1" step="0.01" value="0.55" />
+            </label>
+          </article>
+          <div class="cw-panel">
+            <canvas id="iaccCanvas" class="cw-canvas" aria-label="左右耳波形相关性和声像宽度示意"></canvas>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="widthReadout">中等宽度</strong><span>声像宽度</span></p>
+              <p class="cw-metric"><strong id="envelopmentReadout">有空间包围</strong><span>包围感</span></p>
+              <p class="cw-metric"><strong>IACC</strong><span>双耳相似度指标</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="precedence">
+        <div class="section-heading">
+          <p>PRECEDENCE EFFECT</p>
+          <h2>有反射时为什么定位仍然稳定</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>直达声与反射</h3>
+            <p>
+              源课件用反射延迟展示优先效应：短延迟时事件融合，中等延迟时定位主要由先到达声主导，
+              延迟更长时可能分裂成回声。
+            </p>
+            <label>反射延迟 <b id="echoDelayText">18 ms</b>
+              <input id="echoDelay" data-spatial-control type="range" min="0" max="80" step="1" value="18" />
+            </label>
+          </article>
+          <div class="cw-panel">
+            <div id="precedenceDiagram" class="cw-visual" data-label="直达声与反射延迟时间线"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="fusionReadout">融合，定位由先到达声主导</strong><span>听觉组织状态</span></p>
+              <p class="cw-metric"><strong>反射</strong><span>增强房间感，也可能形成回声</span></p>
+              <p class="cw-metric"><strong>边界</strong><span>延迟和强度共同决定听感</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="scene-analysis">
+        <div class="section-heading">
+          <p>AUDITORY SCENE ANALYSIS</p>
+          <h2>混合声如何被组织成对象</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>分组线索</h3>
+            <p>源课件用四个复选框表示空间一致、同步起音、音色相似、共同变化。线索越一致，越容易形成稳定对象。</p>
+            <div class="cw-control-row">
+              <label class="cw-chip"><input data-asa-cue data-spatial-control type="checkbox" checked /> 空间一致</label>
+              <label class="cw-chip"><input data-asa-cue data-spatial-control type="checkbox" checked /> 同步起音</label>
+              <label class="cw-chip"><input data-asa-cue data-spatial-control type="checkbox" /> 音色相似</label>
+              <label class="cw-chip"><input data-asa-cue data-spatial-control type="checkbox" /> 共同变化</label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="asaDiagram" class="cw-visual" data-label="听觉场景分析中的频率成分分组示意"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="asaCount">2 条音流</strong><span>感知对象数量估计</span></p>
+              <p class="cw-metric"><strong id="asaConfidence">较稳定</strong><span>分组稳定性</span></p>
+              <p class="cw-metric"><strong>ASA</strong><span>人类机制与机器任务的桥</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="complex-boundaries">
+        <div class="section-heading">
+          <p>BOUNDARIES</p>
+          <h2>复杂声音、距离感知与视觉影响</h2>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>复杂声侧向化</h3>
+            <p>宽带、瞬态和谐波结构会共同影响左右定位，不一定能用单频线索解释。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>距离感知</h3>
+            <p>距离判断依赖声级、直混比、频谱变化和经验，不只是“更响更近”。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>视觉影响</h3>
+            <p>看见的声源位置会改变听觉定位判断，空间听觉不是孤立通道。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip" id="route">
+        <p class="card-label">学习路线</p>
+        <h2>本章承接 WEEK4 的空间与场景组织部分</h2>
+        <p>机器特征表示已从源课件 `#features` 拆出为独立 Chapter，避免把“人怎么组织声音”和“机器怎么取特征”混在同一页里。</p>
+        <div class="cw-route-row">
+          <a href="../../session/spatial-scene-feature-route/">回到 WEEK4 导览</a>
+          <a href="../audio-feature-representations/">进入音频特征表示</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/week3-week4-courseware.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>

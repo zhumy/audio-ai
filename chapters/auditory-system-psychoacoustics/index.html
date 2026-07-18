@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 听觉系统与心理声学基础</title>
+    <meta name="description" content="从外耳、中耳、内耳到听阈、响度、临界频带与掩蔽，理解声音如何被人耳组织成可听经验。" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-7" />
+  </head>
+  <body class="chapter-page lecture-page courseware-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../session/auditory-psychoacoustics-route/">WEEK3 导览</a>
+        <a href="../pitch-timbre-symbolic-audio/">音高音色</a>
+        <a href="../../session/">全部导览</a>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#auditory-chain">外中内耳</a>
+        <a href="#cochlear-map">耳蜗频率</a>
+        <a href="#thresholds-health">听阈健康</a>
+        <a href="#loudness">响度</a>
+        <a href="#critical-bands">临界频带</a>
+        <a href="#masking-mp3">掩蔽 MP3</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section class="chapter-hero lecture-hero" id="overview">
+        <div>
+          <p class="chapter-code">DRAFT CHAPTER / WEEK3 SOURCE</p>
+          <h1>听觉系统与<br /><span>心理声学基础</span></h1>
+          <p class="chapter-lead">
+            声音进入耳朵后并不是被动记录。外耳、中耳和内耳会改变声波，耳蜗把频率映射到位置，听阈、响度、
+            临界频带和掩蔽决定哪些声音容易被听见、区分或忽略。
+          </p>
+          <div class="cw-chip-row" aria-label="本章关键词">
+            <span class="cw-chip">外耳 / 中耳 / 内耳</span>
+            <span class="cw-chip">耳蜗频率地图</span>
+            <span class="cw-chip">听阈与响度</span>
+            <span class="cw-chip">临界频带与掩蔽</span>
+          </div>
+        </div>
+        <aside class="brief-card">
+          <span class="card-label">本章转换</span>
+          <p><strong>声音输入</strong>：频率、声级、频谱和时间变化。</p>
+          <p><strong>听觉加工</strong>：外中内耳与心理声学约束。</p>
+          <p><strong>后续用途</strong>：音高音色、感知编码与机器特征。</p>
+        </aside>
+      </section>
+
+      <section class="chapter-block" id="auditory-chain">
+        <div class="section-heading">
+          <p>AUDITORY CHAIN</p>
+          <h2>外耳、中耳、内耳：声音进入听觉系统的整体路径</h2>
+        </div>
+        <div class="cw-grid">
+          <article class="cw-card">
+            <h3>不是被动麦克风</h3>
+            <p>
+              WEEK3 源课件的第一条主线是：耳朵不是把空气压力原样交给大脑。耳廓和耳道改变方向相关频谱，
+              中耳把鼓膜振动传给卵圆窗，内耳再把机械振动转成神经活动。
+            </p>
+            <ul>
+              <li>外耳：收集声波并引入方向相关滤波。</li>
+              <li>中耳：鼓膜和听小骨完成机械耦合与阻抗匹配。</li>
+              <li>内耳：耳蜗基底膜把频率组织成空间位置。</li>
+            </ul>
+          </article>
+          <figure class="cw-figure">
+            <img src="media/outer-middle-inner-ear.png" alt="外耳、中耳、内耳整体构造图，标出耳廓、外耳道、鼓膜、听小骨、耳蜗和听神经" />
+            <figcaption>源课件中的外中内耳整体结构图。发布前需要补齐图片来源和授权信息。</figcaption>
+          </figure>
+        </div>
+        <div class="cw-media-grid" aria-label="外耳、中耳、耳蜗材料">
+          <figure class="cw-figure">
+            <img src="media/pinna.jpg" alt="耳廓结构图，显示耳廓褶皱与外耳入口" />
+            <figcaption>外耳：耳廓形状让不同方向的声音具有不同谱线索。</figcaption>
+          </figure>
+          <figure class="cw-figure">
+            <img src="media/middle-ear.png" alt="中耳结构图，显示鼓膜、锤骨、砧骨、镫骨、卵圆窗和杠杆作用" />
+            <figcaption>中耳：鼓膜、听小骨和卵圆窗连接空气振动与内耳液体振动。</figcaption>
+          </figure>
+          <figure class="cw-figure">
+            <img src="media/cochlea-frequency.jpg" alt="耳蜗频率分布图，显示低频靠近顶端区域，高频靠近基底区域" />
+            <figcaption>内耳：耳蜗中不同位置对不同频率更敏感。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="cochlear-map">
+        <div class="section-heading">
+          <p>COCHLEAR MAP</p>
+          <h2>耳蜗频率地图：频率变成位置</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>从 Hz 到位置</h3>
+            <p>
+              在源课件中，耳蜗互动图让学生拖动频率并观察基底膜相对位置。这里保留这个动态观察，
+              但用课程统一的青色主轨迹和珊瑚色探针重新绘制。
+            </p>
+            <div class="cw-control-row">
+              <label>输入频率 <b id="cochleaFreqText">1000 Hz</b>
+                <input id="cochleaFreq" data-auditory-control type="range" min="80" max="12000" step="10" value="1000" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="cochleaDiagram" class="cw-visual" data-label="耳蜗位置频率映射图"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="cochleaPlace">约 37%</strong><span>沿基底膜的相对位置</span></p>
+              <p class="cw-metric"><strong id="cochleaMel">1000 mel</strong><span>近似心理声学频率尺度</span></p>
+              <p class="cw-metric"><strong id="cochleaRegion">中频语音敏感区</strong><span>当前位置的教学解释</span></p>
+            </div>
+          </div>
+        </div>
+        <p class="cw-note">这张图是简化教学模型：它帮助建立“频率不是只存在于频谱图上，也对应耳蜗位置”的直觉。</p>
+      </section>
+
+      <section class="chapter-block" id="thresholds-health">
+        <div class="section-heading">
+          <p>THRESHOLD AND HEALTH</p>
+          <h2>听阈、听损与辅听设备：可听性的边界</h2>
+        </div>
+        <div class="cw-grid">
+          <article class="cw-card">
+            <h3>听阈曲线</h3>
+            <p>
+              同样的声压级在不同频率上不一定同样容易被听见。源课件把最小可听、听力测试、audiogram、
+              助听器和人工耳蜗放在一起，用来说明心理声学不是抽象曲线，也会成为健康和设备问题。
+            </p>
+          </article>
+          <figure class="cw-figure">
+            <img src="media/hearing-threshold-curve.png" alt="听阈曲线图，横轴为频率，纵轴为声压级，显示最小可听与高声级边界" />
+            <figcaption>听阈图用于建立“频率相关可听性”的第一印象。</figcaption>
+          </figure>
+        </div>
+        <div class="cw-media-grid">
+          <figure class="cw-figure">
+            <img src="media/hearing-test-room.webp" alt="听力测试环境，显示隔声测试间和听力测试设备" />
+            <figcaption>听力测试需要受控环境。</figcaption>
+          </figure>
+          <figure class="cw-figure">
+            <img src="media/audiogram.jpg" alt="听力图 audiogram 示例，标出不同频率下左右耳听阈和听损程度区域" />
+            <figcaption>Audiogram 把不同频率下的听阈画成诊断线索。</figcaption>
+          </figure>
+          <figure class="cw-figure">
+            <img src="media/cochlear-implant.jpg" alt="人工耳蜗结构示意图，显示体外处理器、植入体、电极阵列和听神经刺激路径" />
+            <figcaption>人工耳蜗展示了从声学到神经刺激的工程边界。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="loudness">
+        <div class="section-heading">
+          <p>LOUDNESS</p>
+          <h2>响度：同一声压不等于同一听感</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>等响曲线的课堂观察</h3>
+            <p>拖动响度级和测试频率，观察达到近似等响需要的声压级如何变化。中高频通常更敏感，低频需要更高声压。</p>
+            <div class="cw-control-row">
+              <label>响度级 <b id="phonText">60 phon</b>
+                <input id="phonLevel" data-auditory-control type="range" min="30" max="90" step="20" value="70" />
+              </label>
+              <label>测试频率 <b id="loudFreqText">1000 Hz</b>
+                <input id="loudFreq" data-auditory-control type="range" min="100" max="10000" step="10" value="1000" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="loudnessDiagram" class="cw-visual" data-label="互动等响曲线图"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="splNeed">60 dB SPL</strong><span>该频率达到近似等响所需声压</span></p>
+              <p class="cw-metric"><strong id="loudBand">中频最敏感</strong><span>当前频率区域解释</span></p>
+              <p class="cw-metric"><strong>phon</strong><span>以 1 kHz 参照的响度级</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="critical-bands">
+        <div class="section-heading">
+          <p>CRITICAL BANDS</p>
+          <h2>临界频带：频谱不是无限精细地被感知</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>ERB 带宽</h3>
+            <p>
+              源课件用中心频率滑块说明：感知上的频率分辨率不是固定 Hz 宽度。中心频率越高，等效矩形带宽通常越宽。
+            </p>
+            <div class="cw-control-row">
+              <label>中心频率 <b id="bandFreqText">1000 Hz</b>
+                <input id="bandFreq" data-auditory-control type="range" min="120" max="8000" step="10" value="1000" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="bandDiagram" class="cw-visual" data-label="临界频带与 ERB 带宽示意"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="bandWidthText">132 Hz</strong><span>近似 ERB 带宽</span></p>
+              <p class="cw-metric"><strong id="bandRangeText">934 - 1066 Hz</strong><span>示意频带范围</span></p>
+              <p class="cw-metric"><strong>感知分辨率</strong><span>相近频率更容易互相影响</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="masking-mp3">
+        <div class="section-heading">
+          <p>MASKING TO MP3</p>
+          <h2>掩蔽：听不见不代表不存在</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>掩蔽声与目标声</h3>
+            <p>
+              当目标声在频率上靠近较强的掩蔽声，并且声级低于简化掩蔽阈值时，它可能存在于信号中但不容易被听见。
+              MP3 的课堂应用点正是把“听不出来”转化成工程能力。
+            </p>
+            <div class="cw-control-row">
+              <label>掩蔽声频率 <b id="maskerFreqText">1000 Hz</b>
+                <input id="maskerFreq" data-auditory-control type="range" min="200" max="6000" step="10" value="1000" />
+              </label>
+              <label>目标声频率 <b id="targetFreqText">1200 Hz</b>
+                <input id="targetFreq" data-auditory-control type="range" min="200" max="6000" step="10" value="1200" />
+              </label>
+              <label>掩蔽声声级 <b id="maskerLevelText">65 dB</b>
+                <input id="maskerLevel" data-auditory-control type="range" min="30" max="90" step="1" value="65" />
+              </label>
+              <label>目标声声级 <b id="targetLevelText">45 dB</b>
+                <input id="targetLevel" data-auditory-control type="range" min="10" max="80" step="1" value="45" />
+              </label>
+            </div>
+            <div class="cw-button-row">
+              <button id="playMaskDemo" type="button">播放掩蔽声</button>
+              <button id="playTargetDemo" type="button">播放目标声</button>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="maskingDiagram" class="cw-visual" data-label="频域掩蔽阈值示意"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="audibleText">可能被掩蔽</strong><span>根据简化阈值模型估计</span></p>
+              <p class="cw-metric"><strong id="distanceText">相距 200 Hz</strong><span>频率距离</span></p>
+              <p class="cw-metric"><strong>MP3</strong><span>心理声学模型的工程应用</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip" id="route">
+        <p class="card-label">学习路线</p>
+        <h2>本章从 WEEK3 源课件拆出，仍处于 draft</h2>
+        <p>
+          课堂路线由 Session 组织；音高、音色和 MIDI 已拆到独立 Chapter，避免心理声学页过长并保留后续复用空间。
+        </p>
+        <div class="cw-route-row">
+          <a href="../../session/auditory-psychoacoustics-route/">回到 WEEK3 导览</a>
+          <a href="../pitch-timbre-symbolic-audio/">进入音高、音色与符号音频</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/week3-week4-courseware.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 音频特征表示</title>
+    <meta name="description" content="从窗长、帧移、Mel 频带数和任务目标理解机器听觉特征表示的选择。" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-7" />
+  </head>
+  <body class="chapter-page lecture-page courseware-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../session/spatial-scene-feature-route/">WEEK4 导览</a>
+        <a href="../spatial-hearing-scene-analysis/">空间听觉</a>
+        <a href="../../session/">全部导览</a>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#human-machine-map">人机映射</a>
+        <a href="#window-hop">窗长帧移</a>
+        <a href="#mel-bands">Mel 频带</a>
+        <a href="#feature-lab">特征实验</a>
+        <a href="#task-fit">任务匹配</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section class="chapter-hero lecture-hero" id="overview">
+        <div>
+          <p class="chapter-code">DRAFT CHAPTER / WEEK4 SOURCE</p>
+          <h1>音频特征<br /><span>表示</span></h1>
+          <p class="chapter-lead">
+            WEEK4 源课件最后从空间与场景回到机器听觉特征表示。本章只承接这一部分：
+            窗长、帧移和 Mel 频带数如何改变模型能看到的信息。
+          </p>
+        </div>
+        <aside class="brief-card">
+          <span class="card-label">本章转换</span>
+          <p><strong>输入</strong>：波形、频谱、听觉频带和空间/场景线索。</p>
+          <p><strong>选择</strong>：窗长、帧移、频带数、任务目标。</p>
+          <p><strong>输出</strong>：给分类/检测等模型使用的特征表示。</p>
+        </aside>
+      </section>
+
+      <section class="chapter-block" id="human-machine-map">
+        <div class="section-heading">
+          <p>HUMAN TO MACHINE</p>
+          <h2>人类机制与机器表示</h2>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>时间结构</h3>
+            <p>瞬态、起音和节奏要求足够好的时间分辨率，窗太长会抹平变化。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>频率结构</h3>
+            <p>谐波、音色和频带能量要求足够好的频率分辨率，窗太短会让频率变粗。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>任务目标</h3>
+            <p>分类、检测、分离和定位关心的信息不同，特征不是越细越好。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="window-hop">
+        <div class="section-heading">
+          <p>FRAME DESIGN</p>
+          <h2>窗长与帧移：把连续声音切成模型可用片段</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>两种分辨率的拉扯</h3>
+            <p>
+              源课件的 feature widget 用窗长和帧移说明特征设计的第一组取舍：短窗保留时间变化，长窗提高频率区分；
+              小帧移保留密集轨迹，但计算量更高。
+            </p>
+            <div class="cw-control-row">
+              <label>窗长 <b id="windowText">25 ms</b>
+                <input id="windowSize" data-feature-control type="range" min="8" max="96" step="1" value="25" />
+              </label>
+              <label>帧移 <b id="hopText">10 ms</b>
+                <input id="hopSize" data-feature-control type="range" min="4" max="40" step="1" value="10" />
+              </label>
+            </div>
+          </article>
+          <article class="cw-card">
+            <h3>学生要带走的判断</h3>
+            <p>不要把 STFT/Mel 图当成固定答案。它是把声音交给机器之前的一次观察尺度选择。</p>
+            <p class="cw-note">第一版先保留源课件的交互直觉，后续再补具体公式和实现细节。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="mel-bands">
+        <div class="section-heading">
+          <p>MEL BANDS</p>
+          <h2>Mel 频带数：压缩频率维度，也改变可见细节</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>频带数不是装饰参数</h3>
+            <p>
+              Mel 频带越少，表示越紧凑但细节更少；频带越多，频率纹理更细，但也可能增加噪声和模型负担。
+            </p>
+            <label>Mel 频带数 <b id="melBandsText">64</b>
+              <input id="melBands" data-feature-control type="range" min="24" max="128" step="4" value="64" />
+            </label>
+          </article>
+          <article class="cw-card">
+            <h3>与听觉的关系</h3>
+            <p>源课件把 Mel 频带放在空间/场景之后，是为了说明机器特征常借用人类听觉尺度，但不会自动等同于人的听觉。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="feature-lab">
+        <div class="section-heading">
+          <p>FEATURE LAB</p>
+          <h2>特征表示切换演示</h2>
+        </div>
+        <div class="cw-panel">
+          <canvas id="featureCanvas" class="cw-canvas" aria-label="音频特征表示示意图"></canvas>
+          <div class="cw-metric-row">
+            <p class="cw-metric"><strong id="timeRes">较好时间分辨率</strong><span>窗长越短越能定位瞬态</span></p>
+            <p class="cw-metric"><strong id="freqRes">中等频率分辨率</strong><span>窗长越长频率分辨率越好</span></p>
+            <p class="cw-metric"><strong id="taskHint">适合分类/检测</strong><span>特征与机器任务的关系</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="task-fit">
+        <div class="section-heading">
+          <p>TASK FIT</p>
+          <h2>任务匹配：模型需要的是合适信息，不是全部信息</h2>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>分类</h3>
+            <p>常关心稳定的频谱纹理、音色和事件形状。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>检测</h3>
+            <p>常关心事件何时出现，时间分辨率不能太差。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>空间/场景</h3>
+            <p>如果任务关心方向或对象分离，单通道 Mel 特征可能丢掉关键线索。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip" id="route">
+        <p class="card-label">学习路线</p>
+        <h2>本章来自 WEEK4 的机器表示收束部分</h2>
+        <p>它和空间听觉/场景组织相连，但知识对象已经变成机器可用的表示选择，所以单独成章。</p>
+        <div class="cw-route-row">
+          <a href="../../session/spatial-scene-feature-route/">回到 WEEK4 导览</a>
+          <a href="../spatial-hearing-scene-analysis/">回到空间听觉与场景组织</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/week3-week4-courseware.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>
