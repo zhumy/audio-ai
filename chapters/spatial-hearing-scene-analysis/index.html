@@ -15,7 +15,7 @@
         AUDIO <b>AI</b>
       </a>
       <nav class="chapter-links" aria-label="课程导航">
-        <a href="../../session/spatial-scene-feature-route/">WEEK4 导览</a>
+        <a href="../../session/spatial-scene-feature-route/">空间场景路线</a>
         <a href="../audio-feature-representations/">音频特征</a>
         <a href="../../session/">全部导览</a>
       </nav>
@@ -35,10 +35,10 @@
 
       <section class="chapter-hero lecture-hero" id="overview">
         <div>
-          <p class="chapter-code">DRAFT CHAPTER / WEEK4 SOURCE</p>
+          <p class="chapter-code">DRAFT CHAPTER / SPATIAL HEARING</p>
           <h1>空间听觉与<br /><span>场景组织</span></h1>
           <p class="chapter-lead">
-            WEEK4 源课件从一个问题开始：同一条波形，为什么能听出空间和对象？本章保留这个问题，
+            本章从一个问题开始：同一条波形，为什么能听出空间和对象？随后把这个问题
             依次组织 ITD/ILD、HRTF、IACC、优先效应和 ASA。
           </p>
           <div class="cw-chip-row">
@@ -65,7 +65,7 @@
           <article class="cw-card">
             <h3>时间差与强度差</h3>
             <p>
-              源课件用方位角和频率滑块观察双耳线索。低频下到达时间差更稳定，高频下头影导致的强度差更明显。
+              方位角和频率滑块用于观察双耳线索：低频下到达时间差更稳定，高频下头影导致的强度差更明显。
             </p>
             <div class="cw-control-row">
               <label>声源方位角 <b id="azimuthText">35°</b>
@@ -96,7 +96,7 @@
           <article class="cw-card">
             <h3>方向相关谱线索</h3>
             <p>
-              HRTF 把方向、仰角和个体耳廓差异变成左右耳频响。这里用课程配色重绘源课件中的 HRTF 谱线索示意。
+              HRTF 把方向、仰角和个体耳廓差异变成左右耳频响。这里用课程配色绘制 HRTF 谱线索示意。
             </p>
             <div class="cw-control-row">
               <label>虚拟方位 <b id="hrtfAzText">35°</b>
@@ -122,7 +122,7 @@
         <section class="cw-card" id="hrtf-data">
           <h3>SOFA 与开放 HRTF 数据集</h3>
           <p>
-            源课件把 SOFA 和数据集放在 HRTF 后面，作为工程案例。本章第一版先保留关系：HRTF 不只是概念，
+            SOFA 和数据集作为工程案例放在 HRTF 后面。本章第一版先保留关系：HRTF 不只是概念，
             还会以数据格式和测量库进入空间音频渲染。
           </p>
         </section>
@@ -163,7 +163,7 @@
           <article class="cw-card">
             <h3>直达声与反射</h3>
             <p>
-              源课件用反射延迟展示优先效应：短延迟时事件融合，中等延迟时定位主要由先到达声主导，
+              反射延迟滑块展示优先效应：短延迟时事件融合，中等延迟时定位主要由先到达声主导，
               延迟更长时可能分裂成回声。
             </p>
             <label>反射延迟 <b id="echoDelayText">18 ms</b>
@@ -189,7 +189,7 @@
         <div class="cw-two">
           <article class="cw-card">
             <h3>分组线索</h3>
-            <p>源课件用四个复选框表示空间一致、同步起音、音色相似、共同变化。线索越一致，越容易形成稳定对象。</p>
+            <p>四个复选框表示空间一致、同步起音、音色相似、共同变化。线索越一致，越容易形成稳定对象。</p>
             <div class="cw-control-row">
               <label class="cw-chip"><input data-asa-cue data-spatial-control type="checkbox" checked /> 空间一致</label>
               <label class="cw-chip"><input data-asa-cue data-spatial-control type="checkbox" checked /> 同步起音</label>
@@ -231,17 +231,17 @@
 
       <section class="chapter-block reading-strip" id="route">
         <p class="card-label">学习路线</p>
-        <h2>本章承接 WEEK4 的空间与场景组织部分</h2>
-        <p>机器特征表示已从源课件 `#features` 拆出为独立 Chapter，避免把“人怎么组织声音”和“机器怎么取特征”混在同一页里。</p>
+        <h2>本章承接空间线索，并把它推进到场景组织</h2>
+        <p>机器特征表示已拆出为独立 Chapter，避免把“人怎么组织声音”和“机器怎么取特征”混在同一页里。</p>
         <div class="cw-route-row">
-          <a href="../../session/spatial-scene-feature-route/">回到 WEEK4 导览</a>
+          <a href="../../session/spatial-scene-feature-route/">回到空间场景路线</a>
           <a href="../audio-feature-representations/">进入音频特征表示</a>
         </div>
       </section>
     </main>
 
     <script src="../../assets/js/theme.js"></script>
-    <script src="../../assets/js/week3-week4-courseware.js"></script>
+    <script src="../../assets/js/perceptual-courseware.js"></script>
     <script src="../../assets/js/analytics-config.js"></script>
     <script src="../../assets/js/analytics.js"></script>
   </body>

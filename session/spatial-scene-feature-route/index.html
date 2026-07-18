@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Audio AI | WEEK4 空间听觉、场景组织与特征导览</title>
-    <meta name="description" content="WEEK4 源课件的学习路线导览：从空间听辨、双耳线索、HRTF/IACC/优先效应到场景组织和音频特征表示。" />
+    <title>Audio AI | 空间听觉、场景组织与机器特征路线</title>
+    <meta name="description" content="空间听觉、场景组织与机器特征路线：组织 ITD/ILD、HRTF、IACC、优先效应、ASA 和音频特征表示之间的学习关系。" />
     <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
     <link rel="stylesheet" href="../../assets/css/route.css?v=20260718-1" />
   </head>
@@ -12,67 +12,69 @@
     <header class="route-header">
       <a class="route-brand" href="../../">AUDIO <strong>AI</strong></a>
       <nav aria-label="课程导航">
-        <a href="../">全部导览</a>
+        <a href="../">全部路线</a>
+        <a href="../../">课程首页</a>
         <a href="../../syllabus/">课程大纲</a>
       </nav>
     </header>
 
-    <nav class="route-dock" aria-label="WEEK4 关系导航" data-session-route-nav>
+    <nav class="route-dock" aria-label="空间场景关系导航" data-session-route-nav>
       <span>关系导航</span>
       <div class="route-dock-links">
         <a href="#overview">全貌</a>
-        <a href="../../chapters/spatial-hearing-scene-analysis/#binaural-cues">ITD/ILD</a>
-        <a href="../../chapters/spatial-hearing-scene-analysis/#hrtf">HRTF</a>
-        <a href="../../chapters/spatial-hearing-scene-analysis/#scene-analysis">ASA</a>
-        <a href="../../chapters/audio-feature-representations/#feature-lab">音频特征</a>
+        <a href="../../chapters/spatial-hearing-scene-analysis/#binaural-cues">当前：ITD/ILD</a>
+        <a href="../../chapters/spatial-hearing-scene-analysis/#hrtf">扩展：HRTF</a>
+        <a href="../../chapters/spatial-hearing-scene-analysis/#scene-analysis">组织：ASA</a>
+        <a href="../../chapters/audio-feature-representations/#feature-lab">用于后续：音频特征</a>
       </div>
     </nav>
 
     <main>
       <section class="route-hero" id="overview">
-        <p class="route-eyebrow">SESSION / WEEK4 SOURCE ROUTE</p>
-        <h1>空间听觉、场景组织<br /><span>如何走向音频特征？</span></h1>
+        <p class="route-eyebrow">SESSION / SPATIAL SCENE ROUTE</p>
+        <h1>同一条波形，<br /><span>为什么能听出空间、对象和任务线索？</span></h1>
         <p>
-          这个 Session 只组织 WEEK4 源课件中的学习路线：先用同一条波形引出空间和对象问题，
-          再进入 ITD/ILD、HRTF、IACC、优先效应和 ASA，最后回到机器听觉特征表示。
+          这条 Session 把“人怎么定位和组织声音”与“机器怎么选择特征”放在同一条路线上：
+          先从双耳时间差和强度差进入空间线索，再扩展到 HRTF、IACC 与反射环境，
+          然后用听觉场景分析解释对象分组，最后落到窗长、帧移和 Mel 频带等机器表示选择。
         </p>
         <div class="session-notice">
-          这里不重讲具体线索和交互。每个关系卡都给出“为什么跳转”，完整解释、图和控件在 Chapter 中。
+          本页只组织关系，不重讲具体线索。每个链接都说明为什么跳转；完整示意图、交互控件和使用边界在 Chapter 中维护。
         </div>
       </section>
 
       <section class="route-section" id="route-map">
         <div class="route-section-heading">
-          <div><p>ROUTE MAP</p><h2>WEEK4 源课件的关系路径</h2></div>
+          <div><p>ROUTE MAP</p><h2>空间与场景这条线适合分三步走</h2></div>
         </div>
         <div class="relation-grid">
           <article class="relation-card">
             <p class="relation-label">当前主题</p>
-            <h3>先建立空间问题</h3>
-            <p>源课件先问“同一条波形，为什么能听出空间和对象”，随后进入双耳定位线索。</p>
+            <h3>先从左右耳差异建立空间问题</h3>
+            <p>空间听觉的入口不是“声源在哪里”的结论，而是两个耳朵接收到的时间、强度和谱形差异。</p>
             <ul>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#overview">进入完整 Chapter：开场问题 <small class="link-preview">从空间与对象的听辨入口开始。</small></a></li>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#binaural-cues">跳到精确锚点：ITD / ILD <small class="link-preview">操作方位角和频率。</small></a></li>
+              <li><a href="../../chapters/spatial-hearing-scene-analysis/#overview">进入 Chapter：空间与对象问题 <small class="link-preview">从听辨入口建立问题。</small></a></li>
+              <li><a href="../../chapters/spatial-hearing-scene-analysis/#binaural-cues">跳到锚点：ITD / ILD <small class="link-preview">操作方位角和频率，观察双耳线索。</small></a></li>
             </ul>
           </article>
           <article class="relation-card">
-            <p class="relation-label">当前主题</p>
-            <h3>再看真实空间线索如何复杂化</h3>
-            <p>HRTF、IACC 和优先效应把空间听觉从左右线索扩展到个体差异、宽度和反射。</p>
+            <p class="relation-label">扩展真实场景</p>
+            <h3>再把定位线索扩展到个体、宽度和反射</h3>
+            <p>真实空间不只提供左右差异，还包含耳廓滤波、双耳相关性、直达声和反射声之间的时间关系。</p>
             <ul>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#hrtf">跳到精确锚点：HRTF <small class="link-preview">观察方向、仰角和个体差异。</small></a></li>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#iacc">跳到精确锚点：IACC <small class="link-preview">操作相关性和声像宽度。</small></a></li>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#precedence">跳到精确锚点：优先效应 <small class="link-preview">操作反射延迟。</small></a></li>
+              <li><a href="../../chapters/spatial-hearing-scene-analysis/#hrtf">跳到锚点：HRTF <small class="link-preview">观察方向、仰角和个体差异。</small></a></li>
+              <li><a href="../../chapters/spatial-hearing-scene-analysis/#iacc">跳到锚点：IACC <small class="link-preview">操作相关性和声像宽度。</small></a></li>
+              <li><a href="../../chapters/spatial-hearing-scene-analysis/#precedence">跳到锚点：优先效应 <small class="link-preview">操作反射延迟。</small></a></li>
             </ul>
           </article>
           <article class="relation-card">
             <p class="relation-label">用于后续</p>
-            <h3>最后从场景组织走向机器特征</h3>
-            <p>源课件最后把 ASA 和特征表示接在一起：听觉组织给机器特征选择提出信息保留问题。</p>
+            <h3>最后从听觉组织走向机器特征</h3>
+            <p>ASA 说明人会把声学线索组织成对象；机器特征则把需要保留的信息转成可计算的时间、频率和感知尺度表示。</p>
             <ul>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#scene-analysis">跳到精确锚点：场景组织 <small class="link-preview">操作 ASA 分组线索。</small></a></li>
-              <li><a href="../../chapters/audio-feature-representations/#overview">进入完整 Chapter：音频特征表示 <small class="link-preview">查看窗长、帧移和 Mel 频带数。</small></a></li>
-              <li><a href="../../chapters/audio-feature-representations/#feature-lab">跳到精确锚点：特征实验 <small class="link-preview">操作特征表示画布。</small></a></li>
+              <li><a href="../../chapters/spatial-hearing-scene-analysis/#scene-analysis">跳到锚点：听觉场景分析 <small class="link-preview">操作空间一致、同步起音、音色相似和共同变化。</small></a></li>
+              <li><a href="../../chapters/audio-feature-representations/#overview">进入 Chapter：音频特征表示 <small class="link-preview">看窗长、帧移、Mel 频带数和任务适配。</small></a></li>
+              <li><a href="../../chapters/audio-feature-representations/#feature-lab">跳到锚点：特征实验 <small class="link-preview">操作特征表示画布。</small></a></li>
             </ul>
           </article>
         </div>
@@ -80,8 +82,8 @@
     </main>
 
     <footer class="route-footer">
-      <span>Draft Session：只组织 WEEK4 源课件路线</span>
-      <a href="../">返回全部导览</a>
+      <span>Draft Session：路线已接入，正文仍待教师审核</span>
+      <a href="../">返回全部路线</a>
     </footer>
     <script src="../../assets/js/theme.js"></script>
     <script src="../../assets/js/analytics-config.js"></script>

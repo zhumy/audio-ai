@@ -54,7 +54,7 @@
     {
       "id": "auditory-psychoacoustics-route",
       "type": "session",
-      "title": "WEEK3 听觉系统与心理声学导览",
+      "title": "听觉系统与心理声学路线",
       "url": "session/auditory-psychoacoustics-route/",
       "status": "draft",
       "maintainers": ["@zhumy"],
@@ -79,7 +79,7 @@
     {
       "id": "spatial-scene-feature-route",
       "type": "session",
-      "title": "WEEK4 空间听觉、场景组织与特征导览",
+      "title": "空间听觉、场景组织与机器特征路线",
       "url": "session/spatial-scene-feature-route/",
       "status": "draft",
       "maintainers": ["@zhumy"],

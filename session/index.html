@@ -3,33 +3,75 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Audio AI | 学习导览</title>
-    <meta name="description" content="Audio AI 当前公开学习导览。" />
+    <title>Audio AI | 学习路线</title>
+    <meta name="description" content="Audio AI 学习路线入口。Session 组织主题关系，Chapter 承载具体知识。" />
     <link rel="stylesheet" href="../assets/css/theme.css" />
     <link rel="stylesheet" href="../assets/css/route.css" />
   </head>
   <body class="route-page">
     <header class="route-header">
       <a class="route-brand" href="../">AUDIO <strong>AI</strong></a>
-      <nav aria-label="课程导航"><a href="../syllabus/">课程大纲</a><a href="../">课程首页</a></nav>
+      <nav aria-label="课程导航">
+        <a href="../">课程首页</a>
+        <a href="../syllabus/">课程大纲</a>
+      </nav>
     </header>
     <main>
       <section class="route-hero">
         <p class="route-eyebrow">LEARNING ROUTES</p>
-        <h1>学习导览</h1>
-        <p>Session 根据大纲组织知识关系和学习顺序，但不阐述 Chapter 中的具体知识。</p>
+        <h1>Session 组织关系，<br /><span>Chapter 讲清知识。</span></h1>
+        <p>
+          学习路线不是正文的压缩版，而是帮助学生知道为什么从一个主题跳到另一个主题。
+          所有定义、图示、推导、互动实验和适用边界，都进入对应 Chapter。
+        </p>
       </section>
-      <section class="route-section">
+
+      <section class="route-section" aria-labelledby="publishedRoutes">
+        <div class="route-section-heading">
+          <div>
+            <p>PUBLISHED</p>
+            <h2 id="publishedRoutes">当前发布路线</h2>
+          </div>
+        </div>
         <div class="route-card-grid">
           <a class="route-card featured" href="sound-physics-sampling-spectrum/">
             <span>Published Session</span>
-            <h3>声音物理与时域、空间域、频域</h3>
-            <p>理解三个观察维度之间的宏观关系，并跳转到各自的完整 Chapter。</p>
+            <h3>声音物理与多域表示</h3>
+            <p>从同一个声场出发，组织时域、空间域和频域三种观察方式之间的关系。</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="route-section" aria-labelledby="draftRoutes">
+        <div class="route-section-heading">
+          <div>
+            <p>TEACHER PREVIEW</p>
+            <h2 id="draftRoutes">正在整合的感知与表示路线</h2>
+          </div>
+        </div>
+        <div class="route-card-grid">
+          <a class="route-card" href="auditory-psychoacoustics-route/">
+            <span>Draft Session</span>
+            <h3>听觉系统与心理声学路线</h3>
+            <p>把听觉通路、听阈、响度、临界频带、音高音色和掩蔽应用串成一条感知路线。</p>
+          </a>
+          <a class="route-card" href="spatial-scene-feature-route/">
+            <span>Draft Session</span>
+            <h3>空间听觉、场景组织与机器特征路线</h3>
+            <p>把 ITD/ILD、HRTF、IACC、优先效应、ASA 和音频特征表示串成一条路线。</p>
+          </a>
+          <a class="route-card" href="../chapters/audio-feature-representations/">
+            <span>Draft Chapter</span>
+            <h3>从人的组织到机器表示</h3>
+            <p>预览特征表示 Chapter，检查窗长、帧移和 Mel 频带数这些动态控件是否符合课堂表达。</p>
           </a>
         </div>
       </section>
     </main>
-    <footer class="route-footer"><span>学习路径由 course-data/paths/current.json 管理</span><a href="../">返回首页</a></footer>
+    <footer class="route-footer">
+      <span>学习顺序由 course-data/paths/current.json 发布；草稿路线先用于教师预览</span>
+      <a href="../">返回课程首页</a>
+    </footer>
     <script src="../assets/js/theme.js"></script>
   </body>
 </html>

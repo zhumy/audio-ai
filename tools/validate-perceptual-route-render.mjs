@@ -30,6 +30,8 @@ const browserCandidates = [
 ].filter(Boolean);
 const browserExecutable = browserCandidates.find((candidate) => existsSync(candidate));
 const pages = [
+  "",
+  "session/",
   "chapters/auditory-system-psychoacoustics/",
   "chapters/pitch-timbre-symbolic-audio/",
   "chapters/spatial-hearing-scene-analysis/",
@@ -216,8 +218,9 @@ async function validate() {
           const issues = await collectPageIssues(page);
           issues.forEach((issue) => failures.push(`${label}: ${issue}`));
 
+          const needsPersistentNav = path.startsWith("chapters/") || (path.startsWith("session/") && path !== "session/");
           const navCount = await page.locator(".chapter-outline, .route-dock").count();
-          if (!navCount) failures.push(`${label}: missing persistent route navigation`);
+          if (needsPersistentNav && !navCount) failures.push(`${label}: missing persistent route navigation`);
 
           const visuals = page.locator(".cw-visual");
           const visualCount = await visuals.count();

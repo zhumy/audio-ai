@@ -4041,7 +4041,7 @@ body.chapter-page {
   }
 }
 
-/* WEEK3/WEEK4 draft integrations: shared textbook-style interactive panels. */
+/* Shared draft integrations for human hearing and machine-listening representation pages. */
 .courseware-page {
   --cw-content: 100%;
 }
