@@ -11,7 +11,9 @@
   --course-secondary: #f4c965;
   --course-alert: #ff8e86;
   --course-line: rgba(204, 230, 226, 0.14);
-  --course-text-body-size: clamp(15px, 1.05vw, 17px);
+  --course-text-body-size: clamp(15px, 1.1vw, 18px);
+  --course-text-small-size: clamp(13px, 0.9vw, 14px);
+  --course-text-label-size: clamp(12px, 0.82vw, 13px);
   --course-card-title-size: clamp(19px, 1.25vw, 22px);
   --course-card-subtitle-size: clamp(17px, 1.1vw, 20px);
   --course-math-display-size: clamp(20px, 1.35vw, 24px);

@@ -170,10 +170,13 @@ Student HTML includes connected teaching content, derivations, figures, interact
 
 Use `assets/css/theme.css` as the canonical source of shared `--course-*` tokens.
 
-- Chapters and Sessions share the same sans-serif stack, body/card-title text-size tokens, dark/light background and surface family, ink and muted text, cyan primary, gold secondary, coral alert, and line color.
+- Chapters and Sessions share the same sans-serif stack, body/small/label/card-title text-size tokens, dark/light background and surface family, ink and muted text, cyan primary, gold secondary, coral alert, and line color.
+- Explanatory card paragraphs use `--course-text-body-size`; captions and secondary derivation notes may use `--course-text-small-size`; only controls, metadata, and diagram labels use `--course-text-label-size`.
+- Select card title and subtitle tokens by visual role rather than by the literal `h3`/`h4` element name.
 - A Session may use a warmer background balance, broader relationship cards, and a distinct route dock to communicate its higher orchestration level, but it must remain recognizably part of the same course.
 - Authoritative display MathML uses `--course-math-display-size`; dense or secondary MathML uses `--course-math-compact-size`; inline MathML follows surrounding text.
 - Every display-equation wrapper, including page-specific wrappers such as `.fp-equation`, explicitly uses `--course-font-math` and a shared math-size token; never rely on the browser-default `math` font or 16px size.
+- Long MathML keeps its intrinsic width with `width/min-width: max-content`, is centered when it fits, aligns to the inline start when it needs mobile scrolling, and scrolls only inside its equation wrapper; clipping glyphs or creating whole-page overflow is a release blocker.
 - Cyan represents the primary signal, response, wave, or coordinate. Gold represents phase, polarity contrast, or emphasis. Coral is reserved for warnings, incident rays, or error states. Axes and annotations remain neutral.
 - Page-local body font stacks, duplicate global palettes, hardcoded display-equation sizes, and unrelated animation palettes are release blockers.
 

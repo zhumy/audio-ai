@@ -242,6 +242,8 @@ def audit_course_design_system(root: Path) -> list[str]:
         "--course-alert",
         "--course-line",
         "--course-text-body-size",
+        "--course-text-small-size",
+        "--course-text-label-size",
         "--course-card-title-size",
         "--course-card-subtitle-size",
         "--course-math-display-size",
@@ -275,6 +277,21 @@ def audit_course_design_system(root: Path) -> list[str]:
         issues.append("shared display equations do not use --course-math-display-size")
     if "--course-math-display-size" not in css_rule(texts["chapter"], ".formula-display").get("font-size", ""):
         issues.append("formula-display does not use --course-math-display-size")
+    math_stack_math = css_rule(texts["chapter"], ".math-stack math")
+    if math_stack_math.get("min-width", "") != "max-content" or math_stack_math.get("width", "") != "max-content":
+        issues.append("stacked display MathML does not preserve intrinsic width for local scrolling")
+    if math_stack_math.get("justify-self", "") != "center":
+        issues.append("stacked display MathML is not centered when it fits")
+    if not re.search(r"(?s)@media\s*\(max-width:\s*700px\).*?\.math-stack\s+math\s*\{[^{}]*justify-self:\s*start", texts["chapter"]):
+        issues.append("stacked display MathML does not align to inline start on narrow screens")
+    if "minmax(0, 1fr)" not in css_rule(texts["chapter"], ".math-stack").get("grid-template-columns", ""):
+        issues.append("math-stack grid does not contain intrinsic MathML width")
+    if "--course-text-body-size" not in css_rule(texts["chapter"], ".definition-card p,\n.sensitivity-card p").get("font-size", ""):
+        issues.append("definition-card explanatory text does not use --course-text-body-size")
+    if "--course-card-title-size" not in css_rule(texts["chapter"], ".definition-card h4,\n.sensitivity-card h4").get("font-size", ""):
+        issues.append("definition-card primary titles do not use --course-card-title-size")
+    if "--course-text-small-size" not in css_rule(texts["chapter"], ".sound-wave-animation figcaption").get("font-size", ""):
+        issues.append("time-domain figure captions do not use --course-text-small-size")
 
     frequency_page = root / "chapters" / "frequency-domain-processing" / "index.html"
     if frequency_page.exists():
@@ -287,6 +304,14 @@ def audit_course_design_system(root: Path) -> list[str]:
         frequency_card_body = css_rule(frequency_css, ".fp-card p,\n      .fp-card li,\n      .fp-note p,\n      .fp-table")
         if "--course-text-body-size" not in frequency_card_body.get("font-size", ""):
             issues.append("frequency card text does not use --course-text-body-size")
+
+    spatial_page = root / "chapters" / "spatial-acoustic-features" / "index.html"
+    if spatial_page.exists():
+        spatial_css = spatial_page.read_text(encoding="utf-8")
+        if "--course-text-body-size" not in css_rule(spatial_css, ".section-intro").get("font-size", ""):
+            issues.append("spatial section introductions do not use --course-text-body-size")
+        if not re.search(r"(?s)h3\s*\{[^{}]*font-size:\s*var\(--course-card-title-size", spatial_css):
+            issues.append("spatial card headings do not use --course-card-title-size")
 
     route_body = css_rule(texts["route"], "body.route-page")
     if "--course-font-sans" not in route_body.get("font-family", ""):

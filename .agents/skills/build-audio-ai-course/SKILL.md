@@ -89,11 +89,13 @@ Treat `chapter-outline` as one shared UI contract, not a page-local visual choic
 
 Treat typography, palette, mathematics, and motion as one course design system:
 
-- Use `assets/css/theme.css` as the canonical source for `--course-*` tokens. Chapter and Session pages must use the shared sans-serif stack, body/card-title text sizes, background/surface/ink roles, primary cyan, secondary gold, alert coral, line color, and display/compact MathML sizes.
+- Use `assets/css/theme.css` as the canonical source for `--course-*` tokens. Chapter and Session pages must use the shared sans-serif stack, body/small/label/card-title text sizes, background/surface/ink roles, primary cyan, secondary gold, alert coral, line color, and display/compact MathML sizes.
+- Treat student-facing explanatory paragraphs as body text even when they sit inside dense cards. Reserve `--course-text-small-size` for captions and secondary derivation notes, and `--course-text-label-size` for controls, metadata, and diagram labels; do not shrink core explanations to make a card fit.
+- Assign heading tokens by visual role, not HTML rank: a card's primary heading uses `--course-card-title-size` even when semantic document structure requires an `h4`; use the subtitle token only for genuinely subordinate headings.
 - Let a Session differ in hierarchy, card composition, and route-navigation treatment because it is an orchestration layer, but keep its typography and semantic colors visibly related to Chapters through the same tokens.
 - Use `--course-math-display-size` for authoritative display equations and `--course-math-compact-size` for dense matrices, secondary derivations, and mobile-sensitive formula groups. Do not hardcode a Chapter-specific display formula size.
 - Apply both `--course-font-math` and the appropriate shared math-size token to every display-equation wrapper, including page-specific wrappers such as `.fp-equation`; inheriting the browser's default `math` font or its default 16px size is a release failure.
-- Keep inline MathML at surrounding text size. Give wide display MathML local horizontal scrolling instead of shrinking it until unreadable.
+- Keep inline MathML at surrounding text size. Give wide display MathML `width/min-width: max-content` inside a locally scrollable equation wrapper instead of shrinking or clipping it; center it when it fits, but align it to the inline start on narrow screens so both ends remain reachable. The page itself must not gain horizontal overflow.
 - Use primary cyan for the measured signal, response, wave, or main coordinate; secondary gold for phase, polarity contrast, or a highlighted transformation; use alert coral only for incident rays, warnings, or error states. Keep axes and annotations neutral.
 - Do not introduce a page-local body font stack, duplicate the global light/dark palette, or add an animation palette unrelated to the shared semantic roles.
 
