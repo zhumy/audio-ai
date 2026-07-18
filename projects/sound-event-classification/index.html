@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 项目：声音事件分类</title>
+    <meta name="description" content="实践项目骨架：用时域、频域和听觉相关特征完成声音事件分类。" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260602-1" />
+    <link rel="stylesheet" href="../../assets/css/theme.css" />
+  </head>
+  <body class="chapter-page lecture-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回课程首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../chapters/time-domain-audio/">时域基础</a>
+        <a href="../../labs/spectrum-stft/">实验</a>
+      </nav>
+    </header>
+    <main>
+      <section class="chapter-hero lecture-hero">
+        <div>
+          <p class="chapter-code">PROJECT / SOUND EVENT CLASSIFICATION</p>
+          <h1>声音事件分类<br /><span>与交互展示</span></h1>
+          <p class="chapter-lead">
+            项目把前四章的共同语言落到一个任务中：选择声音类别，提取时域、频域和听觉相关特征，
+            建立一个简单分类器，并用页面展示结果和错误案例。
+          </p>
+        </div>
+        <aside class="brief-card">
+          <span class="card-label">项目路线</span>
+          <div class="brief-grid">
+            <p><strong>定义声音事件</strong></p>
+            <p><strong>提取特征</strong></p>
+            <p><strong>训练基线模型</strong></p>
+            <p><strong>解释错误案例</strong></p>
+          </div>
+        </aside>
+      </section>
+      <section class="chapter-block">
+        <div class="section-heading">
+          <p>PROJECT STRUCTURE</p>
+          <h2>先做一个能解释的基线，而不是追求复杂模型</h2>
+        </div>
+        <div class="frequency-roadmap">
+          <article><span>01</span><h4>数据</h4><p>采集或整理少量声音事件样本，如敲击、摩擦、语音、环境声。</p></article>
+          <article><span>02</span><h4>特征</h4><p>比较 RMS、ZCR、频谱质心、带宽、Mel 能量等特征。</p></article>
+          <article><span>03</span><h4>模型</h4><p>先用 KNN、SVM 或小型神经网络建立可解释基线。</p></article>
+          <article><span>04</span><h4>展示</h4><p>页面中展示音频、波形、频谱、预测标签和错误分析。</p></article>
+        </div>
+      </section>
+    </main>
+    <footer class="chapter-footer"><span>AUDIO AI / PROJECT · DRAFT</span><a href="../../syllabus/">返回大纲</a></footer>
+    <script src="../../assets/js/theme.js"></script>
+  </body>
+</html>

@@ -1,0 +1,357 @@
+:root {
+  color-scheme: dark light;
+  --course-font-sans: Inter, "Microsoft YaHei", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+  --course-font-math: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+  --course-bg: #071117;
+  --course-surface: #0d1b21;
+  --course-surface-2: #11252b;
+  --course-ink: #f5f1e9;
+  --course-muted: #9fb1b0;
+  --course-primary: #69eee3;
+  --course-secondary: #f4c965;
+  --course-alert: #ff8e86;
+  --course-line: rgba(204, 230, 226, 0.14);
+  --course-text-body-size: clamp(15px, 1.1vw, 18px);
+  --course-text-small-size: clamp(13px, 0.9vw, 14px);
+  --course-text-label-size: clamp(12px, 0.82vw, 13px);
+  --course-card-title-size: clamp(19px, 1.25vw, 22px);
+  --course-card-subtitle-size: clamp(17px, 1.1vw, 20px);
+  --course-math-display-size: clamp(20px, 1.35vw, 24px);
+  --course-math-compact-size: clamp(17px, 1.1vw, 20px);
+}
+
+:root[data-theme="light"] {
+  --course-bg: #f6f7f2;
+  --course-surface: #ffffff;
+  --course-surface-2: #edf3f0;
+  --course-ink: #10191b;
+  --course-muted: #516466;
+  --course-primary: #087b78;
+  --course-secondary: #8f6500;
+  --course-alert: #b9473e;
+  --course-line: rgba(20, 42, 44, 0.17);
+  --bg: var(--course-bg);
+  --surface: var(--course-surface);
+  --surface-2: var(--course-surface-2);
+  --surface-bright: #f7fbf8;
+  --ink: var(--course-ink);
+  --muted: var(--course-muted);
+  --cyan: var(--course-primary);
+  --cyan-soft: rgba(8, 123, 120, 0.14);
+  --cyan-dim: rgba(8, 123, 120, 0.12);
+  --gold: var(--course-secondary);
+  --amber: var(--course-secondary);
+  --red: var(--course-alert);
+  --line: var(--course-line);
+}
+
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 78% 10%, color-mix(in srgb, var(--course-primary) 12%, transparent), transparent 30%),
+    radial-gradient(circle at 12% 42%, color-mix(in srgb, var(--course-secondary) 8%, transparent), transparent 27%),
+    var(--course-bg);
+  color: var(--course-ink);
+}
+
+:root[data-theme="light"] body::after,
+:root[data-theme="light"] .page-noise {
+  opacity: 0.055;
+  background-image: radial-gradient(rgba(10, 22, 24, 0.22) 0.6px, transparent 0.6px);
+}
+
+:root[data-theme="light"] :is(
+  .brief-card,
+  .course-card,
+  .physics-module,
+  .definition-card,
+  .sensitivity-card,
+  .chapter-card,
+  .stat-card,
+  .lab-panel,
+  .lab-guide,
+  .auditory-grid article,
+  .level-reference,
+  .wave-interpretation,
+  .adc-wave-figure,
+  .adc-key-panel,
+  .adc-diagram-card,
+  .pdm-reading-note,
+  .microphone-electronics,
+  .mems-cutaway,
+  .capsule-parts,
+  .reference-pair article,
+  .layer-grid article,
+  .modules article,
+  .goal-grid article,
+  .parts article,
+  .appendix-card,
+  .appendix-table-wrap,
+  .appendix-grid article,
+  .question-grid p,
+  .console,
+  .recognition
+) {
+  background-color: var(--surface);
+  box-shadow: 0 20px 50px rgba(31, 45, 47, 0.08);
+}
+
+:root[data-theme="light"] :is(
+  .definition-card,
+  .capsule-parts,
+  .adc-key-panel article,
+  .sequence-example,
+  .density-map span,
+  .electronics-chain p,
+  .transduction-path p,
+  .signal-chain p,
+  .level-reference article,
+  .metric-grid p,
+  .safe-dose-grid article,
+  .hearing-stat,
+  .auditory-table,
+  .map-row.header
+) {
+  background-color: var(--surface-2);
+}
+
+:root[data-theme="light"] :is(
+  .chapter-lead,
+  .lede,
+  .intro,
+  .vision-body,
+  .source-reading,
+  .muted,
+  .calibration-note,
+  .media-credit,
+  .formula-explain,
+  .adc-diagram-card p:not(.card-label),
+  .pdm-reading-note p:not(.card-label),
+  .adc-key-panel span,
+  .auditory-table td,
+  .appendix-meta,
+  .track-key,
+  .footer,
+  .chapter-footer
+) {
+  color: var(--muted);
+}
+
+:root[data-theme="light"] :is(
+  h1,
+  h2,
+  h3,
+  h4,
+  .brief-grid strong,
+  .definition-card h4,
+  .layer-grid h3,
+  .reference-pair h3,
+  .auditory-table tbody th,
+  .electronics-chain strong,
+  .adc-diagram-card h4,
+  .adc-block-flow span,
+  .sigma-loop span,
+  .recognition strong
+) {
+  color: var(--ink);
+}
+
+:root[data-theme="light"] .spl-safety {
+  color: var(--ink);
+  background: rgba(176, 116, 23, 0.1);
+}
+
+:root[data-theme="light"] .spl-safety strong,
+:root[data-theme="light"] .spl-safety .safety-practice,
+:root[data-theme="light"] .safe-dose-grid span,
+:root[data-theme="light"] .species-audiograms p {
+  color: var(--ink);
+}
+
+:root[data-theme="light"] .safe-dose-grid article,
+:root[data-theme="light"] .species-audiograms article {
+  border-color: rgba(176, 116, 23, 0.16);
+  background: rgba(176, 116, 23, 0.08);
+}
+
+:root[data-theme="light"] .density-map span,
+:root[data-theme="light"] .sequence-example {
+  border-color: rgba(8, 123, 120, 0.16);
+  background: rgba(8, 123, 120, 0.055);
+}
+
+:root[data-theme="light"] .density-map code,
+:root[data-theme="light"] .sequence-example code {
+  color: var(--ink);
+  background: rgba(8, 123, 120, 0.09);
+}
+
+:root[data-theme="light"] :is(
+  .adc-wave-figure svg,
+  .sound-wave-animation svg,
+  .mems-cutaway img,
+  .microphone-visuals img,
+  #labWave,
+  #waveCanvas
+) {
+  background: #f1f6f3;
+}
+
+:root[data-theme="light"] .sound-wave-animation text {
+  fill: #263538;
+}
+
+:root[data-theme="light"] .sound-wave-animation .air-particles {
+  fill: rgba(33, 49, 51, 0.72);
+}
+
+:root[data-theme="light"] .sound-wave-animation .particle-column {
+  fill: rgba(33, 49, 51, 0.76);
+}
+
+:root[data-theme="light"] .sound-wave-animation .equilibrium-guides {
+  stroke: rgba(33, 49, 51, 0.18);
+}
+
+:root[data-theme="light"] .sound-wave-animation .particle-note {
+  fill: #263538;
+}
+
+:root[data-theme="light"] .sound-wave-animation .particle-note.small {
+  fill: #607175;
+}
+
+:root[data-theme="light"] .sphere-spread-figure svg > rect {
+  fill: #f1f6f3;
+  stroke: rgba(11, 120, 126, 0.18);
+}
+
+:root[data-theme="light"] .sphere-spread-figure .source-dot {
+  stroke: rgba(246, 247, 242, 0.92);
+}
+
+:root[data-theme="light"] .sphere-spread-figure .sphere-title,
+:root[data-theme="light"] .sphere-spread-figure .sphere-label {
+  fill: #263538;
+}
+
+:root[data-theme="light"] .sphere-spread-figure .sphere-formula {
+  fill: #08727a;
+}
+
+:root[data-theme="light"] .sphere-spread-figure .sphere-note {
+  fill: #607175;
+}
+
+:root[data-theme="light"] .acoustic-propagation-note .equation {
+  border-color: rgba(11, 120, 126, 0.12);
+}
+
+:root[data-theme="light"] .equation,
+:root[data-theme="light"] .inline-math {
+  background: rgba(8, 123, 120, 0.045);
+  color: var(--ink);
+}
+
+:root[data-theme="light"] .equation math {
+  color: var(--ink);
+}
+
+:root[data-theme="light"] .spl-chart {
+  background: rgba(8, 123, 120, 0.045);
+  border-color: rgba(8, 123, 120, 0.13);
+}
+
+:root[data-theme="light"] .wave-solution-note {
+  background: rgba(8, 123, 120, 0.035);
+  border-color: rgba(8, 123, 120, 0.12);
+}
+
+:root[data-theme="light"] .definition-card.wave-solution-note {
+  background: var(--surface-2);
+  border-color: transparent;
+}
+
+:root[data-theme="light"] .wave-solution-section {
+  background: var(--surface-2);
+  border-color: rgba(8, 123, 120, 0.12);
+}
+
+:root[data-theme="light"] .formula-roadmap {
+  border-color: rgba(8, 123, 120, 0.12);
+  background: rgba(8, 123, 120, 0.035);
+}
+
+:root[data-theme="light"] .formula-roadmap span {
+  background: rgba(8, 123, 120, 0.08);
+}
+
+:root[data-theme="light"] .derivation-steps li {
+  border-color: rgba(8, 123, 120, 0.1);
+  background: rgba(8, 123, 120, 0.025);
+}
+
+:root[data-theme="light"] .adc-wave-figure text {
+  fill: #263538;
+}
+
+:root[data-theme="light"] .adc-wave-figure .analog-wave {
+  stroke: #263538;
+}
+
+:root[data-theme="light"] .adc-wave-figure .sample-lines circle {
+  stroke: #f6f7f2;
+}
+
+:root[data-theme="light"] .theme-toggle {
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--ink);
+}
+
+.theme-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  background: rgba(7, 17, 23, 0.86);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(14px);
+  font: 700 12px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.theme-toggle::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 14px var(--cyan);
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.hero-visual {
+  overflow: hidden;
+}
+
+.hero-wave {
+  width: 100%;
+  left: 0;
+}
+
+@media (max-width: 700px) {
+  .theme-toggle {
+    right: 12px;
+    bottom: 12px;
+    padding: 9px 12px;
+  }
+}

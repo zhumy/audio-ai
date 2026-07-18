@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audio AI 课程建设"
+  short_description: "维护 Session/Chapter 边界、课程关系、推导与发布验收"
+  default_prompt: "Use $build-audio-ai-course to build or review an Audio AI Session or Chapter, preserve semantic relationships, and verify the rendered responsive result."

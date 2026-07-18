@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-labelledby="title desc">
+  <title id="title">STFT滑动窗口与声谱图形成过程</title>
+  <desc id="desc">分析窗在上方时间波形上从左向右滑动，下方声谱图的时间游标同步移动，表示每一帧都进行一次DFT。</desc>
+  <style>
+    text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #10191b; }
+    .axis { stroke: #607175; stroke-width: 2; }
+    .wave { fill: none; stroke: #087b78; stroke-width: 4; }
+    .window { fill: #f4c965; fill-opacity: .22; stroke: #8f6500; stroke-width: 3; }
+    .cursor { stroke: #f4c965; stroke-width: 4; }
+    .spectrum-primary { fill: #087b78; }
+    .spectrum-secondary { fill: #f4c965; }
+    .spectrum-muted { fill: #68a8a5; }
+    .label { font-size: 19px; font-weight: 700; }
+    .small { font-size: 15px; }
+    @media (prefers-color-scheme: dark) {
+      text { fill: #f5f1e9; }
+      .axis { stroke: #7f9291; }
+      .wave { stroke: #69eee3; }
+      .window { fill: #f4c965; stroke: #f4c965; }
+      .spectrum-primary { fill: #69eee3; }
+      .spectrum-muted { fill: #68a8a5; }
+    }
+  </style>
+  <text class="label" x="35" y="35">每次只看一个短时间片段</text>
+  <line class="axis" x1="70" y1="145" x2="940" y2="145"/>
+  <path class="wave" d="M70 145 C95 75 120 75 145 145 S195 215 220 145 S270 75 295 145 S345 215 370 145 S420 105 445 145 S495 185 520 145 C545 25 570 25 595 145 S645 265 670 145 S720 25 745 145 S795 265 820 145 S895 90 940 145"/>
+  <rect class="window" x="70" y="52" width="185" height="190" rx="10">
+    <animate attributeName="x" values="70;755;70" dur="7s" repeatCount="indefinite"/>
+  </rect>
+  <text class="small" x="765" y="238">窗长决定时间/频率权衡</text>
+  <text class="label" x="35" y="280">每一帧做一次DFT，按时间排成声谱图</text>
+  <g transform="translate(70 305)">
+    <rect x="0" y="0" width="870" height="90" fill="#102f38" rx="8"/>
+    <g class="spectrum-primary" opacity=".6">
+      <rect x="10" y="58" width="28" height="22"/><rect x="45" y="55" width="28" height="25"/><rect x="80" y="60" width="28" height="20"/>
+      <rect x="115" y="57" width="28" height="23"/><rect x="150" y="59" width="28" height="21"/><rect x="185" y="55" width="28" height="25"/>
+      <rect x="220" y="58" width="28" height="22"/><rect x="255" y="56" width="28" height="24"/><rect x="290" y="60" width="28" height="20"/>
+    </g>
+    <g class="spectrum-secondary" opacity=".82">
+      <rect x="10" y="20" width="28" height="9"/><rect x="45" y="20" width="28" height="9"/><rect x="80" y="20" width="28" height="9"/>
+      <rect x="115" y="20" width="28" height="9"/><rect x="150" y="20" width="28" height="9"/><rect x="185" y="20" width="28" height="9"/>
+      <rect x="220" y="20" width="28" height="9"/><rect x="255" y="20" width="28" height="9"/><rect x="290" y="20" width="28" height="9"/>
+      <rect x="325" y="20" width="28" height="9"/><rect x="360" y="20" width="28" height="9"/>
+    </g>
+    <g class="spectrum-muted" opacity=".88">
+      <rect x="430" y="40" width="28" height="10"/><rect x="465" y="40" width="28" height="10"/><rect x="500" y="40" width="28" height="10"/>
+      <rect x="535" y="40" width="28" height="10"/><rect x="570" y="40" width="28" height="10"/><rect x="605" y="40" width="28" height="10"/>
+      <rect x="640" y="40" width="28" height="10"/><rect x="675" y="40" width="28" height="10"/><rect x="710" y="40" width="28" height="10"/>
+      <rect x="745" y="40" width="28" height="10"/><rect x="780" y="40" width="28" height="10"/><rect x="815" y="40" width="28" height="10"/>
+    </g>
+    <line class="cursor" x1="5" y1="0" x2="5" y2="90">
+      <animate attributeName="x1" values="5;860;5" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="5;860;5" dur="7s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  <text class="small" x="75" y="420">时间 →</text>
+  <text class="small" x="15" y="360" transform="rotate(-90 15 360)">频率 ↑</text>
+</svg>

@@ -1,0 +1,1650 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>声压梯度、质点振速与差分阵列 | Audio AI</title>
+    <meta
+      name="description"
+      content="从牛顿第二定律出发，解释声压梯度、质点加速度、质点振速、1/(jω)、双麦克风差分阵列，以及三维质点振速为什么需要三个独立方向的声压梯度。"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #071117;
+        --surface: #0e1b22;
+        --surface-2: #13242c;
+        --surface-3: #172b34;
+        --ink: #edf7f5;
+        --muted: #a9bfbc;
+        --muted-2: #78928f;
+        --cyan: #69eee3;
+        --gold: #f4c965;
+        --red: #ff8e86;
+        --green: #8ee6ad;
+        --line: rgba(105, 238, 227, 0.18);
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 4%, rgba(105, 238, 227, 0.11), transparent 26rem),
+          radial-gradient(circle at 90% 20%, rgba(244, 201, 101, 0.08), transparent 24rem),
+          var(--bg);
+        font-family: Inter, "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+        line-height: 1.75;
+      }
+
+      a { color: inherit; }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        min-height: 62px;
+        padding: 0 5vw;
+        border-bottom: 1px solid var(--line);
+        background: rgba(7, 17, 23, 0.88);
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+      }
+
+      .brand b { color: var(--cyan); }
+
+      .topbar nav {
+        display: flex;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .topbar nav a { text-decoration: none; }
+      .topbar nav a:hover { color: var(--cyan); }
+
+      main {
+        width: min(1120px, 92vw);
+        margin: 0 auto;
+        padding: 64px 0 100px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+        gap: 28px;
+        align-items: end;
+        margin-bottom: 36px;
+      }
+
+      .eyebrow,
+      .section-kicker {
+        margin: 0 0 9px;
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1, h2, h3 { text-wrap: balance; }
+
+      h1 {
+        max-width: 850px;
+        margin: 0;
+        font-size: clamp(38px, 6vw, 72px);
+        line-height: 1.08;
+        letter-spacing: -0.045em;
+      }
+
+      h1 span { color: var(--cyan); }
+
+      .lead {
+        max-width: 780px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: clamp(16px, 2vw, 20px);
+      }
+
+      .answer-card,
+      .panel,
+      .step,
+      .compare-card {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: linear-gradient(145deg, rgba(105, 238, 227, 0.045), transparent 48%), var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .answer-card { padding: 22px; }
+
+      .answer-card strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--gold);
+        font-size: 18px;
+      }
+
+      .answer-card p { margin: 0; color: var(--muted); }
+
+      .answer-card .mini-eq {
+        display: block;
+        margin-top: 14px;
+        color: var(--ink);
+        font-size: 19px;
+      }
+
+      .inline-mathml {
+        display: inline math;
+        math-style: compact;
+        margin: 0 0.08em;
+        color: var(--ink);
+        font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+        font-size: 1.06em;
+        vertical-align: -0.12em;
+      }
+
+      .scope-strip {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin: 30px 0 54px;
+      }
+
+      .scope-strip span {
+        padding: 13px 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.025);
+        text-align: center;
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      section { scroll-margin-top: 82px; }
+
+      .lesson-section { margin-top: 64px; }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: 90px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+        margin-bottom: 22px;
+      }
+
+      .section-number {
+        color: rgba(105, 238, 227, 0.38);
+        font: 900 44px/1 Inter, sans-serif;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(27px, 4vw, 42px);
+        line-height: 1.18;
+      }
+
+      .section-intro {
+        max-width: 820px;
+        margin: 10px 0 0;
+        color: var(--muted);
+      }
+
+      .panel { padding: clamp(20px, 3vw, 34px); }
+
+      .definition-grid,
+      .compare-grid,
+      .three-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .definition-grid { grid-template-columns: repeat(3, 1fr); }
+      .compare-grid { grid-template-columns: repeat(2, 1fr); }
+      .three-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .definition-card,
+      .compare-card {
+        padding: 20px;
+        border: 1px solid rgba(105, 238, 227, 0.13);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .definition-card h3,
+      .compare-card h3 {
+        margin: 0 0 8px;
+        color: var(--gold);
+        font-size: 17px;
+      }
+
+      .definition-card p,
+      .compare-card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+      .equation {
+        max-width: 100%;
+        margin: 14px 0;
+        padding: 16px 18px;
+        overflow-x: auto;
+        border: 1px solid rgba(105, 238, 227, 0.17);
+        border-radius: 14px;
+        color: var(--ink);
+        background: #09151b;
+        font-family: "Cambria Math", "STIX Two Math", "DejaVu Serif", "Times New Roman", serif;
+        font-size: clamp(18px, 2.5vw, 26px);
+        line-height: 1.55;
+        text-align: center;
+        font-variant-numeric: lining-nums tabular-nums;
+      }
+
+      .equation.small { font-size: clamp(16px, 2vw, 21px); }
+
+      .equation math {
+        display: block math;
+        math-style: normal;
+        width: max-content;
+        min-width: max-content;
+        margin: 0 auto;
+        color: inherit;
+        font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+        font-size: 1em;
+      }
+
+      .equation mtext { font-family: Inter, "Microsoft YaHei", "PingFang SC", system-ui, sans-serif; }
+
+      .equation-stack {
+        display: grid;
+        gap: 9px;
+        margin: 14px 0;
+      }
+
+      .equation-stack .equation { margin: 0; }
+
+      .symbol-note {
+        margin: -4px 0 15px;
+        color: var(--muted-2);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .force-figure,
+      .array-figure {
+        margin: 20px 0;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #09151b;
+      }
+
+      .force-figure svg,
+      .array-figure svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      figcaption {
+        margin-top: 10px;
+        color: var(--muted-2);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .steps { display: grid; gap: 13px; }
+
+      .step {
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 14px;
+        padding: 20px;
+        box-shadow: none;
+      }
+
+      .step-index {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: #061416;
+        background: var(--cyan);
+        font-weight: 900;
+      }
+
+      .step h3 { margin: 2px 0 6px; font-size: 19px; }
+      .step p { margin: 0; color: var(--muted); }
+
+      .key-point,
+      .warning,
+      .success {
+        margin: 18px 0 0;
+        padding: 16px 18px;
+        border-left: 4px solid var(--gold);
+        border-radius: 8px 16px 16px 8px;
+        color: var(--muted);
+        background: rgba(244, 201, 101, 0.075);
+      }
+
+      .warning {
+        border-left-color: var(--red);
+        background: rgba(255, 142, 134, 0.07);
+      }
+
+      .success {
+        border-left-color: var(--green);
+        background: rgba(142, 230, 173, 0.07);
+      }
+
+      .key-point b,
+      .warning b,
+      .success b { color: var(--ink); }
+
+      .concept-jump {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0 18px;
+        padding: 9px 13px;
+        border: 1px solid rgba(105, 238, 227, 0.3);
+        border-radius: 999px;
+        color: var(--cyan);
+        background: rgba(105, 238, 227, 0.06);
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .concept-jump:hover { background: rgba(105, 238, 227, 0.12); }
+
+      .phase-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .phase-row article {
+        padding: 16px;
+        border-radius: 16px;
+        background: var(--surface-2);
+      }
+
+      .phase-row strong { display: block; color: var(--cyan); }
+      .phase-row p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+
+      .identity {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        gap: 9px;
+        align-items: center;
+        margin: 22px 0;
+      }
+
+      .identity span {
+        min-height: 80px;
+        display: grid;
+        place-items: center;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface-2);
+        text-align: center;
+        font-weight: 800;
+      }
+
+      .identity i { color: var(--gold); font-size: 22px; font-style: normal; }
+
+      .comparison-table {
+        width: 100%;
+        margin-top: 18px;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(105, 238, 227, 0.11);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .comparison-table th { color: var(--cyan); background: rgba(105, 238, 227, 0.05); }
+      .comparison-table td { color: var(--muted); }
+      .comparison-table tr:last-child td { border-bottom: 0; }
+
+      .verdict {
+        margin-top: 70px;
+        padding: clamp(24px, 5vw, 46px);
+        border: 1px solid rgba(244, 201, 101, 0.24);
+        border-radius: 28px;
+        background:
+          radial-gradient(circle at 10% 15%, rgba(244, 201, 101, 0.12), transparent 28%),
+          var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .verdict h2 { color: var(--gold); }
+      .verdict ul { margin: 18px 0 0; padding-left: 22px; color: var(--muted); }
+      .verdict li + li { margin-top: 8px; }
+
+      footer {
+        padding: 26px 5vw 40px;
+        border-top: 1px solid var(--line);
+        color: var(--muted-2);
+        text-align: center;
+        font-size: 12px;
+      }
+
+      @media (max-width: 820px) {
+        .hero,
+        .definition-grid,
+        .compare-grid,
+        .three-grid { grid-template-columns: 1fr; }
+
+        .scope-strip { grid-template-columns: repeat(2, 1fr); }
+        .phase-row { grid-template-columns: 1fr; }
+        .identity { grid-template-columns: 1fr; }
+        .identity i { transform: rotate(90deg); text-align: center; }
+      }
+
+      @media (max-width: 560px) {
+        .topbar nav { display: none; }
+        main { width: min(94vw, 1120px); padding-top: 42px; }
+        .section-heading { grid-template-columns: 1fr; gap: 5px; }
+        .section-number { font-size: 28px; }
+        .scope-strip { grid-template-columns: 1fr; }
+        .step { grid-template-columns: 1fr; }
+        .comparison-table { display: block; overflow-x: auto; white-space: nowrap; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./"><b>AUDIO</b> AI · 空间声学</a>
+      <nav aria-label="本页导航">
+        <a href="#newton">牛顿第二定律</a>
+        <a href="#one-over-jw">为何有 1/(jω)</a>
+        <a href="#array">差分阵列</a>
+        <a href="#spherical">球面波</a>
+      </nav>
+    </header>
+
+    <main>
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Pressure gradient · Particle velocity · Differential array</p>
+          <h1>声压梯度如何变成<br /><span>质点振速？</span></h1>
+          <p class="lead">
+            从一小块空气的受力出发，解释“两个麦克风相减”如何近似一个方向的声压梯度，
+            为什么恢复质点振速时会多出
+            <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>，
+            以及为什么三维质点振速需要三个独立方向的梯度。
+          </p>
+        </div>
+        <aside class="answer-card">
+          <strong>先给结论</strong>
+          <p>声压梯度直接决定的是空气质点的加速度，而不是速度。由加速度恢复速度需要对时间积分。</p>
+          <span class="mini-eq">
+            时间积分 ⇔ 频域乘以
+            <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>
+          </span>
+        </aside>
+      </header>
+
+      <div class="scope-strip" aria-label="本页核心路线">
+        <span>压力差产生合力</span>
+        <span>合力产生加速度</span>
+        <span>积分得到振速</span>
+        <span>阵列差分近似梯度</span>
+      </div>
+
+      <section class="lesson-section" id="newton">
+        <div class="section-heading">
+          <span class="section-number">01</span>
+          <div>
+            <p class="section-kicker">Newton's second law</p>
+            <h2>声压梯度先产生加速度</h2>
+            <p class="section-intro">压力很大并不一定推动空气；只有一小块空气两侧的压力不同，才会出现净合力。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="definition-grid">
+            <article class="definition-card">
+              <h3>位移 ξ(x₀,t)</h3>
+              <p>原来位于 x₀ 的空气微团，在 t 时刻偏离平衡位置的距离和方向，单位 m。</p>
+            </article>
+            <article class="definition-card">
+              <h3>质点振速 u(x,t)</h3>
+              <p>空气微团位移随时间的瞬时变化率，单位 m/s；它不是声波的传播速度 c。</p>
+            </article>
+            <article class="definition-card">
+              <h3>声压 p(x,t)</h3>
+              <p>瞬时总压强相对静态大气压的微小变化，单位 Pa。</p>
+            </article>
+          </div>
+
+          <div class="equation" role="math" aria-label="质点振速等于位移对时间的导数">
+            <math display="block">
+              <mrow>
+                <mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                <mo>=</mo><msub><mi>x</mi><mn>0</mn></msub>
+                <mo>+</mo><mi>ξ</mi><mo>(</mo><msub><mi>x</mi><mn>0</mn></msub><mo>,</mo><mi>t</mi><mo>)</mo>
+                <mo>,</mo><mspace width="1.5em" />
+                <mi>u</mi><mo>=</mo>
+                <mfrac><mrow><mo>∂</mo><mi>ξ</mi></mrow><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac>
+              </mrow>
+            </math>
+          </div>
+
+          <figure class="force-figure">
+            <svg viewBox="0 0 920 250" role="img" aria-labelledby="forceTitle forceDesc">
+              <title id="forceTitle">小空气块两侧压力产生合力</title>
+              <desc id="forceDesc">横截面积为 S、厚度为 Δx 的空气块，左侧压力 p(x) 与右侧压力 p(x+Δx) 不同。</desc>
+              <defs>
+                <marker id="cyanArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                  <path d="M0,0 L10,5 L0,10 Z" fill="#69eee3" />
+                </marker>
+                <marker id="goldArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                  <path d="M0,0 L10,5 L0,10 Z" fill="#f4c965" />
+                </marker>
+              </defs>
+              <rect x="350" y="54" width="220" height="140" rx="16" fill="#13242c" stroke="#69eee3" stroke-opacity="0.55" />
+              <text x="460" y="112" fill="#edf7f5" text-anchor="middle" font-size="22" font-weight="800">小空气块</text>
+              <text x="460" y="145" fill="#a9bfbc" text-anchor="middle" font-size="18">质量 m = ρSΔx</text>
+              <line x1="110" y1="124" x2="334" y2="124" stroke="#69eee3" stroke-width="8" marker-end="url(#cyanArrow)" />
+              <line x1="810" y1="124" x2="586" y2="124" stroke="#f4c965" stroke-width="5" marker-end="url(#goldArrow)" />
+              <text x="112" y="88" fill="#69eee3" font-size="20" font-weight="800">p(x)S</text>
+              <text x="700" y="88" fill="#f4c965" font-size="20" font-weight="800">p(x+Δx)S</text>
+              <text x="460" y="226" fill="#a9bfbc" text-anchor="middle" font-size="17">箭头不等长 → 压力合力不为零 → 空气块加速</text>
+            </svg>
+            <figcaption>压力作用在面积 S 上形成力；两侧压力相减，才得到净压力。</figcaption>
+          </figure>
+
+          <div class="equation-stack">
+            <div class="equation small" role="math" aria-label="压力合力">
+              <math display="block">
+                <mrow>
+                  <msub><mi>F</mi><mi>x</mi></msub>
+                  <mo>=</mo><mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo><mi>S</mi>
+                  <mo>−</mo><mi>p</mi><mo>(</mo><mi>x</mi><mo>+</mo><mi>Δ</mi><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo><mi>S</mi>
+                  <mo>≈</mo><mo>−</mo>
+                  <mfrac><mrow><mo>∂</mo><mi>p</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+                  <mi>S</mi><mi>Δ</mi><mi>x</mi>
+                </mrow>
+              </math>
+            </div>
+            <div class="equation small" role="math" aria-label="空气块质量乘以加速度">
+              <math display="block">
+                <mrow>
+                  <mi>m</mi><mi>a</mi><mo>=</mo><mi>ρ</mi><mi>S</mi><mi>Δ</mi><mi>x</mi>
+                  <mo>·</mo><mfrac><mrow><mo>∂</mo><mi>u</mi></mrow><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac>
+                </mrow>
+              </math>
+            </div>
+            <div class="equation" role="math" aria-label="一维线性欧拉方程">
+              <math display="block">
+                <mrow>
+                  <mi>ρ</mi><mfrac><mrow><mo>∂</mo><mi>u</mi></mrow><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac>
+                  <mo>=</mo><mo>−</mo><mfrac><mrow><mo>∂</mo><mi>p</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+                </mrow>
+              </math>
+            </div>
+          </div>
+          <p class="symbol-note">ρ：空气密度；负号表示空气向压力降低的方向加速。</p>
+
+          <div class="key-point">
+            <b>严谨说法：</b>声压空间梯度 −∂p/∂x 决定质点加速度 ∂u/∂t。
+            “声压梯度决定质点振速”是简写，其中隐含了对加速度随时间积分这一步。
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="one-over-jw">
+        <div class="section-heading">
+          <span class="section-number">02</span>
+          <div>
+            <p class="section-kicker">The missing integration</p>
+            <h2>为什么会多出一个 <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>？</h2>
+            <p class="section-intro">它不是额外假设，也不是人为均衡器，而是“由加速度恢复速度”必然出现的积分。</p>
+          </div>
+        </div>
+
+        <div class="steps">
+          <article class="step">
+            <span class="step-index">1</span>
+            <div>
+              <h3>复指数表示：时间微分直接变成 <math class="inline-mathml"><mi>j</mi><mi>ω</mi></math></h3>
+              <p>
+                对单频声场，采用
+                <math class="inline-mathml"><msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup></math>
+                表示声压和质点振速。实际物理量取复数表达式的实部；
+                <a href="#complex-phasor-meaning">为什么使用复数、为什么取实部，见附录2 ↓</a>
+              </p>
+              <div class="equation-stack">
+                <div class="equation small" role="math">
+                  <math display="block"><mrow>
+                    <mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                    <mo>=</mo><mi>Re</mi><mo>{</mo><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                    <msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup><mo>}</mo>
+                  </mrow></math>
+                </div>
+                <div class="equation small" role="math">
+                  <math display="block"><mrow>
+                    <mi>u</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                    <mo>=</mo><mi>Re</mi><mo>{</mo><mi>U</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                    <msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup><mo>}</mo>
+                  </mrow></math>
+                </div>
+                <div class="equation small" role="math">
+                  <math display="block"><mrow>
+                    <mfrac><mrow><mo>∂</mo><mi>u</mi></mrow><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac>
+                    <mo>⇔</mo><mi>j</mi><mi>ω</mi><mi>U</mi>
+                  </mrow></math>
+                </div>
+                <div class="equation small" role="math">
+                  <math display="block"><mrow>
+                    <mi>ρ</mi><mi>j</mi><mi>ω</mi><mi>U</mi>
+                    <mo>=</mo><mo>−</mo>
+                    <mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+                  </mrow></math>
+                </div>
+                <div class="equation" role="math">
+                  <math display="block"><mrow>
+                    <mi>U</mi><mo>=</mo><mo>−</mo>
+                    <mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac>
+                    <mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+                  </mrow></math>
+                </div>
+              </div>
+              <p class="key-point">
+                <b>所以答案很直接：</b>牛顿方程中出现的是质点振速的时间导数；在单频复数表示中，时间导数就是
+                <math class="inline-mathml"><mi>j</mi><mi>ω</mi><mi>U</mi></math>。
+                为了从
+                <math class="inline-mathml"><mi>j</mi><mi>ω</mi><mi>U</mi></math>解出
+                <math class="inline-mathml"><mi>U</mi></math>，两边除以
+                <math class="inline-mathml"><mi>j</mi><mi>ω</mi></math>，于是自然出现
+                <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>。
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel" style="margin-top: 18px">
+          <div class="phase-row">
+            <article>
+              <strong><math class="inline-mathml"><mfrac><mn>1</mn><mi>ω</mi></mfrac></math>：幅度作用</strong>
+              <p>同样大小的加速度，低频持续作用更久，因此产生更大的速度摆幅。</p>
+            </article>
+            <article>
+              <strong><math class="inline-mathml"><mfrac><mn>1</mn><mi>j</mi></mfrac></math>：相位作用</strong>
+              <p>
+                <math class="inline-mathml"><mfrac><mn>1</mn><mi>j</mi></mfrac><mo>=</mo><mo>−</mo><mi>j</mi></math>，
+                表示积分带来 −90° 相移；速度比加速度滞后四分之一周期。
+              </p>
+            </article>
+            <article>
+              <strong>前面的负号：方向</strong>
+              <p>它来自压力合力：空气总是朝声压降低的方向加速。</p>
+            </article>
+          </div>
+          <div class="warning">
+            <b>为什么 <math class="inline-mathml"><mi>ω</mi><mo>=</mo><mn>0</mn></math> 时公式发散？</b>
+            直流压力梯度在理想无阻尼流体中会持续加速介质，不存在稳定的正弦稳态速度。
+            声学质点振速公式面向交流小信号；实际算法必须限制接近直流时的积分增益。
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="array">
+        <div class="section-heading">
+          <span class="section-number">03</span>
+          <div>
+            <p class="section-kicker">Two-microphone differential array</p>
+            <h2>差分阵列测到了什么？</h2>
+            <p class="section-intro">两个全向压力麦克风相减，首先得到的是有限间距的声压差；除以间距后，才近似声压空间梯度。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <figure class="array-figure">
+            <svg viewBox="0 0 960 330" role="img" aria-labelledby="arrayTitle arrayDesc">
+              <title id="arrayTitle">双麦克风差分阵列几何</title>
+              <desc id="arrayDesc">两个麦克风位于 x 轴正负 d/2 处，平面波传播方向与阵列轴夹角为 θ。</desc>
+              <defs>
+                <linearGradient id="waveFade" x1="0" x2="1">
+                  <stop offset="0" stop-color="#69eee3" stop-opacity="0.1" />
+                  <stop offset="1" stop-color="#69eee3" stop-opacity="0.8" />
+                </linearGradient>
+                <marker id="waveArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                  <path d="M0,0 L10,5 L0,10 Z" fill="#69eee3" />
+                </marker>
+              </defs>
+              <line x1="120" y1="240" x2="850" y2="240" stroke="#78928f" stroke-width="2" />
+              <text x="862" y="247" fill="#a9bfbc" font-size="18">x</text>
+              <circle cx="350" cy="240" r="24" fill="#13242c" stroke="#f4c965" stroke-width="4" />
+              <circle cx="610" cy="240" r="24" fill="#13242c" stroke="#69eee3" stroke-width="4" />
+              <text x="350" y="247" fill="#edf7f5" text-anchor="middle" font-size="17" font-weight="900">M₁</text>
+              <text x="610" y="247" fill="#edf7f5" text-anchor="middle" font-size="17" font-weight="900">M₂</text>
+              <line x1="350" y1="296" x2="610" y2="296" stroke="#f4c965" stroke-width="3" />
+              <line x1="350" y1="286" x2="350" y2="306" stroke="#f4c965" stroke-width="3" />
+              <line x1="610" y1="286" x2="610" y2="306" stroke="#f4c965" stroke-width="3" />
+              <text x="480" y="322" fill="#f4c965" text-anchor="middle" font-size="19" font-weight="800">间距 d</text>
+              <line x1="160" y1="180" x2="710" y2="76" stroke="url(#waveFade)" stroke-width="9" marker-end="url(#waveArrow)" />
+              <text x="650" y="55" fill="#69eee3" font-size="19" font-weight="800">平面波传播方向</text>
+              <path d="M230 240 A110 110 0 0 1 338 218" fill="none" stroke="#a9bfbc" stroke-width="2" />
+              <text x="266" y="211" fill="#edf7f5" font-size="20">θ</text>
+              <text x="350" y="205" fill="#f4c965" text-anchor="middle" font-size="16">x = −d/2</text>
+              <text x="610" y="205" fill="#69eee3" text-anchor="middle" font-size="16">x = +d/2</text>
+            </svg>
+            <figcaption>θ 定义为传播方向与阵列轴的夹角：θ = 0° 为端射，θ = 90° 为侧射。</figcaption>
+          </figure>
+
+          <h3>3.1 从两个采样点到空间梯度</h3>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>Δ</mi><mi>P</mi><mo>=</mo>
+                <mi>P</mi><mo>(</mo><mfrac><mi>d</mi><mn>2</mn></mfrac><mo>)</mo>
+                <mo>−</mo>
+                <mi>P</mi><mo>(</mo><mo>−</mo><mfrac><mi>d</mi><mn>2</mn></mfrac><mo>)</mo>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+                <mo>≈</mo><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac>
+                <mspace width="1.5em" />
+                <mtext>条件：</mtext><mi>d</mi><mtext> 远小于空间变化尺度</mtext>
+              </mrow></math>
+            </div>
+          </div>
+          <p class="key-point"><b>这与声压梯度是同一个概念。</b>连续空间用导数；离散阵列只能用有限差分逼近导数。</p>
+
+          <h3 id="plane-wave-k-intro" style="margin-top: 30px">3.2 为什么差分结果随频率滚降？</h3>
+          <div class="warning">
+            <b>本段假设：</b>声源距离阵列足够远，在两个麦克风所占的小范围内，声场可以近似为幅度不随位置衰减的行进平面波；
+            两只全向压力麦克风位于
+            <math class="inline-mathml"><msub><mi>x</mi><mn>1</mn></msub><mo>=</mo><mo>−</mo><mfrac><mi>d</mi><mn>2</mn></mfrac></math>和
+            <math class="inline-mathml"><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><mo>+</mo><mfrac><mi>d</mi><mn>2</mn></mfrac></math>；
+            <math class="inline-mathml"><mi>θ</mi></math>是传播方向与阵列
+            <math class="inline-mathml"><mi>x</mi></math>轴的夹角；采用
+            <math class="inline-mathml"><msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup></math>时间约定。
+          </div>
+
+          <p style="color: var(--muted)">
+            先沿波的传播坐标写出您给出的平面波，其中
+            <math class="inline-mathml"><mi>k</mi><mo>=</mo><mfrac><mi>ω</mi><mi>c</mi></mfrac></math>：
+          </p>
+          <a class="concept-jump" href="#omega-k-meaning">
+            <span aria-hidden="true">↓</span> 不熟悉 ω、k、T 和 λ？跳到底部看物理含义与 1 kHz 算例
+          </a>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>P</mi><mo>(</mo><mi>s</mi><mo>)</mo>
+                <mo>=</mo><msub><mi>P</mi><mn>0</mn></msub>
+                <msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>k</mi><mi>s</mi></mrow></msup>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>k</mi><mo>=</mo><mfrac><mi>ω</mi><mi>c</mi></mfrac>
+              </mrow></math>
+            </div>
+          </div>
+
+          <p style="color: var(--muted)">
+            在阵列轴上，传播距离的投影为
+            <math class="inline-mathml"><mi>s</mi><mo>=</mo><mi>x</mi><mi mathvariant="normal">cos</mi><mi>θ</mi></math>，
+            因而阵列轴上的声压是：
+          </p>
+          <div class="equation small" role="math">
+            <math display="block"><mrow>
+              <mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+              <mo>=</mo><msub><mi>P</mi><mn>0</mn></msub>
+              <msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>k</mi><mi>x</mi><mi mathvariant="normal">cos</mi><mi>θ</mi></mrow></msup>
+            </mrow></math>
+          </div>
+          <p class="symbol-note">
+            当
+            <math class="inline-mathml"><mi>θ</mi><mo>=</mo><mn>0</mn><mo>°</mo></math>时，
+            <math class="inline-mathml"><mi mathvariant="normal">cos</mi><mi>θ</mi><mo>=</mo><mn>1</mn></math>，
+            就退化为
+            <math class="inline-mathml"><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msub><mi>P</mi><mn>0</mn></msub><msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>k</mi><mi>x</mi></mrow></msup></math>。
+          </p>
+
+          <p style="color: var(--muted)">
+            以阵列中心
+            <math class="inline-mathml"><mi>x</mi><mo>=</mo><mn>0</mn></math>处的复声压为
+            <math class="inline-mathml"><msub><mi>P</mi><mn>0</mn></msub></math>，两只麦克风分别测得：
+          </p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <msub><mi>P</mi><mn>1</mn></msub>
+                <mo>=</mo><mi>P</mi><mo>(</mo><mo>−</mo><mfrac><mi>d</mi><mn>2</mn></mfrac><mo>)</mo>
+                <mo>=</mo><msub><mi>P</mi><mn>0</mn></msub>
+                <msup><mi>e</mi><mrow><mo>+</mo><mi>j</mi><mfrac><mrow><mi>k</mi><mi>d</mi><mi mathvariant="normal">cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac></mrow></msup>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <msub><mi>P</mi><mn>2</mn></msub>
+                <mo>=</mo><mi>P</mi><mo>(</mo><mo>+</mo><mfrac><mi>d</mi><mn>2</mn></mfrac><mo>)</mo>
+                <mo>=</mo><msub><mi>P</mi><mn>0</mn></msub>
+                <msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mfrac><mrow><mi>k</mi><mi>d</mi><mi mathvariant="normal">cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac></mrow></msup>
+              </mrow></math>
+            </div>
+          </div>
+
+          <p style="color: var(--muted)">
+            定义差分输出为
+            <math class="inline-mathml"><mi>Δ</mi><mi>P</mi><mo>=</mo><msub><mi>P</mi><mn>2</mn></msub><mo>−</mo><msub><mi>P</mi><mn>1</mn></msub></math>，则：
+          </p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>Δ</mi><mi>P</mi>
+                <mo>=</mo><msub><mi>P</mi><mn>0</mn></msub>
+                <mo>[</mo>
+                <msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mfrac><mrow><mi>k</mi><mi>d</mi><mi mathvariant="normal">cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac></mrow></msup>
+                <mo>−</mo>
+                <msup><mi>e</mi><mrow><mo>+</mo><mi>j</mi><mfrac><mrow><mi>k</mi><mi>d</mi><mi mathvariant="normal">cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac></mrow></msup>
+                <mo>]</mo>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>Δ</mi><mi>P</mi>
+                <mo>=</mo><mo>−</mo><mn>2</mn><mi>j</mi><msub><mi>P</mi><mn>0</mn></msub>
+                <mi mathvariant="normal">sin</mi><mo>(</mo>
+                <mfrac><mrow><mi>k</mi><mi>d</mi><mi mathvariant="normal">cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac>
+                <mo>)</mo>
+              </mrow></math>
+            </div>
+          </div>
+          <p class="symbol-note">
+            这里使用了恒等式
+            <math class="inline-mathml">
+              <msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>a</mi></mrow></msup>
+              <mo>−</mo><msup><mi>e</mi><mrow><mo>+</mo><mi>j</mi><mi>a</mi></mrow></msup>
+              <mo>=</mo><mo>−</mo><mn>2</mn><mi>j</mi><mi mathvariant="normal">sin</mi><mi>a</mi>
+            </math>。
+          </p>
+
+          <p style="color: var(--muted)">
+            当
+            <math class="inline-mathml"><mo>|</mo><mi>k</mi><mi>d</mi><mi mathvariant="normal">cos</mi><mi>θ</mi><mo>|</mo><mo>≪</mo><mn>1</mn></math>时
+            （通常用更保守且与角度无关的条件
+            <math class="inline-mathml"><mi>k</mi><mi>d</mi><mo>≪</mo><mn>1</mn></math>），可使用
+            <math class="inline-mathml"><mi mathvariant="normal">sin</mi><mi>z</mi><mo>≈</mo><mi>z</mi></math>：
+          </p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>Δ</mi><mi>P</mi>
+                <mo>≈</mo><mo>−</mo><mn>2</mn><mi>j</mi><msub><mi>P</mi><mn>0</mn></msub>
+                <mo>(</mo><mfrac><mrow><mi>k</mi><mi>d</mi><mi mathvariant="normal">cos</mi><mi>θ</mi></mrow><mn>2</mn></mfrac><mo>)</mo>
+                <mo>=</mo><mo>−</mo><mi>j</mi><mi>k</mi><mi>d</mi><mi mathvariant="normal">cos</mi><mi>θ</mi><mo>·</mo><msub><mi>P</mi><mn>0</mn></msub>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mrow><mo>|</mo><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><msub><mi>P</mi><mn>0</mn></msub></mfrac><mo>|</mo></mrow>
+                <mo>≈</mo><mi>k</mi><mi>d</mi><mo>|</mo><mi mathvariant="normal">cos</mi><mi>θ</mi><mo>|</mo>
+                <mo>=</mo><mfrac><mrow><mi>ω</mi><mi>d</mi></mrow><mi>c</mi></mfrac><mo>|</mo><mi mathvariant="normal">cos</mi><mi>θ</mi><mo>|</mo>
+              </mrow></math>
+            </div>
+          </div>
+
+          <p class="key-point">
+            <b>符号说明：</b>上述负号来自差分顺序
+            <math class="inline-mathml"><mi>Δ</mi><mi>P</mi><mo>=</mo><msub><mi>P</mi><mn>2</mn></msub><mo>−</mo><msub><mi>P</mi><mn>1</mn></msub></math>。
+            若交换两只麦克风的相减顺序，差分信号整体变号，但幅频响应和 6 dB/oct 结论不变。
+          </p>
+
+          <div class="identity" aria-label="差分阵列低频滚降的原因链">
+            <span>低频<br />波长 λ 很长</span>
+            <i>→</i>
+            <span>两只麦克风<br />声压几乎相同</span>
+            <i>→</i>
+            <span>相减接近零<br />低频滚降</span>
+          </div>
+
+          <div class="success">
+            <b>6 dB/oct 从哪里来？</b>在
+            <math class="inline-mathml"><mi>k</mi><mi>d</mi><mo>≪</mo><mn>1</mn></math>的范围内，
+            <math class="inline-mathml"><mo>|</mo><mi>Δ</mi><mi>P</mi><mo>|</mo></math>与
+            <math class="inline-mathml"><mi>ω</mi></math>、也就是频率
+            <math class="inline-mathml"><mi>f</mi></math>成正比。
+            频率每降低一半，差分幅度也减半，即降低约 6.02 dB。这是“一阶空间差分”表现出的低频滚降。
+          </div>
+
+          <h3 style="margin-top: 30px">3.3 为什么恢复质点振速时又除以 <math class="inline-mathml"><mi>j</mi><mi>ω</mi></math>？</h3>
+          <p style="color: var(--muted)">差分阵列只完成了空间导数；牛顿方程还要求把加速度对时间积分：</p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <msub><mi>G</mi><mi>x</mi></msub>
+                <mo>≈</mo><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac>
+                <mspace width="1em" /><mtext>（压力梯度估计）</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>j</mi><mi>ω</mi><mi>ρ</mi><msub><mi>U</mi><mi>x</mi></msub>
+                <mo>=</mo><mo>−</mo><msub><mi>G</mi><mi>x</mi></msub>
+                <mspace width="1em" /><mtext>（牛顿第二定律）</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation" role="math">
+              <math display="block"><mrow>
+                <msub><mi>U</mi><mi>x</mi></msub>
+                <mo>≈</mo><mo>−</mo>
+                <mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi><mi>d</mi></mrow></mfrac>
+                <mspace width="1em" /><mtext>（质点振速估计）</mtext>
+              </mrow></math>
+            </div>
+          </div>
+
+          <div class="warning">
+            <b>先不要抵消：</b>到这里为止，
+            <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>
+            必须保留，因为它负责把加速度积分成速度。下面的抵消只发生在进一步假设声场是理想行进平面波之后。
+          </div>
+
+          <h3 id="plane-wave-cancellation" style="margin-top: 30px">3.4 理想平面波中，两个 <math class="inline-mathml"><mi>j</mi><mi>ω</mi></math> 究竟怎样抵消？</h3>
+          <p style="color: var(--muted)">
+            为了看清代数，先令平面波沿
+            <math class="inline-mathml"><mo>+</mo><mi>x</mi></math>方向传播：
+          </p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                <mo>=</mo><msub><mi>P</mi><mn>0</mn></msub>
+                <msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>k</mi><mi>x</mi></mrow></msup>
+                <mspace width="1em" /><mtext>（平面波）</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+                <mo>=</mo><mo>−</mo><mi>j</mi><mi>k</mi><mi>P</mi>
+                <mo>=</mo><mo>−</mo><mi>j</mi><mfrac><mi>ω</mi><mi>c</mi></mfrac><mi>P</mi>
+                <mspace width="1em" /><mtext>（因为 k = ω/c）</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>U</mi>
+                <mo>=</mo><mo>−</mo><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac>
+                <mo>(</mo><mo>−</mo><mi>j</mi><mfrac><mi>ω</mi><mi>c</mi></mfrac><mi>P</mi><mo>)</mo>
+              </mrow></math>
+            </div>
+            <div class="equation" role="math">
+              <math display="block"><mrow>
+                <mi>U</mi>
+                <mo>=</mo>
+                <mfrac>
+                  <mrow><mi>j</mi><mi>ω</mi><mi>P</mi></mrow>
+                  <mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi><mi>c</mi></mrow>
+                </mfrac>
+                <mo>=</mo><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac>
+              </mrow></math>
+            </div>
+          </div>
+
+          <p class="key-point">
+            <b>准确理解：</b>不是通用公式中的
+            <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>
+            消失了，而是理想平面波自身满足
+            <math class="inline-mathml"><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac><mo>=</mo><mo>−</mo><mi>j</mi><mfrac><mi>ω</mi><mi>c</mi></mfrac><mi>P</mi></math>；
+            梯度里本来就带有一个
+            <math class="inline-mathml"><mi>j</mi><mi>ω</mi></math>。代入后，它与时间积分的
+            <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>成对约去。
+          </p>
+
+          <p style="color: var(--muted)">
+            对差分阵列也是同一件事。在
+            <math class="inline-mathml"><mi>k</mi><mi>d</mi><mo>≪</mo><mn>1</mn></math>时，沿阵列轴传播的平面波满足：
+          </p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>Δ</mi><mi>P</mi>
+                <mo>≈</mo><mo>−</mo><mi>j</mi>
+                <mfrac><mrow><mi>ω</mi><mi>d</mi></mrow><mi>c</mi></mfrac><mi>P</mi>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <msub><mi>U</mi><mi>x</mi></msub>
+                <mo>≈</mo><mo>−</mo>
+                <mfrac><mrow><mo>−</mo><mi>j</mi><mfrac><mrow><mi>ω</mi><mi>d</mi></mrow><mi>c</mi></mfrac><mi>P</mi></mrow>
+                <mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi><mi>d</mi></mrow></mfrac>
+                <mo>=</mo><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac>
+              </mrow></math>
+            </div>
+          </div>
+
+          <div class="warning">
+            <b>适用边界：</b>驻波、近场、球面波、倏逝场或包含反射的复杂声场中，
+            <math class="inline-mathml"><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac></math>
+            不一定等于
+            <math class="inline-mathml"><mo>−</mo><mi>j</mi><mfrac><mi>ω</mi><mi>c</mi></mfrac><mi>P</mi></math>，
+            因而不能直接写成
+            <math class="inline-mathml"><mi>U</mi><mo>=</mo><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac></math>；
+            通用的
+            <math class="inline-mathml"><mi>U</mi><mo>=</mo><mo>−</mo><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac><mo>∇</mo><mi>P</mi></math>
+            仍然必须保留。
+          </div>
+
+          <table class="comparison-table">
+            <thead>
+              <tr><th>量</th><th>它是什么</th><th>低频表现</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><math class="inline-mathml"><mi>Δ</mi><mi>P</mi></math></td>
+                <td>两个压力麦克风的声压差</td><td>相对声压约按 6 dB/oct 滚降</td>
+              </tr>
+              <tr>
+                <td><math class="inline-mathml"><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac></math></td>
+                <td>声压梯度 <math class="inline-mathml"><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac></math> 的有限差分估计</td>
+                <td>对平面波含有与 <math class="inline-mathml"><mi>ω</mi></math> 成正比的梯度</td>
+              </tr>
+              <tr>
+                <td><math class="inline-mathml"><mo>−</mo><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi><mi>d</mi></mrow></mfrac></math></td>
+                <td><math class="inline-mathml"><mi>x</mi></math> 方向质点振速 <math class="inline-mathml"><msub><mi>U</mi><mi>x</mi></msub></math> 的估计</td>
+                <td>只在理想行进平面波条件下与梯度中的 <math class="inline-mathml"><mi>j</mi><mi>ω</mi></math> 抵消</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <section class="lesson-section" id="spherical">
+        <div class="section-heading">
+          <span class="section-number">04</span>
+          <div>
+            <p class="section-kicker">Spherical wave</p>
+            <h2>球面波中，<math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math> 仍然存在</h2>
+            <p class="section-intro">牛顿第二定律与波形无关；改变的只是球面波的声压梯度比平面波多了一个幅度扩散项。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+                <mo>=</mo><mfrac>
+                  <mrow><mi>A</mi><msup><mi>e</mi><mrow><mo>−</mo><mi>j</mi><mi>k</mi><mi>r</mi></mrow></msup></mrow>
+                  <mi>r</mi>
+                </mfrac>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mfrac><mrow><mi>d</mi><mi>P</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac>
+                <mo>=</mo><mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+                <mo>[</mo><mo>−</mo><mi>j</mi><mi>k</mi><mo>−</mo><mfrac><mn>1</mn><mi>r</mi></mfrac><mo>]</mo>
+              </mrow></math>
+            </div>
+            <div class="equation" role="math">
+              <math display="block"><mrow>
+                <msub><mi>U</mi><mi>r</mi></msub><mo>(</mo><mi>r</mi><mo>)</mo>
+                <mo>=</mo><mfrac><mrow><mi>P</mi><mo>(</mo><mi>r</mi><mo>)</mo></mrow><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac>
+                <mo>[</mo><mn>1</mn><mo>+</mo><mfrac><mn>1</mn><mrow><mi>j</mi><mi>k</mi><mi>r</mi></mrow></mfrac><mo>]</mo>
+              </mrow></math>
+            </div>
+          </div>
+
+          <div class="compare-grid">
+            <article class="compare-card">
+              <h3>远场：<math class="inline-mathml"><mi>k</mi><mi>r</mi><mo>≫</mo><mn>1</mn></math></h3>
+              <p>
+                <math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>k</mi><mi>r</mi></mrow></mfrac></math>很小，
+                <math class="inline-mathml"><msub><mi>U</mi><mi>r</mi></msub><mo>≈</mo><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac></math>。
+                局部看起来接近平面行波，压力与径向振速近似同相。
+              </p>
+            </article>
+            <article class="compare-card">
+              <h3>近场：<math class="inline-mathml"><mi>k</mi><mi>r</mi></math> 不大</h3>
+              <p>
+                球面扩散的
+                <math class="inline-mathml"><mo>−</mo><mfrac><mn>1</mn><mi>r</mi></mfrac></math>梯度不可忽略，
+                压力与振速出现额外幅相关系，不能只用
+                <math class="inline-mathml"><mfrac><mi>P</mi><mrow><mi>ρ</mi><mi>c</mi></mrow></mfrac></math>估计。
+              </p>
+            </article>
+          </div>
+
+          <p class="key-point">
+            <b>这里的“径向”不是某一根固定坐标轴。</b>对球面波而言，径向是“从声源指向测量点”的方向，
+            记为
+            <math class="inline-mathml"><mi>r</mi></math>方向；而麦克风基线是“两只麦克风的连线方向”，
+            记为
+            <math class="inline-mathml"><mi>s</mi></math>方向。只有当双麦克风沿声源—测点连线摆放时，才叫径向布置。
+            这时可用
+            <math class="inline-mathml"><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac></math>近似
+            <math class="inline-mathml"><mfrac><mrow><mi>d</mi><mi>P</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac></math>，
+            再用
+            <math class="inline-mathml"><mo>−</mo><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac></math>恢复
+            <math class="inline-mathml"><msub><mi>U</mi><mi>r</mi></msub></math>。
+            若基线与径向夹角为
+            <math class="inline-mathml"><mi>α</mi></math>，测到的不是完整径向梯度，而是
+            <math class="inline-mathml"><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>s</mi></mrow></mfrac><mo>=</mo><mi>cos</mi><mi>α</mi><mfrac><mrow><mi>d</mi><mi>P</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac></math>
+            这一投影。
+          </p>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="three-dimensional-velocity">
+        <div class="section-heading">
+          <span class="section-number">05</span>
+          <div>
+            <p class="section-kicker">Vector particle velocity</p>
+            <h2>三维质点振速：一条基线只给一个方向</h2>
+          </div>
+        </div>
+
+        <p class="section-intro">
+          前面双麦克风差分的推导，其实只是在一条基线方向上测声压变化。
+          但质点振速本质上是一个三维向量：空气质点可以沿
+          <math class="inline-mathml"><mi>x</mi></math>、
+          <math class="inline-mathml"><mi>y</mi></math>、
+          <math class="inline-mathml"><mi>z</mi></math>三个方向运动。
+          因此，完整的质点振速不能由一条差分线直接给出。
+        </p>
+
+        <div class="key-point">
+          <b>先把三个“方向”分清楚：</b>
+          <ul>
+            <li>
+              <math class="inline-mathml"><mi>x</mi></math>、
+              <math class="inline-mathml"><mi>y</mi></math>、
+              <math class="inline-mathml"><mi>z</mi></math>是人为选定的固定坐标轴，用来把三维质点振速拆成
+              <math class="inline-mathml"><msub><mi>U</mi><mi>x</mi></msub></math>、
+              <math class="inline-mathml"><msub><mi>U</mi><mi>y</mi></msub></math>、
+              <math class="inline-mathml"><msub><mi>U</mi><mi>z</mi></msub></math>。
+            </li>
+            <li>
+              <math class="inline-mathml"><mi>r</mi></math>方向只在球面波语境中特别常用，指“声源到测量点”的径向；它通常不是固定的
+              <math class="inline-mathml"><mi>x</mi></math>轴。
+            </li>
+            <li>
+              <math class="inline-mathml"><mi>s</mi></math>方向是两只麦克风的基线方向，也就是你实际做差分的方向。
+              差分阵列先得到这一方向的声压梯度；经欧拉方程恢复后，得到的是
+              <math class="inline-mathml"><msub><mi>U</mi><mi>s</mi></msub></math>，即质点振速在基线方向上的分量。
+            </li>
+          </ul>
+        </div>
+
+        <div class="equation-stack">
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <mi mathvariant="bold">U</mi><mo>=</mo>
+              <mrow><mo>[</mo><mtable>
+                <mtr><mtd><msub><mi>U</mi><mi>x</mi></msub></mtd></mtr>
+                <mtr><mtd><msub><mi>U</mi><mi>y</mi></msub></mtd></mtr>
+                <mtr><mtd><msub><mi>U</mi><mi>z</mi></msub></mtd></mtr>
+              </mtable><mo>]</mo></mrow>
+              <mo>,</mo>
+              <mo>∇</mo><mi>P</mi><mo>=</mo>
+              <mrow><mo>[</mo><mtable>
+                <mtr><mtd><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac></mtd></mtr>
+                <mtr><mtd><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>y</mi></mrow></mfrac></mtd></mtr>
+                <mtr><mtd><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>z</mi></mrow></mfrac></mtd></mtr>
+              </mtable><mo>]</mo></mrow>
+            </mrow></math>
+          </div>
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <mi>j</mi><mi>ω</mi><mi>ρ</mi><mi mathvariant="bold">U</mi>
+              <mo>=</mo><mo>−</mo><mo>∇</mo><mi>P</mi>
+              <mo>,</mo>
+              <mspace width="0.8em"></mspace>
+              <mi mathvariant="bold">U</mi>
+              <mo>=</mo><mo>−</mo>
+              <mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac>
+              <mo>∇</mo><mi>P</mi>
+            </mrow></math>
+          </div>
+        </div>
+
+        <div class="three-grid">
+          <article class="compare-card">
+            <h3>一条基线测的是方向导数</h3>
+            <p>
+              若两只麦克风沿单位方向
+              <math class="inline-mathml"><mover accent="true"><mi mathvariant="bold">e</mi><mo>^</mo></mover></math>
+              排列，间距为
+              <math class="inline-mathml"><mi>d</mi></math>，那么它近似的是：
+            </p>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac>
+                <mo>≈</mo>
+                <mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>s</mi></mrow></mfrac>
+                <mo>=</mo>
+                <mover accent="true"><mi mathvariant="bold">e</mi><mo>^</mo></mover>
+                <mo>·</mo><mo>∇</mo><mi>P</mi>
+              </mrow></math>
+            </div>
+            <p>
+              这只是完整梯度
+              <math class="inline-mathml"><mo>∇</mo><mi>P</mi></math>
+              在这条基线方向上的投影，不是完整的三维梯度。
+            </p>
+          </article>
+          <article class="compare-card">
+            <h3>恢复的是一个速度分量</h3>
+            <p>
+              把这个方向导数代入欧拉方程，只能得到沿基线方向的质点振速分量：
+            </p>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <msub><mi>U</mi><mi>s</mi></msub>
+                <mo>=</mo>
+                <mover accent="true"><mi mathvariant="bold">e</mi><mo>^</mo></mover>
+                <mo>·</mo><mi mathvariant="bold">U</mi>
+                <mo>≈</mo><mo>−</mo>
+                <mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi><mi>ρ</mi></mrow></mfrac>
+                <mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac>
+              </mrow></math>
+            </div>
+            <p>
+              如果两只麦克风的连线正好平行于
+              <math class="inline-mathml"><mi>x</mi></math>轴，且相减方向也按
+              <math class="inline-mathml"><mo>+</mo><mi>x</mi></math>定义，那么
+              <math class="inline-mathml"><msub><mi>U</mi><mi>s</mi></msub><mo>=</mo><msub><mi>U</mi><mi>x</mi></msub></math>。
+              若连线斜着放，它给的是
+              <math class="inline-mathml"><mi>x</mi></math>、
+              <math class="inline-mathml"><mi>y</mi></math>、
+              <math class="inline-mathml"><mi>z</mi></math>三个分量混合后的投影：
+            </p>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <msub><mi>U</mi><mi>s</mi></msub>
+                <mo>=</mo>
+                <msub><mi>e</mi><mi>x</mi></msub><msub><mi>U</mi><mi>x</mi></msub>
+                <mo>+</mo>
+                <msub><mi>e</mi><mi>y</mi></msub><msub><mi>U</mi><mi>y</mi></msub>
+                <mo>+</mo>
+                <msub><mi>e</mi><mi>z</mi></msub><msub><mi>U</mi><mi>z</mi></msub>
+              </mrow></math>
+            </div>
+            <p>
+              其中
+              <math class="inline-mathml"><msub><mi>e</mi><mi>x</mi></msub></math>、
+              <math class="inline-mathml"><msub><mi>e</mi><mi>y</mi></msub></math>、
+              <math class="inline-mathml"><msub><mi>e</mi><mi>z</mi></msub></math>
+              是基线单位方向在三个坐标轴上的分量。
+            </p>
+          </article>
+          <article class="compare-card">
+            <h3>三维需要三个独立方向</h3>
+            <p>
+              若有三条独立方向的基线，可写成：
+            </p>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <msub><mi>g</mi><mi>i</mi></msub>
+                <mo>≈</mo>
+                <mfrac><mrow><mi>Δ</mi><msub><mi>P</mi><mi>i</mi></msub></mrow><msub><mi>d</mi><mi>i</mi></msub></mfrac>
+                <mo>=</mo>
+                <msub><mover accent="true"><mi mathvariant="bold">e</mi><mo>^</mo></mover><mi>i</mi></msub>
+                <mo>·</mo><mo>∇</mo><mi>P</mi>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi mathvariant="bold">g</mi><mo>=</mo><mi mathvariant="bold">E</mi><mo>∇</mo><mi>P</mi>
+                <mo>,</mo>
+                <mspace width="0.8em"></mspace>
+                <mtext>rank</mtext><mo>(</mo><mi mathvariant="bold">E</mi><mo>)</mo><mo>=</mo><mn>3</mn>
+              </mrow></math>
+            </div>
+            <p>
+              只有当这三个方向线性独立时，才能由三个投影反推出完整的
+              <math class="inline-mathml"><mo>∇</mo><mi>P</mi></math>，再得到
+              <math class="inline-mathml"><msub><mi>U</mi><mi>x</mi></msub></math>、
+              <math class="inline-mathml"><msub><mi>U</mi><mi>y</mi></msub></math>、
+              <math class="inline-mathml"><msub><mi>U</mi><mi>z</mi></msub></math>。
+            </p>
+          </article>
+        </div>
+
+        <div class="warning">
+          <b>一句话：</b>双麦克风差分阵列是“一个方向的压力梯度传感器”。
+          它可以估计
+          <math class="inline-mathml"><msub><mi>U</mi><mi>x</mi></msub></math>
+          这一类方向分量，但不能自动变成完整的
+          <math class="inline-mathml"><mi mathvariant="bold">U</mi><mo>=</mo><mo>(</mo><msub><mi>U</mi><mi>x</mi></msub><mo>,</mo><msub><mi>U</mi><mi>y</mi></msub><mo>,</mo><msub><mi>U</mi><mi>z</mi></msub><mo>)</mo></math>。
+          若要三维声矢量，必须测到三个独立方向的声压梯度；只有在“声波只可能沿已知方向传播”这类强假设下，一条基线才可能够用。
+        </div>
+      </section>
+
+      <section class="verdict">
+        <p class="section-kicker">Final distinction</p>
+        <h2>同一个空间梯度，但不是同一个输出量</h2>
+        <ul>
+          <li><b>差分阵列：</b><math class="inline-mathml"><mfrac><mrow><mi>Δ</mi><mi>P</mi></mrow><mi>d</mi></mfrac></math> 近似声压空间梯度。</li>
+          <li><b>牛顿第二定律：</b>声压梯度对应 ρ 倍的质点加速度，方向相反。</li>
+          <li><b><math class="inline-mathml"><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac></math>：</b>把加速度积分成速度，因此不是“多余的一项”。</li>
+          <li><b>三维质点振速：</b>需要三个独立方向的声压梯度；一条基线只能给一个方向投影。</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section" id="omega-k-meaning">
+        <div class="section-heading">
+          <span class="section-number">附</span>
+          <div>
+            <p class="section-kicker">Time phase · Spatial phase</p>
+            <h2><math class="inline-mathml"><mi>ω</mi></math> 与 <math class="inline-mathml"><mi>k</mi></math>：时间转一圈，空间走一圈</h2>
+            <p class="section-intro">
+              对平面波
+              <math class="inline-mathml">
+                <mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                <mo>=</mo><mi>Re</mi><mo>{</mo><msub><mi>P</mi><mn>0</mn></msub>
+                <msup><mi>e</mi><mrow><mi>j</mi><mo>(</mo><mi>ω</mi><mi>t</mi><mo>−</mo><mi>k</mi><mi>x</mi><mo>)</mo></mrow></msup><mo>}</mo>
+              </math>，
+              <math class="inline-mathml"><mi>ω</mi><mi>t</mi></math>描述相位随时间改变，
+              <math class="inline-mathml"><mi>k</mi><mi>x</mi></math>描述相位随空间位置改变。
+            </p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="compare-grid">
+            <article class="compare-card">
+              <h3><math class="inline-mathml"><mi>ω</mi></math>：时间上的相位角速度</h3>
+              <p>
+                频率
+                <math class="inline-mathml"><mi>f</mi></math>表示每秒振动多少个周期，周期
+                <math class="inline-mathml"><mi>T</mi></math>表示完成一次振动需要多少秒：
+              </p>
+              <div class="equation-stack">
+                <div class="equation small" role="math">
+                  <math display="block"><mrow>
+                    <mi>T</mi><mo>=</mo><mfrac><mn>1</mn><mi>f</mi></mfrac>
+                  </mrow></math>
+                </div>
+                <div class="equation small" role="math">
+                  <math display="block"><mrow>
+                    <mi>ω</mi><mo>=</mo><mn>2</mn><mi>π</mi><mi>f</mi>
+                    <mo>=</mo><mfrac><mrow><mn>2</mn><mi>π</mi></mrow><mi>T</mi></mfrac>
+                    <mspace width="1em" /><mtext>rad/s</mtext>
+                  </mrow></math>
+                </div>
+                <div class="equation" role="math">
+                  <math display="block"><mrow>
+                    <mi>ω</mi><mi>T</mi><mo>=</mo><mn>2</mn><mi>π</mi>
+                  </mrow></math>
+                </div>
+              </div>
+              <p>
+                固定在空间某一点观察，经过一个周期
+                <math class="inline-mathml"><mi>T</mi></math>，相位正好转过
+                <math class="inline-mathml"><mn>2</mn><mi>π</mi></math>弧度。
+                因此
+                <math class="inline-mathml"><mi>ω</mi></math>叫<b>角频率</b>，也可理解为相位旋转的角速度；
+                它不是空气质点真的绕圆周旋转。
+              </p>
+            </article>
+
+            <article class="compare-card">
+              <h3><math class="inline-mathml"><mi>k</mi></math>：空间上的相位变化率</h3>
+              <p>
+                波长
+                <math class="inline-mathml"><mi>λ</mi></math>是空间中相邻两个同相位点之间的距离。
+                波数
+                <math class="inline-mathml"><mi>k</mi></math>表示每传播 1 m，相位改变多少弧度：
+              </p>
+              <div class="equation-stack">
+                <div class="equation small" role="math">
+                  <math display="block"><mrow>
+                    <mi>k</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mi>π</mi></mrow><mi>λ</mi></mfrac>
+                    <mo>=</mo><mfrac><mi>ω</mi><mi>c</mi></mfrac>
+                    <mspace width="1em" /><mtext>rad/m</mtext>
+                  </mrow></math>
+                </div>
+                <div class="equation" role="math">
+                  <math display="block"><mrow>
+                    <mi>k</mi><mi>λ</mi><mo>=</mo><mn>2</mn><mi>π</mi>
+                  </mrow></math>
+                </div>
+              </div>
+              <p>
+                固定同一时刻观察空间波形，沿传播方向走过一个波长
+                <math class="inline-mathml"><mi>λ</mi></math>，相位正好变化
+                <math class="inline-mathml"><mn>2</mn><mi>π</mi></math>弧度，波形重新重复。
+                所以
+                <math class="inline-mathml"><mi>k</mi></math>也可理解为<b>空间角频率</b>。
+              </p>
+            </article>
+          </div>
+
+          <div class="key-point">
+            <b>时间与空间由声速连接：</b>一个周期持续
+            <math class="inline-mathml"><mi>T</mi><mo>=</mo><mfrac><mn>1</mn><mi>f</mi></mfrac></math>秒，
+            声波以速度
+            <math class="inline-mathml"><mi>c</mi></math>传播，所以一个周期内向前传播的距离为：
+          </div>
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <mi>c</mi><mi>T</mi>
+              <mo>=</mo><mfrac><mi>c</mi><mi>f</mi></mfrac>
+              <mo>=</mo><mi>λ</mi>
+            </mrow></math>
+          </div>
+
+          <h3 style="margin-top: 30px">具体算例：空气中的 1 kHz 声波</h3>
+          <p style="color: var(--muted)">
+            取
+            <math class="inline-mathml"><mi>f</mi><mo>=</mo><mn>1000</mn><mtext>&nbsp;Hz</mtext></math>，
+            室温空气中的声速
+            <math class="inline-mathml"><mi>c</mi><mo>=</mo><mn>343</mn><mtext>&nbsp;m/s</mtext></math>。
+          </p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>T</mi><mo>=</mo><mfrac><mn>1</mn><mn>1000</mn></mfrac>
+                <mo>=</mo><mn>0.001</mn><mtext>&nbsp;s</mtext>
+                <mo>=</mo><mn>1</mn><mtext>&nbsp;ms</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>ω</mi><mo>=</mo><mn>2</mn><mi>π</mi><mi>f</mi>
+                <mo>≈</mo><mn>6283.19</mn><mtext>&nbsp;rad/s</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>λ</mi><mo>=</mo><mfrac><mi>c</mi><mi>f</mi></mfrac>
+                <mo>=</mo><mfrac><mn>343</mn><mn>1000</mn></mfrac>
+                <mo>=</mo><mn>0.343</mn><mtext>&nbsp;m</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>k</mi><mo>=</mo><mfrac><mi>ω</mi><mi>c</mi></mfrac>
+                <mo>=</mo><mfrac><mn>6283.19</mn><mn>343</mn></mfrac>
+                <mo>≈</mo><mn>18.32</mn><mtext>&nbsp;rad/m</mtext>
+              </mrow></math>
+            </div>
+          </div>
+
+          <div class="three-grid">
+            <article class="compare-card">
+              <h3>时间检查</h3>
+              <p><math class="inline-mathml"><mi>ω</mi><mi>T</mi><mo>≈</mo><mn>6283.19</mn><mo>×</mo><mn>0.001</mn><mo>=</mo><mn>6.283</mn><mo>≈</mo><mn>2</mn><mi>π</mi></math></p>
+            </article>
+            <article class="compare-card">
+              <h3>空间检查</h3>
+              <p><math class="inline-mathml"><mi>k</mi><mi>λ</mi><mo>≈</mo><mn>18.32</mn><mo>×</mo><mn>0.343</mn><mo>=</mo><mn>6.283</mn><mo>≈</mo><mn>2</mn><mi>π</mi></math></p>
+            </article>
+            <article class="compare-card">
+              <h3>传播距离</h3>
+              <p><math class="inline-mathml"><mi>c</mi><mi>T</mi><mo>=</mo><mn>343</mn><mo>×</mo><mn>0.001</mn><mo>=</mo><mn>0.343</mn><mtext>&nbsp;m</mtext><mo>=</mo><mi>λ</mi></math></p>
+            </article>
+          </div>
+
+          <p class="success">
+            <b>一句话记忆：</b>
+            <math class="inline-mathml"><mi>ω</mi></math>回答“每秒相位转多少弧度”，
+            <math class="inline-mathml"><mi>k</mi></math>回答“每米相位转多少弧度”；
+            一个周期对应时间上的
+            <math class="inline-mathml"><mn>2</mn><mi>π</mi></math>，也对应空间上的一个波长。
+          </p>
+          <a class="concept-jump" href="#plane-wave-k-intro"><span aria-hidden="true">↑</span> 返回 3.2 平面波差分推导</a>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="complex-phasor-meaning">
+        <div class="section-heading">
+          <span class="section-number">附2</span>
+          <div>
+            <p class="section-kicker">Complex representation · Phasor</p>
+            <h2>为什么用复数表示正弦声场？</h2>
+            <p class="section-intro">
+              实际声压始终是实数。复数不是新的物理量，而是一种把“振幅与相位”装进同一个数、
+              并把微分方程化成代数方程的计算方法。
+            </p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>1. 为什么最后要取实部？</h3>
+          <p style="color: var(--muted)">
+            麦克风测到的瞬时声压
+            <math class="inline-mathml"><mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo></math>
+            必须是实数。对单频声场，把空间复振幅写成：
+          </p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                <mo>=</mo><mi>A</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                <msup><mi>e</mi><mrow><mi>j</mi><mi>φ</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow></msup>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo><msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup>
+                <mo>=</mo><mi>A</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                <msup><mi>e</mi><mrow><mi>j</mi><mo>[</mo><mi>ω</mi><mi>t</mi><mo>+</mo><mi>φ</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>]</mo></mrow></msup>
+              </mrow></math>
+            </div>
+            <div class="equation" role="math">
+              <math display="block"><mrow>
+                <mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo>)</mo>
+                <mo>=</mo><mi>Re</mi><mo>{</mo><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo><msup><mi>e</mi><mrow><mi>j</mi><mi>ω</mi><mi>t</mi></mrow></msup><mo>}</mo>
+                <mo>=</mo><mi>A</mi><mo>(</mo><mi>x</mi><mo>)</mo>
+                <mi mathvariant="normal">cos</mi><mo>[</mo><mi>ω</mi><mi>t</mi><mo>+</mo><mi>φ</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>]</mo>
+              </mrow></math>
+            </div>
+          </div>
+
+          <div class="compare-grid">
+            <article class="compare-card">
+              <h3>复数的模</h3>
+              <p>
+                <math class="inline-mathml"><mo>|</mo><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>|</mo><mo>=</mo><mi>A</mi><mo>(</mo><mi>x</mi><mo>)</mo></math>
+                表示声压振幅。
+              </p>
+            </article>
+            <article class="compare-card">
+              <h3>复数的辐角</h3>
+              <p>
+                <math class="inline-mathml"><mi mathvariant="normal">arg</mi><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><mi>φ</mi><mo>(</mo><mi>x</mi><mo>)</mo></math>
+                表示声压相位。
+              </p>
+            </article>
+          </div>
+
+          <h3 style="margin-top: 30px">2. 使用复数的核心优势</h3>
+          <p style="color: var(--muted)">
+            若直接使用正弦和余弦，每次微分、积分都要同时追踪幅度和相位。
+            使用复指数后，时间微分、时间积分和空间微分都变成简单的乘法或除法：
+          </p>
+          <div class="equation-stack">
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mfrac><mo>∂</mo><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac>
+                <mo>⇔</mo><mi>j</mi><mi>ω</mi>
+                <mspace width="1.2em" />
+                <mtext>时间微分</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mo>∫</mo><mi>d</mi><mi>t</mi>
+                <mo>⇔</mo><mfrac><mn>1</mn><mrow><mi>j</mi><mi>ω</mi></mrow></mfrac>
+                <mspace width="1.2em" />
+                <mtext>时间积分</mtext>
+              </mrow></math>
+            </div>
+            <div class="equation small" role="math">
+              <math display="block"><mrow>
+                <mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+                <mo>=</mo><mo>−</mo><mi>j</mi><mi>k</mi><mi>P</mi>
+                <mspace width="1.2em" />
+                <mtext>沿 +x 传播的平面波</mtext>
+              </mrow></math>
+            </div>
+          </div>
+
+          <p style="color: var(--muted)">因此时域牛顿方程：</p>
+          <div class="equation small" role="math">
+            <math display="block"><mrow>
+              <mi>ρ</mi><mfrac><mrow><mo>∂</mo><mi>u</mi></mrow><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac>
+              <mo>=</mo><mo>−</mo><mfrac><mrow><mo>∂</mo><mi>p</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+            </mrow></math>
+          </div>
+          <p style="color: var(--muted)">可以直接变成复振幅之间的代数关系：</p>
+          <div class="equation" role="math">
+            <math display="block"><mrow>
+              <mi>j</mi><mi>ω</mi><mi>ρ</mi><mi>U</mi>
+              <mo>=</mo><mo>−</mo><mfrac><mrow><mo>∂</mo><mi>P</mi></mrow><mrow><mo>∂</mo><mi>x</mi></mrow></mfrac>
+            </mrow></math>
+          </div>
+
+          <p class="success">
+            <b>一句话概括：</b>复数表示把振幅和相位打包在
+            <math class="inline-mathml"><mi>P</mi><mo>(</mo><mi>x</mi><mo>)</mo></math>中，
+            把微分和积分变成乘除法；计算完成后取实部，才得到真实声压。
+          </p>
+          <a class="concept-jump" href="#one-over-jw"><span aria-hidden="true">↑</span> 返回 02：为什么出现 1/(jω)</a>
+        </div>
+      </section>
+    </main>
+
+    <footer>Audio AI · 声压梯度、质点振速与差分阵列专题</footer>
+
+  </body>
+</html>

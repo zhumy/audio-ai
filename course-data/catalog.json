@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "course_id": "audio-ai-for-human-and-machine",
+  "items": [
+    {
+      "id": "sound-physics-sampling-spectrum",
+      "type": "session",
+      "title": "声音物理与多域表示导览",
+      "url": "session/sound-physics-sampling-spectrum/",
+      "status": "published",
+      "maintainers": ["@zhumy"],
+      "related_topics": ["time-domain-audio", "spatial-acoustic-features", "frequency-domain-processing"]
+    },
+    {
+      "id": "time-domain-audio",
+      "type": "chapter",
+      "title": "时域音频",
+      "url": "chapters/time-domain-audio/",
+      "status": "published",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "spatial-acoustic-features",
+      "type": "chapter",
+      "title": "空间声学特征",
+      "url": "chapters/spatial-acoustic-features/",
+      "status": "published",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "frequency-domain-processing",
+      "type": "chapter",
+      "title": "频域处理",
+      "url": "chapters/frequency-domain-processing/",
+      "status": "published",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "waveform-time-domain-lab",
+      "type": "lab",
+      "title": "时域波形实验",
+      "url": "labs/waveform-time-domain/",
+      "status": "preview",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "spectrum-stft-lab",
+      "type": "lab",
+      "title": "频谱与 STFT 实验",
+      "url": "labs/spectrum-stft/",
+      "status": "preview",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "sound-event-classification",
+      "type": "project",
+      "title": "声音事件分类项目",
+      "url": "projects/sound-event-classification/",
+      "status": "draft",
+      "maintainers": ["@zhumy"]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+name: Validate course
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Validate course pages
+        run: python .agents/skills/build-audio-ai-course/scripts/audit_course_pages.py . --strict
+      - name: Validate JSON configuration
+        run: python -m json.tool course-data/catalog.json >/dev/null && python -m json.tool course-data/paths/current.json >/dev/null && python -m json.tool course-data/glossary.json >/dev/null && python -m json.tool course-data/notation.json >/dev/null && python -m json.tool course-data/units.json >/dev/null
