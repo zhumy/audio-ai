@@ -1,331 +1,354 @@
-# WEEK3/WEEK4 integration blueprint
+# WEEK3/WEEK4 source-first integration blueprint
+
+This document is based only on the current WEEK3 and WEEK4 draft courseware supplied by the teacher. It does not use the teaching syllabus, current public path order, or any week plan outside the two source pages as content evidence.
 
 Source courseware:
 
 - `C:\Users\chunyang.xu\Documents\2026 苏州大学\03 课程\01 人与机器听觉\html_courseware\week03-auditory-psychoacoustics\index.html`
 - `C:\Users\chunyang.xu\Documents\2026 苏州大学\03 课程\01 人与机器听觉\html_courseware\week04-spatial-auditory-scene-features\index.html`
 
-This is a planning document for bringing the current WEEK3 and WEEK4 draft courseware into the student-facing course site. It is not itself a published route and should not be linked from `course-data/paths/current.json`.
+This is a teacher/maintainer planning document. It should not be linked from the public student route until the target pages exist and pass review.
 
-## Integration principle
+## Boundary
 
-The source files are week-shaped teaching pages. The target repository is a connected course site where:
+Architecture rule retained:
 
-- `chapters/` owns definitions, formulas, derivations, worked examples, interactive observations, validity boundaries, and self-checks.
-- `session/` owns syllabus-driven macro organization, prerequisite/current/successor relationships, contextual jumps, and teaching-route flow.
-- Week numbers are teaching-path metadata, not canonical URLs.
+- Chapter owns concrete knowledge: definitions, formulas, examples, interactions, detailed explanation, and validity boundaries.
+- Session owns organization: why these source sections belong together, how to move among them, and what order is recommended.
+- Semantic URLs are still preferred. Week numbers may be kept as source labels or archived teaching-path metadata, but not as the long-term identity of student-facing Chapters.
 
-Therefore, do not import the source pages as `week03/` and `week04/` canonical directories. Split them into semantic Chapters, then build Session pages that point to exact Chapter anchors.
+Content-source rule for this revision:
 
-## Proposed content map
+- Use only the WEEK3 and WEEK4 source page titles, section headings, anchors, images, SVGs, canvases, controls, and closing tasks as evidence.
+- Do not infer missing topics from the syllabus or from the existing public route.
+- Do not create prerequisite/successor claims that are not visible in the two source pages. When a later integration needs to connect to existing site pages, do that in a separate reviewed step.
 
-| Source | Target content ID | Type | Proposed URL | Status at first import | Role |
+## Source inventory
+
+### WEEK3 source page
+
+Title: `第3次课 听觉系统与心理声学基础`
+
+Visible source anchors:
+
+| Source anchor | Source label/heading | Main content observed |
+|---|---|---|
+| `#flow` | 本节课的学习路径 | Time structure for the draft class |
+| `#ear` | 外耳、中耳、内耳：声音进入听觉系统的整体路径 | Whole auditory pathway overview |
+| `#outer-ear` | 外耳：收集声波与方向相关滤波 | Pinna/outer-ear image and explanation |
+| `#middle-ear` | 中耳：鼓膜、听小骨与阻抗匹配 | Middle-ear image and impedance matching explanation |
+| `#inner-ear` | 内耳与耳蜗频率感知：人耳中的频率地图 | Cochlea image, tonotopic SVG, frequency/Mel readout |
+| `#ear-legacy` | 人耳构造：不是被动麦克风 | Legacy/hidden alternate auditory-chain content |
+| `#cochlea-legacy` | 耳蜗频率分析：一条弯曲的频率地图 | Legacy/hidden cochlea interaction |
+| `#pathway-legacy` | 听觉通路与经验：信号进入大脑以后才成为“听见” | Neural coding, attention, experience |
+| `#threshold` | 听阈曲线：从最小可听到不适与损伤风险 | Hearing-threshold image and audibility boundary |
+| `#hearing-health` | 听力健康：测试、听损与辅听设备 | Hearing-test room, audiogram, hearing aid, cochlear implant |
+| `#loudness` | 响度：同一声压不等于同一听感 | Equal-loudness SVG with phon/frequency controls |
+| `#band` | 临界频带：频谱不是无限精细地被感知 | Critical-band/ERB SVG with center-frequency control |
+| `#pitch` | 音高 Pitch：频率相关，但不等于频率 | Equal temperament, piano/MIDI controls, pitch canvas |
+| `#timbre` | 音色：同一音高为什么听起来不像同一种声音 | Harmonic/envelope controls and timbre canvas |
+| `#masking` | 掩蔽：听不见不代表不存在 | Masking SVG, masker/target controls, audio buttons |
+| `#mp3` | 从掩蔽到 MP3：把“听不出来”变成工程能力 | MP3 application and encoding-flow SVG |
+| `#closing` | 形成性检查与课后任务 | Quiz, closing takeaways, post-class tasks |
+
+WEEK3 media and interactions:
+
+- Images: outer/middle/inner ear, pinna, middle ear, cochlea frequency map, hearing threshold curve, test room, audiogram, hearing aids, cochlear implant.
+- SVG interactions: cochlear map, audiogram/WDRC, equal-loudness curve, critical-band/ERB curve, masking threshold, MP3 encoding flow.
+- Canvas/audio interactions: pitch waveform/harmonic spectrum, timbre waveform/envelope/harmonic spectrum, play buttons for pitch/timbre/masking examples.
+
+### WEEK4 source page
+
+Title: `第四周 空间听觉、场景组织与音频特征表示`
+
+Visible source anchors:
+
+| Source anchor | Source label/heading | Main content observed |
+|---|---|---|
+| `#flow` | 两小时的教学路径 | Time structure for the draft class |
+| `#opening` | 同一条波形，为什么能听出空间和对象？ | Opening listening question |
+| `#binaural` | Binaural cues：ITD 与 ILD 如何给出左右方向 | Binaural cue quick view and ITD/ILD SVG |
+| `#hrtf` | HRTF：耳廓、耳道与个性化空间音频 | Spatial rendering chain and HRTF spectral SVG |
+| `#datasets` | 开放 HRTF 数据格式与数据集：以 SOFA 为核心 | SOFA object panel and HRTF dataset choices |
+| `#iacc` | IACC：双耳相关性如何影响声像宽度和空间感 | IACC explanation and width canvas |
+| `#precedence` | The Precedence Effect：有反射时为什么定位仍然稳定 | Direct/reflected sound timeline SVG |
+| `#asa` | Auditory Scene Analysis：混合声如何被组织成对象 | Grouping cue controls and ASA SVG |
+| `#complex` | 复杂声音、距离感知与视觉对定位的影响 | Complex lateralization, distance, visual influence |
+| `#features` | 从空间与场景回到机器听觉特征表示 | Feature representation choices and feature canvas |
+| `#closing` | 收束、小测与课后任务 | Closing takeaways, quiz, post-class tasks |
+
+WEEK4 media and interactions:
+
+- Inline SVG interactions: binaural ITD/ILD position diagram, HRTF spectral-cue chart, precedence timeline, ASA grouping diagram.
+- Canvas interactions: IACC waveform/width demonstration, audio feature representation canvas.
+- Preview images present in the source folder: `week04-preview.png`, `week04-mobile-preview.png`. Treat them as visual reference only, not student content.
+
+## Source-derived target map
+
+The following targets are derived from the two source pages only. Status should start as `draft` because none of these pages has yet been rebuilt in the shared course style.
+
+| Source evidence | Target content ID | Type | Proposed semantic URL | First status | Why this split follows the source |
 |---|---|---|---|---|---|
-| WEEK3 | `auditory-system-psychoacoustics` | chapter | `chapters/auditory-system-psychoacoustics/` | `draft` | Human auditory pathway, cochlear frequency mapping, thresholds, loudness, critical bands, masking, hearing-health boundaries |
-| WEEK3 | `pitch-timbre-symbolic-audio` | chapter | `chapters/pitch-timbre-symbolic-audio/` | `draft` | Pitch, timbre, harmonic structure, missing fundamental, log-frequency ratios, semitone/MIDI bridge |
-| WEEK3 | `auditory-perception-route` | session | `session/auditory-perception-route/` | `draft` | Route from spectrum to perception, then to perceptual features and evaluation |
-| WEEK4 | `spatial-hearing-scene-analysis` | chapter | `chapters/spatial-hearing-scene-analysis/` | `draft` | Binaural cues, HRTF, IACC, precedence effect, auditory scene analysis, complex sound lateralization |
-| WEEK4 | `audio-feature-representations` | chapter | `chapters/audio-feature-representations/` | `draft` | STFT/Mel/filterbank feature choices, time-frequency tradeoff, spatial/scene cues for machine listening |
-| WEEK4 | `spatial-scene-feature-route` | session | `session/spatial-scene-feature-route/` | `draft` | Route from physical sound field and perception to scene organization and machine features |
+| WEEK3 anchors `#ear` through `#masking`, plus `#mp3` as application | `auditory-system-psychoacoustics` | chapter | `chapters/auditory-system-psychoacoustics/` | `draft` | The source page has a continuous path from ear anatomy to psychoacoustic boundaries and masking |
+| WEEK3 anchors `#pitch` and `#timbre` | `pitch-timbre-symbolic-audio` | chapter | `chapters/pitch-timbre-symbolic-audio/` | `draft` | Pitch/timbre have their own controls, canvases, and symbolic mapping, so they are easier to maintain as a separate Chapter |
+| WEEK3 anchor `#flow` and `#closing` | `auditory-psychoacoustics-route` | session | `session/auditory-psychoacoustics-route/` | `draft` | The source page contains a class route and closing tasks that should organize, not duplicate, the Chapter knowledge |
+| WEEK4 anchors `#opening` through `#complex` | `spatial-hearing-scene-analysis` | chapter | `chapters/spatial-hearing-scene-analysis/` | `draft` | The source page has one continuous perception story from ITD/ILD to scene organization |
+| WEEK4 anchor `#features` | `audio-feature-representations` | chapter | `chapters/audio-feature-representations/` | `draft` | The source explicitly turns from spatial/scene perception to machine feature representation |
+| WEEK4 anchors `#flow` and `#closing` | `spatial-scene-feature-route` | session | `session/spatial-scene-feature-route/` | `draft` | The source has a two-hour route and wrap-up that should become a Session-level organizer |
 
-Keep all new IDs semantic. If the syllabus later needs "WEEK3" or "WEEK4" links, create compatibility/teaching-path entries that redirect or link to these semantic pages.
+## Source-derived narratives
 
-## Course-level narratives
+These narratives are phrased from the internal order of the WEEK3/WEEK4 source pages, not from the syllabus.
 
-### Auditory perception route
+### `auditory-system-psychoacoustics`
 
-Previous knowledge -> current transformation -> next use:
-`time-domain waveform and frequency-domain spectrum -> human auditory system transforms physical pressure, frequency, and spectrum into perceptual organization -> machine features, perceptual coding, hearing evaluation, and task metrics reuse these perceptual constraints`.
+Source-section flow:
+`听觉路径 -> 耳蜗频率地图 -> 听阈/听力健康 -> 响度 -> 临界频带 -> 掩蔽 -> MP3 应用`.
 
-Chapter-level narrative:
-`hearing is not a passive microphone -> sound pressure, frequency, spectrum, and auditory organs become the objects -> outer/middle/inner ear and cochlear mechanics create selective frequency response -> thresholds, loudness, critical bands, and masking become perceptual representations -> interactive listening/plots show audibility and masking -> boundaries include hearing loss, device compensation, and simplified psychoacoustic models`.
+Chapter narrative:
+`声音进入耳朵并不是被动记录 -> 外耳、中耳、内耳、频率、声级和频谱成为研究对象 -> 耳蜗位置-频率映射、听阈、响度、临界频带和掩蔽解释可听性 -> 交互图展示频率/声级/频带如何改变听感 -> MP3 和辅听设备作为应用与边界`.
 
-### Pitch/timbre symbolic audio
+### `pitch-timbre-symbolic-audio`
 
-Previous knowledge -> current transformation -> next use:
-`spectrum, harmonics, and auditory pitch sensitivity -> frequency relations become perceived pitch, timbre, and symbolic musical units -> music/audio AI, MIDI, pitch tracking, synthesis, and sound-event features reuse the mapping`.
+Source-section flow:
+`音高 -> 十二平均律/MIDI -> 缺失基频与谐波 -> 音色 -> 合成听辨`.
 
-Chapter-level narrative:
-`two sounds can share frequency content or pitch yet sound different -> fundamental frequency, harmonic amplitudes, envelope, and semitone distance are the objects -> ratios and harmonic organization explain pitch and timbre -> log-frequency, note names, and MIDI provide a representation -> synthesis widgets demonstrate pitch/timbre changes -> boundaries include missing fundamental, inharmonicity, and non-musical sounds`.
+Chapter narrative:
+`频率相关但不等于音高 -> 基频、谐波、半音距离、MIDI 编号和包络成为研究对象 -> 对数频率和谐波组织解释音高 -> 谐波能量和起音包络解释音色 -> 播放与画布观察让学生比较同音高不同音色`.
 
-### Spatial hearing and scene analysis
+### `auditory-psychoacoustics-route`
 
-Previous knowledge -> current transformation -> next use:
-`sound field p(r,t), spatial gradients, and spectrum -> human listeners infer direction, width, externalization, distance, and objects from binaural and spectral cues -> spatial audio rendering, scene analysis, source separation, and event detection use those cues`.
+Session narrative:
+`WEEK3 的课堂路径先建立听觉系统如何接收声音，再用听阈、响度、临界频带、音高、音色、掩蔽解释“听见什么”，最后用 MP3 和课堂小测收束应用与检查`.
 
-Chapter-level narrative:
-`the same waveform can be heard as coming from a place and belonging to an object -> source direction, ear signals, delay, level, correlation, and reflections are the objects -> ITD/ILD, HRTF, IACC, precedence, and grouping principles explain organization -> spatial and scene features become representations -> interactive diagrams demonstrate localization and grouping -> boundaries include individual HRTF mismatch, reverberation, visual bias, and simplified cue models`.
+Session should link to:
 
-### Audio feature representations
+- `chapters/auditory-system-psychoacoustics/#auditory-chain`
+- `chapters/auditory-system-psychoacoustics/#cochlear-map`
+- `chapters/auditory-system-psychoacoustics/#thresholds`
+- `chapters/auditory-system-psychoacoustics/#loudness`
+- `chapters/auditory-system-psychoacoustics/#critical-bands`
+- `chapters/pitch-timbre-symbolic-audio/#pitch`
+- `chapters/pitch-timbre-symbolic-audio/#timbre`
+- `chapters/auditory-system-psychoacoustics/#masking`
 
-Previous knowledge -> current transformation -> next use:
-`waveform, spectrum, auditory bands, and scene cues -> engineering chooses frame, frequency scale, channel, and spatial descriptors as model inputs -> sound-event classification and later machine-listening tasks reuse these representations`.
+Session must not contain:
 
-Chapter-level narrative:
-`a model cannot consume "sound" directly without a representation choice -> frames, spectra, Mel bands, channels, spatial cues, and labels are the objects -> windowing, filterbanks, and feature design expose tradeoffs -> waveform/STFT/Mel/spatial-feature views become methods -> feature widgets compare time/frequency/task behavior -> boundaries include task mismatch, lost phase/spatial detail, and evaluation leakage`.
+- full equal-loudness or critical-band explanations;
+- duplicated ear anatomy teaching text;
+- duplicated MP3 encoding-flow explanation;
+- the pitch/timbre synthesis explanation beyond route-level context.
 
-## Target chapter outlines and anchors
+### `spatial-hearing-scene-analysis`
+
+Source-section flow:
+`开场听辨问题 -> ITD/ILD -> HRTF -> SOFA/数据集 -> IACC -> 优先效应 -> ASA -> 复杂声/距离/视觉影响`.
+
+Chapter narrative:
+`同一条波形也能被听成来自某个方向和某个对象 -> 方位角、距离、双耳时间差、双耳强度差、HRTF、相关性、反射和分组线索成为研究对象 -> ITD/ILD、HRTF、IACC、优先效应和 ASA 解释定位与场景组织 -> SVG/Canvas 交互展示参数改变后的听觉判断 -> 个体差异、反射、距离和视觉影响给出边界`.
+
+### `audio-feature-representations`
+
+Source-section flow:
+`人类机制与机器表示 -> 窗长 -> 帧移 -> Mel 频带数 -> 特征表示切换演示 -> 任务提示`.
+
+Chapter narrative:
+`空间和场景听觉之后，机器需要选择输入表示 -> 窗长、帧移、频带数、时间分辨率、频率分辨率和任务目标成为研究对象 -> 特征参数改变会改变可保留的信息 -> Canvas 交互比较表示选择的效果 -> 以分类/检测任务适配作为边界`.
+
+### `spatial-scene-feature-route`
+
+Session narrative:
+`WEEK4 的课堂路径先用同一波形引出空间和对象问题，再依次组织 ITD/ILD、HRTF、IACC、优先效应和 ASA，最后回到机器听觉特征表示与课堂检查`.
+
+Session should link to:
+
+- `chapters/spatial-hearing-scene-analysis/#opening`
+- `chapters/spatial-hearing-scene-analysis/#binaural-cues`
+- `chapters/spatial-hearing-scene-analysis/#hrtf`
+- `chapters/spatial-hearing-scene-analysis/#iacc`
+- `chapters/spatial-hearing-scene-analysis/#precedence`
+- `chapters/spatial-hearing-scene-analysis/#scene-analysis`
+- `chapters/audio-feature-representations/#overview`
+- `chapters/audio-feature-representations/#feature-lab`
+
+Session must not contain:
+
+- ITD/ILD equations or explanatory examples copied from the Chapter;
+- HRTF dataset descriptions beyond why the route jumps there;
+- IACC/precedence/ASA interactive explanations;
+- feature-parameter teaching that belongs in the feature Chapter.
+
+## Target chapter outlines
 
 ### `chapters/auditory-system-psychoacoustics/`
 
-Proposed outline:
-
-| Anchor | Label | Source material | Ownership notes |
+| Target anchor | Student-facing label | Source anchors | Concrete content owned here |
 |---|---|---|---|
-| `#overview` | 先看全貌 | WEEK3 hero and learning path | State why physical sound is transformed by the ear before machines imitate or exploit perception |
-| `#auditory-chain` | 听觉通路 | `#ear`, `#outer-ear`, `#middle-ear`, `#inner-ear` | Own the ear-pathway explanation and stable anatomy anchors |
-| `#cochlear-map` | 耳蜗频率图 | cochlea interactive SVG and image | Own tonotopy, Mel bridge, and cochlear map interaction |
-| `#thresholds` | 听阈与健康 | `#threshold`, `#hearing-health` | Own audibility boundaries, audiogram, hearing-loss/device context |
-| `#loudness` | 响度 | `#loudness` | Own equal-loudness explanation and interactive curve |
-| `#critical-bands` | 临界频带 | `#band` | Own ERB/critical-band explanation and bandwidth interaction |
-| `#masking` | 掩蔽 | `#masking`, `#mp3` | Own masking model and link MP3 as application, not as whole coding chapter unless later expanded |
-| `#route` | 学习路线 | closing route | Link back to frequency-domain processing and forward to pitch/timbre and feature representations |
-
-Important relationship links:
-
-- 前置知识: `chapters/frequency-domain-processing/#stft`
-- 前置知识: `chapters/time-domain-audio/#auditory-time`
-- 复用定义: SPL should link to the authoritative sound-pressure/SPL anchor once it exists in `time-domain-audio`
-- 用于后续: `chapters/pitch-timbre-symbolic-audio/`
-- 用于后续: `chapters/audio-feature-representations/`
+| `#overview` | 先看全貌 | `#flow`, page hero | Courseware question and route distilled into a Chapter opening |
+| `#auditory-chain` | 外中内耳 | `#ear`, `#outer-ear`, `#middle-ear`, `#inner-ear` | Ear pathway, outer-ear filtering, middle-ear impedance matching, inner-ear entry |
+| `#cochlear-map` | 耳蜗频率图 | `#inner-ear`, `#cochlea-legacy` | Tonotopic map, frequency-region interaction, Mel readout if retained |
+| `#pathway-experience` | 通路与经验 | `#pathway-legacy` | Neural coding, attention, experience as interpretation layer |
+| `#thresholds-health` | 听阈与健康 | `#threshold`, `#hearing-health` | Threshold curve, audiogram, hearing loss, aids, cochlear implant as boundary/application |
+| `#loudness` | 响度 | `#loudness` | Equal-loudness interaction and same-SPL-not-same-loudness explanation |
+| `#critical-bands` | 临界频带 | `#band` | Critical band/ERB interaction and perceptual frequency resolution |
+| `#masking-mp3` | 掩蔽与 MP3 | `#masking`, `#mp3` | Masking threshold interaction and MP3 as application |
+| `#route` | 学习路线 | `#closing` | Self-check, takeaways, links to the WEEK3 Session and pitch/timbre Chapter |
 
 ### `chapters/pitch-timbre-symbolic-audio/`
 
-Proposed outline:
-
-| Anchor | Label | Source material | Ownership notes |
+| Target anchor | Student-facing label | Source anchors | Concrete content owned here |
 |---|---|---|---|
-| `#overview` | 先看全貌 | WEEK3 `#pitch`, `#timbre` questions | Explain why frequency is related to, but not equal to, pitch |
-| `#object` | 研究对象 | pitch frequency, harmonics, envelope controls | Define `f0`, harmonic index, amplitude, envelope, semitone distance |
-| `#log-frequency` | 对数频率 | semitone/MIDI controls | Own octave, semitone, equal temperament, note/MIDI mapping |
-| `#pitch-perception` | 音高机制 | missing fundamental widget | Explain harmonic grouping and missing fundamental |
-| `#timbre` | 音色 | harmonic/envelope widget | Own timbre as spectral-envelope/time-envelope interaction |
-| `#synthesis-lab` | 合成观察 | pitch/timbre audio buttons and canvases | Student-facing interactive synthesis |
-| `#limits` | 边界 | source caveats | Inharmonic, noisy, speech, and culturally variable pitch systems |
-| `#route` | 学习路线 | closing tasks | Link to psychoacoustics, audio features, synthesis/generation later |
-
-Important relationship links:
-
-- 前置知识: `chapters/frequency-domain-processing/#fourier`
-- 复用定义: `chapters/auditory-system-psychoacoustics/#cochlear-map`
-- 用于后续: `chapters/audio-feature-representations/`
-- 用于后续: future music/synthesis/generation chapter
+| `#overview` | 先看全貌 | `#pitch`, `#timbre` | Why pitch and timbre need a separate treatment inside WEEK3 material |
+| `#pitch` | 音高 | `#pitch` | Frequency-pitch distinction, pitch controls, listening examples |
+| `#equal-temperament` | 十二平均律 | `#pitch` | Semitone distance, note names, piano keyboard, MIDI number |
+| `#missing-fundamental` | 缺失基频 | `#pitch` | Harmonic count and missing-fundamental checkbox/canvas |
+| `#timbre` | 音色 | `#timbre` | Harmonic amplitudes, attack speed, timbre canvas |
+| `#synthesis-practice` | 合成听辨 | `#pitch`, `#timbre` | Playback controls and comparison tasks |
+| `#route` | 学习路线 | `#closing` | Links back to the WEEK3 Session and forward to feature material only after that target exists |
 
 ### `chapters/spatial-hearing-scene-analysis/`
 
-Proposed outline:
-
-| Anchor | Label | Source material | Ownership notes |
+| Target anchor | Student-facing label | Source anchors | Concrete content owned here |
 |---|---|---|---|
-| `#overview` | 先看全貌 | WEEK4 opening | Connect one waveform to location/object perception |
-| `#binaural-cues` | ITD / ILD | `#binaural` | Own definitions, assumptions, and the binaural cue widget |
-| `#hrtf` | HRTF | `#hrtf`, `#datasets` | Own HRTF mechanism and SOFA/dataset engineering note |
-| `#iacc` | IACC | `#iacc` | Own correlation/width explanation and interaction |
-| `#precedence` | 优先效应 | `#precedence` | Own direct/reflected sound organization and delay boundaries |
-| `#scene-analysis` | 场景组织 | `#asa`, `#complex` | Own auditory scene grouping principles, distance, visual influence |
-| `#practice` | 互动观察 | SVG/canvas widgets | Keep widgets accessible and visually verified |
-| `#route` | 学习路线 | closing | Link to physical spatial field and feature representations |
-
-Important relationship links:
-
-- 前置知识: `chapters/spatial-acoustic-features/#field`
-- 换一个维度: `chapters/spatial-acoustic-features/#differential`
-- 换一个维度: `chapters/spatial-acoustic-features/#vector-foa`
-- 前置知识: `chapters/auditory-system-psychoacoustics/#cochlear-map`
-- 用于后续: `chapters/audio-feature-representations/`
-- 用于后续: `projects/sound-event-classification/`
+| `#overview` | 先看全貌 | `#opening` | Opening question: same waveform, spatial/object perception |
+| `#binaural-cues` | ITD / ILD | `#binaural` | Binaural cue explanation and parameter SVG |
+| `#hrtf` | HRTF | `#hrtf` | HRTF rendering chain and spectral-cue SVG |
+| `#hrtf-data` | SOFA 与数据集 | `#datasets` | SOFA object panel and dataset selection context |
+| `#iacc` | IACC | `#iacc` | Correlation/width explanation and canvas |
+| `#precedence` | 优先效应 | `#precedence` | Direct/reflection timeline and fusion/echo states |
+| `#scene-analysis` | 场景组织 | `#asa` | ASA grouping cues and object-count interaction |
+| `#complex-boundaries` | 复杂声与视觉 | `#complex` | Lateralization of complex sounds, distance, visual influence |
+| `#route` | 学习路线 | `#closing` | Self-check, takeaways, links to the WEEK4 Session and feature Chapter |
 
 ### `chapters/audio-feature-representations/`
 
-Proposed outline:
-
-| Anchor | Label | Source material | Ownership notes |
+| Target anchor | Student-facing label | Source anchors | Concrete content owned here |
 |---|---|---|---|
-| `#overview` | 先看全貌 | WEEK4 `#features` | Explain representation choice as the bridge to machine listening |
-| `#frames` | 分帧与窗长 | feature widget controls | Reuse STFT anchor instead of re-deriving STFT |
-| `#spectral-features` | 频谱特征 | WEEK4 feature panel | Link to frequency-domain processing |
-| `#auditory-features` | 听觉频带 | Mel bands, psychoacoustic links | Link to critical bands/Mel; do not duplicate psychoacoustic definitions |
-| `#spatial-features` | 空间特征 | spatial/scene cue links | Link to ITD/ILD/HRTF/IACC anchors |
-| `#task-fit` | 任务匹配 | classification/detection hints | Connect representation choices to tasks |
-| `#feature-lab` | 特征实验 | feature canvas | Student-facing interactive feature comparison |
-| `#route` | 学习路线 | route cards | Link to project and later ML chapters |
-
-Important relationship links:
-
-- 前置知识: `chapters/frequency-domain-processing/#stft`
-- 复用定义: `chapters/auditory-system-psychoacoustics/#critical-bands`
-- 复用定义: `chapters/spatial-hearing-scene-analysis/#binaural-cues`
-- 进入项目: `projects/sound-event-classification/`
-
-## Target session outlines
-
-### `session/auditory-perception-route/`
-
-Purpose: organize the teaching route from physical/digital representations into human perception without teaching the concrete psychoacoustic content.
-
-Suggested relationship navigation:
-
-- 前置知识: `chapters/time-domain-audio/#auditory-time`
-- 前置知识: `chapters/frequency-domain-processing/#stft`
-- 当前主题: `chapters/auditory-system-psychoacoustics/#auditory-chain`
-- 当前主题: `chapters/auditory-system-psychoacoustics/#loudness`
-- 当前主题: `chapters/auditory-system-psychoacoustics/#critical-bands`
-- 换一个表示: `chapters/pitch-timbre-symbolic-audio/`
-- 用于后续: `chapters/audio-feature-representations/`
-
-Session prose should explain:
-
-- why spectrum alone is not enough to predict what people hear;
-- why auditory constraints matter for compression, feature design, and evaluation;
-- how pitch/timbre continues from psychoacoustics into symbolic and generative audio.
-
-Session prose must not include:
-
-- equal-loudness formulas or plotted data as a substitute for the Chapter;
-- full ERB/Mel definitions;
-- masking threshold derivations or MP3 coding details.
-
-### `session/spatial-scene-feature-route/`
-
-Purpose: organize the teaching route from physical spatial field to human localization/scene organization and then to machine features.
-
-Suggested relationship navigation:
-
-- 前置知识: `chapters/spatial-acoustic-features/#field`
-- 前置知识: `chapters/frequency-domain-processing/#stft`
-- 当前主题: `chapters/spatial-hearing-scene-analysis/#binaural-cues`
-- 当前主题: `chapters/spatial-hearing-scene-analysis/#hrtf`
-- 当前主题: `chapters/spatial-hearing-scene-analysis/#scene-analysis`
-- 换一个维度: `chapters/spatial-acoustic-features/#vector-foa`
-- 用于后续: `chapters/audio-feature-representations/#spatial-features`
-- 进入项目: `projects/sound-event-classification/`
-
-Session prose should explain:
-
-- why pressure field and microphone arrays are not the same layer as perceived source direction;
-- why scene organization bridges human hearing and machine event detection;
-- how feature representations decide what information survives into the model.
-
-Session prose must not include:
-
-- ITD/ILD equations or cue definitions as standalone teaching content;
-- HRTF/SOFA dataset explanations beyond relationship-level context;
-- ASA examples that replace the Chapter's own examples.
+| `#overview` | 先看全貌 | `#features` | Why the source returns from human mechanisms to machine representations |
+| `#human-machine-map` | 人类机制与机器表示 | `#features` | Mapping table/idea from source card |
+| `#window-hop` | 窗长与帧移 | `#features` | Window size and hop controls |
+| `#mel-bands` | Mel 频带数 | `#features` | Mel-band count control and representation effect |
+| `#feature-lab` | 特征切换演示 | `#features` | Feature canvas, time/frequency/task readouts |
+| `#task-fit` | 任务匹配 | `#features`, `#closing` | Classification/detection hints and self-check |
+| `#route` | 学习路线 | `#closing` | Links back to the WEEK4 Session and spatial hearing Chapter |
 
 ## Source asset migration
 
 ### WEEK3 assets
 
-| Source asset | Proposed target | Notes |
+Copy these only when building the target Chapter, not in this planning step:
+
+| Source asset | Proposed target | Source use |
 |---|---|---|
-| `assets/ear-structure/outer-middle-inner-ear.png` | `chapters/auditory-system-psychoacoustics/media/outer-middle-inner-ear.png` | Keep alt text and verify license/source before publication |
-| `assets/ear-structure/pinna.jpg` | `chapters/auditory-system-psychoacoustics/media/pinna.jpg` | Use only if it materially supports outer-ear filtering |
-| `assets/ear-structure/middle-ear.png` | `chapters/auditory-system-psychoacoustics/media/middle-ear.png` | Large file; optimize before publish |
-| `assets/ear-structure/cochlea-frequency.jpg` | `chapters/auditory-system-psychoacoustics/media/cochlea-frequency.jpg` | Pair with interactive tonotopy widget |
-| `assets/threshold/hearing-threshold-curve.png` | `chapters/auditory-system-psychoacoustics/media/hearing-threshold-curve.png` | Prefer source attribution or replace with generated/derived chart |
-| `assets/hearing-health/audiogram.jpg` | `chapters/auditory-system-psychoacoustics/media/audiogram.jpg` | Teaching support, not shared definition |
-| `assets/hearing-health/hearing-test-room.webp` | `chapters/auditory-system-psychoacoustics/media/hearing-test-room.webp` | Consider notes-only if too clinical for main flow |
-| `assets/hearing-health/hearing-aid-types.avif` | `chapters/auditory-system-psychoacoustics/media/hearing-aid-types.avif` | Put detailed device taxonomy in `notes.md` unless central |
-| `assets/hearing-health/cochlear-implant.jpg` | `chapters/auditory-system-psychoacoustics/media/cochlear-implant.jpg` | Use as boundary/application, not the main psychoacoustics path |
+| `assets/ear-structure/outer-middle-inner-ear.png` | `chapters/auditory-system-psychoacoustics/media/outer-middle-inner-ear.png` | Whole ear pathway |
+| `assets/ear-structure/pinna.jpg` | `chapters/auditory-system-psychoacoustics/media/pinna.jpg` | Outer ear |
+| `assets/ear-structure/middle-ear.png` | `chapters/auditory-system-psychoacoustics/media/middle-ear.png` | Middle ear |
+| `assets/ear-structure/cochlea-frequency.jpg` | `chapters/auditory-system-psychoacoustics/media/cochlea-frequency.jpg` | Cochlear frequency map |
+| `assets/threshold/hearing-threshold-curve.png` | `chapters/auditory-system-psychoacoustics/media/hearing-threshold-curve.png` | Hearing threshold |
+| `assets/hearing-health/hearing-test-room.webp` | `chapters/auditory-system-psychoacoustics/media/hearing-test-room.webp` | Hearing test environment |
+| `assets/hearing-health/audiogram.jpg` | `chapters/auditory-system-psychoacoustics/media/audiogram.jpg` | Audiogram |
+| `assets/hearing-health/hearing-aid-types.avif` | `chapters/auditory-system-psychoacoustics/media/hearing-aid-types.avif` | Hearing aid types |
+| `assets/hearing-health/cochlear-implant.jpg` | `chapters/auditory-system-psychoacoustics/media/cochlear-implant.jpg` | Cochlear implant |
 
-WEEK3 inline interactions to extract:
-
-- cochlear tonotopic SVG: move to `assets/js/auditory-psychoacoustics.js` or a chapter-local `chapter.js` only if no reuse is expected.
-- audiogram/WDRC SVG: consider a hearing-health subsection and keep device details in `notes.md`.
-- equal-loudness SVG: make the data/model assumptions explicit.
-- ERB/critical-band SVG: share the ERB helper if feature pages need it.
-- pitch canvas and timbre canvas: move to `pitch-timbre-symbolic-audio`.
-- masking SVG/audio: move to `auditory-system-psychoacoustics`; link MP3 as application.
+Before publication, verify source/license/attribution for every imported image. Large images should be optimized after attribution is settled.
 
 ### WEEK4 assets
 
-WEEK4 has no separate source asset folder in the inspected directory. It contains inline SVG/canvas interactions and two preview PNG files:
+WEEK4 uses inline SVG/canvas for teaching content. It also has preview PNGs:
 
 - `week04-preview.png`
 - `week04-mobile-preview.png`
 
-Do not import preview PNGs as student content. Use them only as visual reference while rebuilding the page with shared course CSS.
+Do not import preview PNGs as Chapter figures. Use them only to compare the rebuilt visual layout with the current draft.
 
-WEEK4 inline interactions to extract:
+## JavaScript and interaction migration
 
-- binaural cue SVG: `spatial-hearing-scene-analysis/#binaural-cues`
-- HRTF spectrum SVG and SOFA dataset panel: `spatial-hearing-scene-analysis/#hrtf`
-- IACC canvas: `spatial-hearing-scene-analysis/#iacc`
-- precedence timeline SVG: `spatial-hearing-scene-analysis/#precedence`
-- ASA grouping SVG: `spatial-hearing-scene-analysis/#scene-analysis`
-- feature representation canvas: `audio-feature-representations/#feature-lab`
+Move inline scripts out of the source pages during implementation.
 
-## Shared data and notation updates
+Recommended split:
 
-Before publishing, update shared registries in one reviewed change:
+| Interaction family | Target script suggestion | Source widgets |
+|---|---|---|
+| Auditory/cochlea/threshold/loudness/band/masking | `assets/js/auditory-psychoacoustics.js` | cochlea SVG, audiogram SVG, equal-loudness SVG, band SVG, masking SVG/audio |
+| Pitch/timbre synthesis | `assets/js/pitch-timbre-symbolic-audio.js` | pitch canvas, piano controls, missing fundamental, timbre canvas |
+| Spatial hearing | `assets/js/spatial-hearing-scene-analysis.js` | binaural SVG, HRTF SVG, IACC canvas, precedence SVG, ASA SVG |
+| Audio feature representation | `assets/js/audio-feature-representations.js` | feature canvas and window/hop/Mel controls |
 
-| Registry | Candidate additions |
-|---|---|
-| `course-data/glossary.json` | sound pressure level, audiogram, hearing threshold, loudness, phon, sone, Mel scale, critical band, ERB, masking, pitch, timbre, fundamental frequency, missing fundamental, ITD, ILD, HRTF, IACC, precedence effect, auditory scene analysis, MIDI |
-| `course-data/notation.json` | `L_p`, `p_0`, `f_0`, `n_midi`, `tau`, `Delta L`, `h_L(t,theta,phi)`, `h_R(t,theta,phi)`, `rho_LR(tau)`, `IACC` |
-| `course-data/units.json` | `dB SPL`, `phon`, `sone`, `mel`, `Bark`, `ERB`, `degree`, `ms` |
-
-Do not silently resolve definition conflicts. If any old courseware definition differs from a current Chapter or registry entry, report the passages and classify the difference before editing the shared registry.
+If any helper is shared by more than one target, extract it only after the second actual use appears. Avoid premature shared abstractions.
 
 ## Student/teacher split
 
 Move to student Chapter HTML:
 
-- conceptual explanations needed for self-study;
-- stable definitions and formula anchors;
-- interactive observations that clarify a reusable concept;
-- self-checks and validity boundaries.
+- source explanations needed for self-study;
+- stable source-derived definitions;
+- interaction panels that teach a concept;
+- boundary notes visible in the source page;
+- quizzes and self-checks that can stand without live classroom context.
 
 Move to `notes.md`:
 
-- minute-by-minute class timing;
-- teacher prompts;
-- classroom discussion variants;
-- source/image attribution notes;
-- implementation caveats and pending review items.
+- "two-hour" or minute-by-minute route information from `#flow`;
+- classroom prompts;
+- image attribution and review notes;
+- hidden legacy sections if they are kept only as teacher backup;
+- device/browser caveats for audio demos.
 
 Move to `script.md`:
 
-- spoken transitions;
-- live-demo instructions;
-- recommended questions before revealing answers;
-- contingency paths if audio devices or browser autoplay fail.
+- spoken transitions between source sections;
+- live listening instructions;
+- "reveal after observation" prompts;
+- contingency instructions if audio playback fails.
 
-## Suggested implementation sequence
+## Shared registry candidates from source only
 
-Each step should end with a local git commit.
+These are candidates because they appear in the WEEK3/WEEK4 source material. Do not add them blindly; confirm exact definitions when building Chapters.
 
-1. `plan: add week3 week4 integration blueprint`
-   - Add this planning document only.
-2. `data: register week3 week4 draft content`
-   - Add draft catalog entries.
-   - Do not add to `course-data/paths/current.json` yet.
-3. `chapter: scaffold auditory psychoacoustics`
-   - Create semantic anchors, `notes.md`, and `script.md`.
-   - Migrate only core auditory pathway, cochlear map, thresholds, loudness, critical bands, and masking.
-4. `chapter: scaffold pitch timbre symbolic audio`
-   - Move pitch/timbre/MIDI material out of the psychoacoustics source.
-5. `chapter: scaffold spatial hearing scene analysis`
-   - Build ITD/ILD, HRTF, IACC, precedence, and ASA as one perception chapter.
-6. `chapter: scaffold audio feature representations`
-   - Move the machine feature part out of WEEK4 and connect it to STFT/Mel/spatial cues.
-7. `session: add auditory and spatial scene routes`
-   - Add Session pages with relationship navigation only.
-8. `route: publish reviewed week3 week4 path`
-   - Update `syllabus/index.html`, `session/index.html`, `catalog.json`, and `current.json` only after structural audit and browser acceptance pass.
+| Registry | Candidate additions |
+|---|---|
+| `course-data/glossary.json` | outer ear, middle ear, inner ear, cochlea, tonotopic map, hearing threshold, audiogram, hearing loss, hearing aid, cochlear implant, loudness, phon, critical band, ERB, pitch, timbre, harmonic, missing fundamental, masking, MP3, ITD, ILD, HRTF, SOFA, IACC, precedence effect, auditory scene analysis, distance perception, visual influence, Mel bands |
+| `course-data/notation.json` | `f`, `f0`, semitone distance, MIDI note number, masker frequency, target frequency, ITD delay, ILD level difference, HRTF left/right response, IACC/correlation value, window length, hop size, number of Mel bands |
+| `course-data/units.json` | `Hz`, `dB`, `phon`, `ms`, `degree`, `m`, `mel` |
+
+## Implementation sequence
+
+Each step should end with a local git commit. Commit names may use WEEK3/WEEK4 because git history is allowed to describe the working step; the public content URLs should remain semantic.
+
+1. `plan: revise week3 week4 blueprint from source courseware`
+   - Update this planning document only.
+2. `data: register source-derived week3 week4 draft pages`
+   - Add draft catalog entries for the semantic targets above.
+   - Do not publish the pages in the current route yet.
+3. `chapter: scaffold week3 auditory psychoacoustics`
+   - Create Chapter shell and stable anchors from WEEK3 source sections.
+   - Add `notes.md` and `script.md`.
+4. `chapter: migrate week3 auditory psychoacoustics interactions`
+   - Bring in ear/cochlea/threshold/loudness/band/masking/MP3 content and scripts.
+5. `chapter: scaffold week3 pitch timbre symbolic audio`
+   - Move pitch/timbre/MIDI material into its own source-derived Chapter.
+6. `session: add week3 auditory psychoacoustics route`
+   - Build a Session from source `#flow` and `#closing`; link to Chapter anchors.
+7. `chapter: scaffold week4 spatial hearing scene analysis`
+   - Build ITD/ILD, HRTF, SOFA, IACC, precedence, ASA, complex-boundary sections.
+8. `chapter: scaffold week4 audio feature representations`
+   - Build the feature representation page from WEEK4 `#features`.
+9. `session: add week4 spatial scene feature route`
+   - Build a Session from source `#flow` and `#closing`; link to Chapter anchors.
+10. `route: publish reviewed source-derived week3 week4 content`
+   - Only after structural audit and rendered browser acceptance pass.
 
 ## Validation gate before publication
 
 For every new or edited student-facing page:
 
 - run `python .agents/skills/build-audio-ai-course/scripts/audit_course_pages.py . --strict`;
-- verify all local links and exact anchors;
+- verify all source-derived anchors exist and all local links resolve;
 - inspect desktop, compact desktop, tablet, and mobile viewports;
 - inspect light and dark themes;
-- interact with every slider, button, canvas, and SVG state;
+- interact with every slider, button, SVG, canvas, and audio control migrated from the source pages;
 - confirm no page-level horizontal overflow;
 - confirm sticky `chapter-outline` and Session relationship navigation do not cover content;
-- verify formulas use MathML and shared course math tokens;
-- keep draft content out of `course-data/paths/current.json` until it passes.
+- keep draft content out of the public route until it passes.
 
 For this planning document only, structural audit is sufficient because no student-facing HTML or route has changed.
