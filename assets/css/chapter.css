@@ -4140,6 +4140,25 @@ body.chapter-page {
   overflow: hidden;
 }
 
+.cw-embed {
+  min-width: 0;
+  margin: clamp(16px, 2vw, 24px) 0 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--cyan) 18%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.08);
+}
+
+.cw-embed iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 360px;
+  border: 0;
+  background: var(--surface-2);
+}
+
 .cw-figure img {
   display: block;
   width: 100%;
@@ -4148,11 +4167,16 @@ body.chapter-page {
   background: var(--surface-2);
 }
 
-.cw-figure figcaption {
+.cw-figure figcaption,
+.cw-embed figcaption {
   padding: 12px 14px 15px;
   color: var(--muted);
   font-size: var(--course-text-small-size);
   line-height: 1.55;
+}
+
+.cw-embed figcaption a {
+  color: var(--cyan);
 }
 
 .cw-panel {
@@ -4339,5 +4363,9 @@ body.chapter-page {
   .cw-visual canvas,
   .cw-canvas {
     min-height: 240px;
+  }
+
+  .cw-embed iframe {
+    min-height: 260px;
   }
 }

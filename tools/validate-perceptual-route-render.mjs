@@ -242,6 +242,16 @@ async function validate() {
             if (nonBlank <= 50) failures.push(`${label}: canvas ${index + 1} appears blank`);
           }
 
+          const frames = page.locator("iframe");
+          const frameCount = await frames.count();
+          for (let index = 0; index < frameCount; index += 1) {
+            const frame = frames.nth(index);
+            const box = await frame.boundingBox();
+            if (!box || box.width <= 120 || box.height <= 180) {
+              failures.push(`${label}: iframe ${index + 1} has invalid size`);
+            }
+          }
+
           const controlsWorked = await exerciseControls(page);
           if (!controlsWorked) failures.push(`${label}: controls did not update displayed metrics`);
 
