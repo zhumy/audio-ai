@@ -4098,7 +4098,28 @@ body.chapter-page {
 }
 
 .cw-media-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  align-items: start;
+}
+
+.cw-media-grid[data-layout="single"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.cw-media-grid[data-layout="compare"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cw-media-grid[data-layout="sequence"] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+}
+
+.cw-media-grid[data-layout="feature"] {
+  grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.65fr);
+}
+
+.cw-media-grid[data-layout="feature"] > .cw-figure:first-child {
+  grid-row: span 2;
 }
 
 .cw-card,
@@ -4140,6 +4161,10 @@ body.chapter-page {
   overflow: hidden;
 }
 
+.cw-figure.is-wide {
+  grid-column: 1 / -1;
+}
+
 .cw-embed {
   min-width: 0;
   margin: clamp(16px, 2vw, 24px) 0 0;
@@ -4165,6 +4190,41 @@ body.chapter-page {
   aspect-ratio: 16 / 10;
   object-fit: cover;
   background: var(--surface-2);
+}
+
+.cw-figure.is-diagram img,
+.cw-figure[data-fit="contain"] img {
+  object-fit: contain;
+  padding: clamp(10px, 1.5vw, 18px);
+}
+
+.cw-figure.is-photo img,
+.cw-figure[data-fit="cover"] img {
+  object-fit: cover;
+  padding: 0;
+}
+
+.cw-figure[data-ratio="natural"] img {
+  aspect-ratio: auto;
+  height: auto;
+  max-height: min(72vh, 720px);
+  object-fit: contain;
+}
+
+.cw-figure[data-ratio="square"] img {
+  aspect-ratio: 1;
+}
+
+.cw-figure[data-ratio="portrait"] img {
+  aspect-ratio: 4 / 5;
+}
+
+.cw-figure[data-ratio="wide"] img {
+  aspect-ratio: 16 / 9;
+}
+
+.cw-figure[data-ratio="panorama"] img {
+  aspect-ratio: 21 / 9;
 }
 
 .cw-figure figcaption,
@@ -4333,8 +4393,14 @@ body.chapter-page {
   .cw-grid,
   .cw-two,
   .cw-three,
-  .cw-media-grid {
+  .cw-media-grid,
+  .cw-media-grid[data-layout="compare"],
+  .cw-media-grid[data-layout="feature"] {
     grid-template-columns: 1fr;
+  }
+
+  .cw-media-grid[data-layout="feature"] > .cw-figure:first-child {
+    grid-row: auto;
   }
 
   .cw-metric-row {

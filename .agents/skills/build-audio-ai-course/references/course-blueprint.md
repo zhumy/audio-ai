@@ -1,6 +1,6 @@
 # Audio AI Course Blueprint
 
-Last verified: 2026-07-18
+Last verified: 2026-07-19
 
 This file is the current course-building contract. Update the current statements in place when the user confirms a new direction. Do not use it as a changelog.
 
@@ -179,6 +179,15 @@ Use `assets/css/theme.css` as the canonical source of shared `--course-*` tokens
 - Long MathML keeps its intrinsic width with `width/min-width: max-content`, is centered when it fits, aligns to the inline start when it needs mobile scrolling, and scrolls only inside its equation wrapper; clipping glyphs or creating whole-page overflow is a release blocker.
 - Cyan represents the primary signal, response, wave, or coordinate. Gold represents phase, polarity contrast, or emphasis. Coral is reserved for warnings, incident rays, or error states. Axes and annotations remain neutral.
 - Page-local body font stacks, duplicate global palettes, hardcoded display-equation sizes, and unrelated animation palettes are release blockers.
+
+Media layout is part of the course visual system, not a page-local afterthought.
+
+- Do not default every inserted image to equal-size, one-row thumbnails. Choose layout by teaching role: single primary figure, comparison, sequence, feature-plus-details, full-width figure, or external embed.
+- Use shared media classes in `assets/css/chapter.css`: `.cw-media-grid` with `data-layout="single"`, `compare`, `sequence`, or `feature`; `.cw-figure.is-wide`; `.cw-embed` for trusted external viewers.
+- Choose image fit by material type. Photos may use `.is-photo` or `data-fit="cover"` only when cropping does not remove required evidence. Diagrams, charts, anatomy labels, screenshots, axes, legends, and UI captures use `.is-diagram` or `data-fit="contain"` so labels are never cropped.
+- Use `data-ratio="natural"` when an image's native aspect ratio carries meaning, such as audiograms, scanned figures, tall diagrams, or unusual screenshots. Use `square`, `portrait`, `wide`, or `panorama` only when a stable ratio improves comparison or layout.
+- Captions must explain what the learner should observe and include source/licensing information where applicable. External models should be embedded through the official viewer when license terms do not allow local redistribution.
+- Teacher-facing examples and usage rules live in `docs/teacher/media-layout-guidelines.md`.
 
 ## 12. Rendered acceptance gate
 
