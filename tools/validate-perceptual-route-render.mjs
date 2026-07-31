@@ -36,6 +36,7 @@ const pages = [
   "chapters/pitch-timbre-symbolic-audio/",
   "chapters/spatial-hearing-scene-analysis/",
   "chapters/audio-feature-representations/",
+  "session/auditory-perception-spatial-representation/",
   "session/auditory-psychoacoustics-route/",
   "session/spatial-scene-feature-route/",
 ];

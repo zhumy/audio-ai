@@ -1,6 +1,6 @@
 # Audio AI Course Blueprint
 
-Last verified: 2026-07-19
+Last verified: 2026-07-21
 
 This file is the current course-building contract. Update the current statements in place when the user confirms a new direction. Do not use it as a changelog.
 
@@ -74,6 +74,14 @@ For the current sound-physics Session, the user-confirmed canonical topic pages 
 - `chapters/frequency-domain-processing/index.html` — convolution, complex sinusoids, Fourier transform, DFT, and STFT.
 
 `session/sound-physics-sampling-spectrum/index.html` must provide the physical starting point, the macro relationship of the complete field `p(r,t)` across time, space, and frequency, and visible contextual jumps to the three canonical pages above. It must not explain or reproduce their concrete knowledge and must not become a shortened replacement for them.
+
+For the draft perceptual-and-representation Session, the user-confirmed canonical route is:
+
+- `session/auditory-perception-spatial-representation/index.html` organizes the macro route named **心理声学、空间听觉与听觉特征表征**.
+- The Session receives time, frequency, and spatial signal representations, then relates human auditory organization to machine-usable feature representation.
+- It links to four stable Chapter modules: `chapters/auditory-system-psychoacoustics/`, `chapters/pitch-timbre-symbolic-audio/`, `chapters/spatial-hearing-scene-analysis/`, and `chapters/audio-feature-representations/`.
+- Former separate draft Sessions for auditory psychoacoustics and spatial scene features are compatibility entries, not student-facing canonical route identities.
+- This Session may explain why psychoacoustics, pitch/timbre, spatial hearing, scene organization, and audio features belong in one learning unit, but it must not duplicate their Chapter-owned definitions, examples, interactions, or validity boundaries.
 
 ## 5. Required chapter narrative
 

@@ -1,0 +1,1408 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 主观评价</title>
+    <meta
+      name="description"
+      content="从音频主观评价方法到音频质量评价发展脉络，理解 MOS、MUSHRA、ABX、P.835、P.808、PESQ、POLQA、STOI、ViSQOL 与 DNSMOS 的适用边界。"
+    />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-7" />
+    <style>
+      .subjective-page {
+        --se-accent-soft: color-mix(in srgb, var(--cyan) 9%, transparent);
+        --se-gold-soft: color-mix(in srgb, var(--gold) 10%, transparent);
+        --se-alert-soft: color-mix(in srgb, var(--red) 9%, transparent);
+      }
+
+      .se-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 12px;
+        color: var(--cyan);
+        font-size: var(--course-text-label-size);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .se-kicker::before {
+        width: 26px;
+        height: 2px;
+        background: var(--cyan);
+        content: "";
+      }
+
+      .se-table-wrap {
+        overflow-x: auto;
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--surface) 86%, transparent);
+      }
+
+      .se-table {
+        width: 100%;
+        min-width: 780px;
+        border-collapse: collapse;
+      }
+
+      .se-table th,
+      .se-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        text-align: left;
+        vertical-align: top;
+        font-size: var(--course-text-body-size);
+        line-height: 1.65;
+      }
+
+      .se-table th {
+        color: var(--ink);
+        background: var(--se-accent-soft);
+        font-size: var(--course-text-label-size);
+        font-weight: 900;
+        letter-spacing: 0.04em;
+      }
+
+      .se-table tbody tr:last-child th,
+      .se-table tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .se-table strong {
+        color: var(--ink);
+      }
+
+      .se-method-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .se-method {
+        min-width: 0;
+        padding: 18px 16px;
+        border: 1px solid color-mix(in srgb, var(--cyan) 18%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--surface-2) 62%, transparent);
+      }
+
+      .se-method b,
+      .se-method span {
+        display: block;
+      }
+
+      .se-method b {
+        color: var(--ink);
+        font-size: var(--course-card-title-size);
+        line-height: 1.2;
+      }
+
+      .se-method span {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: var(--course-text-small-size);
+        line-height: 1.55;
+      }
+
+      .se-method.is-highlight {
+        border-color: color-mix(in srgb, var(--gold) 42%, transparent);
+        background: color-mix(in srgb, var(--gold) 8%, var(--surface));
+      }
+
+      .se-mushra-demo {
+        margin-top: 18px;
+      }
+
+      .se-demo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .se-demo-item {
+        min-width: 0;
+        padding: 16px;
+        border: 1px solid color-mix(in srgb, var(--cyan) 16%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--surface-2) 58%, transparent);
+      }
+
+      .se-demo-item.is-reference {
+        border-color: color-mix(in srgb, var(--gold) 36%, transparent);
+        background: color-mix(in srgb, var(--gold) 7%, var(--surface-2));
+      }
+
+      .se-demo-item h4 {
+        margin: 0 0 9px;
+        color: var(--ink);
+        font-size: var(--course-card-title-size);
+        line-height: 1.25;
+      }
+
+      .se-demo-item p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: var(--course-text-small-size);
+        line-height: 1.55;
+      }
+
+      .se-demo-actions,
+      .se-demo-footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-top: 12px;
+      }
+
+      .se-demo-actions button,
+      .se-demo-footer button {
+        min-height: 38px;
+        padding: 8px 13px;
+        border: 1px solid color-mix(in srgb, var(--cyan) 28%, transparent);
+        border-radius: 8px;
+        color: var(--ink);
+        background: color-mix(in srgb, var(--surface) 82%, transparent);
+        font: 700 var(--course-text-label-size)/1 var(--course-font-sans);
+        cursor: pointer;
+      }
+
+      .se-demo-actions button:hover,
+      .se-demo-footer button:hover,
+      .se-demo-actions button:focus-visible,
+      .se-demo-footer button:focus-visible {
+        color: var(--bg);
+        background: var(--cyan);
+        outline: none;
+      }
+
+      .se-demo-score {
+        display: grid;
+        gap: 7px;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: var(--course-text-small-size);
+      }
+
+      .se-demo-score input {
+        width: 100%;
+      }
+
+      .se-demo-score b,
+      .se-demo-reveal {
+        color: var(--ink);
+      }
+
+      .se-demo-reveal {
+        min-height: 1.5em;
+        margin-top: 12px;
+        font-size: var(--course-text-small-size);
+        line-height: 1.55;
+      }
+
+      .se-decision {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .se-decision article {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 14px;
+        align-items: stretch;
+        padding: 10px;
+        border: 1px solid color-mix(in srgb, var(--cyan) 15%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--surface-2) 48%, transparent);
+      }
+
+      .se-decision h4,
+      .se-decision p {
+        margin: 0;
+        min-width: 0;
+        padding: 14px;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--surface) 86%, transparent);
+      }
+
+      .se-decision h4 {
+        color: var(--cyan);
+        font-size: var(--course-card-title-size);
+        line-height: 1.25;
+      }
+
+      .se-decision p {
+        color: var(--muted);
+        line-height: 1.75;
+      }
+
+      .se-pill-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .se-pill-list li {
+        padding: 8px 12px;
+        border: 1px solid color-mix(in srgb, var(--cyan) 20%, transparent);
+        border-radius: 999px;
+        color: var(--muted);
+        background: color-mix(in srgb, var(--cyan) 6%, transparent);
+        font-size: var(--course-text-small-size);
+        line-height: 1.35;
+      }
+
+      .se-warning {
+        border-color: color-mix(in srgb, var(--red) 34%, transparent);
+        background:
+          linear-gradient(135deg, var(--se-alert-soft), transparent 55%),
+          var(--surface);
+      }
+
+      .se-chain {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 10px;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .se-chain li {
+        position: relative;
+        min-width: 0;
+        padding: 14px 12px;
+        border: 1px solid color-mix(in srgb, var(--cyan) 16%, transparent);
+        border-radius: 8px;
+        color: var(--muted);
+        background: color-mix(in srgb, var(--surface-2) 62%, transparent);
+        font-size: var(--course-text-small-size);
+        line-height: 1.45;
+      }
+
+      .se-chain li:not(:last-child)::after {
+        position: absolute;
+        top: 50%;
+        right: -8px;
+        z-index: 1;
+        width: 14px;
+        height: 14px;
+        border-top: 2px solid var(--cyan);
+        border-right: 2px solid var(--cyan);
+        background: color-mix(in srgb, var(--surface) 92%, transparent);
+        content: "";
+        transform: translateY(-50%) rotate(45deg);
+      }
+
+      .se-chain strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--ink);
+        font-size: var(--course-text-body-size);
+      }
+
+      .se-timeline {
+        display: grid;
+        gap: 14px;
+      }
+
+      .se-timeline article {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 16px;
+        align-items: stretch;
+        padding: 10px;
+        border: 1px solid color-mix(in srgb, var(--cyan) 14%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--surface-2) 50%, transparent);
+      }
+
+      .se-time {
+        min-width: 0;
+        padding: 16px 14px;
+        border-radius: 8px;
+        color: var(--bg);
+        background: var(--cyan);
+        font-size: var(--course-card-title-size);
+        font-weight: 900;
+        line-height: 1.2;
+      }
+
+      .se-timeline article:nth-child(even) .se-time {
+        background: var(--gold);
+      }
+
+      .se-timeline h3,
+      .se-timeline p {
+        margin: 0;
+      }
+
+      .se-timeline h3 {
+        color: var(--ink);
+        font-size: var(--course-card-title-size);
+        line-height: 1.3;
+      }
+
+      .se-timeline p {
+        margin-top: 9px;
+        color: var(--muted);
+        line-height: 1.75;
+      }
+
+      .se-timeline .cw-note {
+        margin-top: 12px;
+      }
+
+      .se-workflow {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .se-workflow article {
+        min-width: 0;
+        padding: 22px 20px;
+        border: 1px solid color-mix(in srgb, var(--cyan) 16%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--surface-2) 58%, transparent);
+      }
+
+      .se-workflow article:nth-child(2) {
+        border-color: color-mix(in srgb, var(--gold) 30%, transparent);
+        background: color-mix(in srgb, var(--gold) 7%, var(--surface-2));
+      }
+
+      .se-workflow span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        margin-bottom: 14px;
+        border-radius: 999px;
+        color: var(--bg);
+        background: var(--cyan);
+        font-weight: 900;
+      }
+
+      .se-workflow article:nth-child(2) span {
+        background: var(--gold);
+      }
+
+      .se-workflow h3 {
+        margin-bottom: 10px;
+        color: var(--ink);
+        font-size: var(--course-card-title-size);
+      }
+
+      .se-workflow p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.75;
+      }
+
+      .se-checklist {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .se-checklist p {
+        margin: 0;
+        padding: 14px 16px;
+        border-left: 3px solid var(--cyan);
+        border-radius: 8px;
+        color: var(--muted);
+        background: color-mix(in srgb, var(--surface-2) 62%, transparent);
+        line-height: 1.65;
+      }
+
+      .se-checklist strong {
+        color: var(--ink);
+      }
+
+      @media (max-width: 1020px) {
+        .se-method-grid,
+        .se-demo-grid,
+        .se-workflow {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .se-chain {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .se-chain li::after {
+          display: none;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .se-method-grid,
+        .se-demo-grid,
+        .se-workflow,
+        .se-checklist,
+        .se-decision article,
+        .se-timeline article,
+        .se-chain {
+          grid-template-columns: 1fr;
+        }
+
+        .se-table th,
+        .se-table td {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body class="chapter-page lecture-page courseware-page subjective-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../audio-feature-representations/">音频特征</a>
+        <a href="../spatial-hearing-scene-analysis/">空间听觉</a>
+        <a href="../../session/">全部导览</a>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#evaluation-targets">评价目标</a>
+        <a href="#subjective-methods">主观方法</a>
+        <a href="#objective-metrics">客观指标</a>
+        <a href="#experiment-design">实验设计</a>
+        <a href="#history-lineage">发展脉络</a>
+        <a href="#ai-era">AI 时代</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section class="chapter-hero lecture-hero" id="overview">
+        <div>
+          <p class="chapter-code">DRAFT CHAPTER / SUBJECTIVE EVALUATION</p>
+          <h1>音频主观评价<br /><span>Subjective Evaluation</span></h1>
+          <p class="chapter-lead">
+            本章前半部分先讲“怎么评价”：评价目标、MOS、MUSHRA、ABX、P.835、P.808、
+            PESQ、POLQA、STOI、ViSQOL、DNSMOS 以及实验设计。后半部分再讲“为什么会发展成这样”：
+            音频质量评价如何从传输损伤、总体 MOS、客观感知模型，逐步走向多维诊断、会话体验、众包和 AI 音频评价。
+          </p>
+        </div>
+        <aside class="brief-card">
+          <span class="card-label">本章转换</span>
+          <p><strong>输入</strong>：音频系统输出、模型预测、增强/编解码/生成结果。</p>
+          <p><strong>方法</strong>：评价构念、主观协议、客观指标、统计报告。</p>
+          <p><strong>脉络</strong>：从系统中心走向听者中心，从单一分数走向多维质量画像。</p>
+        </aside>
+      </section>
+
+      <section class="chapter-block" id="evaluation-targets">
+        <div class="section-heading">
+          <p>WHAT TO MEASURE</p>
+          <h2>音频评价目标</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <p class="se-kicker">Core Idea</p>
+            <h3>主观评价首先定义听者要判断的构念</h3>
+            <p>
+              同一段降噪语音可能同时出现噪声更少、语音更失真、可懂度提高、自然度下降、长期聆听更疲劳等现象。
+              如果实验只问“哪段最好”，听者会把不同判断标准混在一起，结果看似是一个分数，实际构念并不清楚。
+            </p>
+            <p class="cw-note">
+              因此，本章的方法选择顺序是：先明确感知目标，再选择主观范式；先判断是否需要参考信号，
+              再选择客观指标；最后用人耳评价校准客观指标的适用边界。
+            </p>
+          </article>
+          <article class="cw-card">
+            <p class="se-kicker">Blind Listening</p>
+            <h3>同一组音频，换问题就会换答案</h3>
+            <p>
+              课堂可用四段同内容语音导入：原始带噪、温和降噪、激进降噪、带宽受限或编解码失真。
+              第一轮只问“哪段最好”；第二轮分别问“哪段最容易听懂”“哪段人声最自然”“哪段背景最干净”
+              “哪段最适合连续听十分钟”。学生通常会发现答案发生变化。
+            </p>
+            <p>
+              这说明评价实验不是先选指标，而是先规定听者究竟评价什么。
+            </p>
+          </article>
+        </div>
+        <div class="se-table-wrap" role="region" aria-label="音频评价的七类感知目标" tabindex="0">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>评价目标</th>
+                <th>典型问题</th>
+                <th>典型方法或指标</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>总体质量</strong></td>
+                <td>整体听起来有多好？是否愿意接受这个处理结果？</td>
+                <td>MOS、P.835 OVRL、POLQA、ViSQOL、DNSMOS</td>
+              </tr>
+              <tr>
+                <td><strong>语音信号质量</strong></td>
+                <td>人声是否自然、清晰、无失真、无断裂？</td>
+                <td>P.835 SIG、主观自然度评分</td>
+              </tr>
+              <tr>
+                <td><strong>背景噪声质量</strong></td>
+                <td>噪声是否明显、烦扰、起伏，是否有音乐噪声或处理伪影？</td>
+                <td>P.835 BAK、噪声侵扰度评分</td>
+              </tr>
+              <tr>
+                <td><strong>可懂度</strong></td>
+                <td>听者能否正确听懂词、句子或关键信息？</td>
+                <td>关键词正确率、STOI、ESTOI</td>
+              </tr>
+              <tr>
+                <td><strong>偏好</strong></td>
+                <td>两个系统中更愿意使用哪个？在目标场景中更偏向哪个？</td>
+                <td>A/B preference、成对比较</td>
+              </tr>
+              <tr>
+                <td><strong>可辨别性</strong></td>
+                <td>A 与 B 是否存在可靠可听差异？</td>
+                <td>ABX、三角测试</td>
+              </tr>
+              <tr>
+                <td><strong>听觉努力或疲劳</strong></td>
+                <td>是否需要费力理解？长期听是否疲劳？</td>
+                <td>Listening effort、任务表现、问卷</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="subjective-methods">
+        <div class="section-heading">
+          <p>SUBJECTIVE METHODS</p>
+          <h2>主观评价方法</h2>
+        </div>
+        <div class="se-method-grid" aria-label="主观评价方法概览">
+          <article class="se-method">
+            <b>MOS / ACR</b>
+            <span>单刺激绝对质量评分，输出多个听者评分的均值。</span>
+          </article>
+          <article class="se-method is-highlight">
+            <b>MUSHRA</b>
+            <span>有明示参考、隐藏参考和锚点的多刺激中间质量评价。</span>
+          </article>
+          <article class="se-method">
+            <b>ABX</b>
+            <span>检验 A 与 B 是否能被可靠区分，不回答哪个更好。</span>
+          </article>
+          <article class="se-method">
+            <b>P.835</b>
+            <span>把降噪语音拆成 SIG、BAK、OVRL 三个评分维度。</span>
+          </article>
+          <article class="se-method">
+            <b>P.808</b>
+            <span>众包听测的实施与质量控制框架，不是新分数。</span>
+          </article>
+        </div>
+
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>MOS：Mean Opinion Score 是统计结果，不是唯一协议</h3>
+            <p>
+              MOS 是多个主观评分的算术平均。语音质量中常见 5 级绝对类别评分：
+              5 为 Excellent / 优，4 为 Good / 良，3 为 Fair / 一般，2 为 Poor / 差，1 为 Bad / 很差。
+              MOS 常来自 ACR（Absolute Category Rating，绝对类别评分），但报告中不能只写“做了 MOS”。
+            </p>
+            <div class="equation" id="eq-mos" role="math" aria-label="MOS 平均值公式">
+              <math display="block">
+                <mrow>
+                  <mi>MOS</mi><mo>=</mo>
+                  <mfrac><mn>1</mn><mi>N</mi></mfrac>
+                  <munderover>
+                    <mo>&#x2211;</mo>
+                    <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+                    <mi>N</mi>
+                  </munderover>
+                  <msub><mi>x</mi><mi>i</mi></msub>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              最基本的报告还应给出听者数量、素材数量、条件数量、随机化方式、播放环境、筛选规则、
+              均值/中位数/标准差、置信区间和统计检验。
+            </p>
+            <div class="equation" id="eq-ci" role="math" aria-label="均值近似置信区间公式">
+              <math display="block">
+                <mrow>
+                  <mover><mi>x</mi><mo>&#x00AF;</mo></mover>
+                  <mo>&#x00B1;</mo>
+                  <msub>
+                    <mi>t</mi>
+                    <mrow><mi>&#x03B1;</mi><mo>/</mo><mn>2</mn><mo>,</mo><mi>N</mi><mo>-</mo><mn>1</mn></mrow>
+                  </msub>
+                  <mfrac><mi>s</mi><msqrt><mi>N</mi></msqrt></mfrac>
+                </mrow>
+              </math>
+            </div>
+          </article>
+
+          <article class="cw-card">
+            <h3>MUSHRA：中高质量、多系统、有参考的比较</h3>
+            <p>
+              MUSHRA 全称为 <strong>MUltiple Stimuli with Hidden Reference and Anchor</strong>。
+              它通常在同一页面中呈现明示参考、隐藏参考、一个或多个低质量锚点，以及若干待测系统；
+              听者可自由切换、重复试听，并在 0-100 连续尺度上评分。
+            </p>
+            <p>
+              隐藏参考用于检查听者是否能识别最高质量条件；锚点用于建立评分范围，避免所有系统挤在高分区域。
+              因此，把多条无参考音频放在一个页面上让听者分别打分，不应直接称为标准 MUSHRA。
+            </p>
+            <ul class="se-pill-list" aria-label="MUSHRA 适用条件">
+              <li>多个系统</li>
+              <li>差异较细</li>
+              <li>中高质量区间</li>
+              <li>有可靠高质量参考</li>
+              <li>输出严格对齐</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>ABX：可辨别性检验，不是质量排序</h3>
+            <p>
+              听者已知 A 和 B，随后听到随机等于 A 或 B 的 X，并判断 X 是 A 还是 B。
+              ABX 的原假设是随机猜测，单次正确概率为 0.5。若进行
+              <span class="inline-mathml"><math><mi>n</mi></math></span> 次并答对
+              <span class="inline-mathml"><math><mi>k</mi></math></span> 次，可用二项分布计算尾概率：
+            </p>
+            <div class="equation" id="eq-abx-binomial" role="math" aria-label="ABX 二项检验公式">
+              <math display="block">
+                <mrow>
+                  <mi>p</mi><mo>=</mo>
+                  <munderover>
+                    <mo>&#x2211;</mo>
+                    <mrow><mi>i</mi><mo>=</mo><mi>k</mi></mrow>
+                    <mi>n</mi>
+                  </munderover>
+                  <mrow>
+                    <mo>(</mo>
+                    <mtable>
+                      <mtr><mtd><mi>n</mi></mtd></mtr>
+                      <mtr><mtd><mi>i</mi></mtd></mtr>
+                    </mtable>
+                    <mo>)</mo>
+                  </mrow>
+                  <msup><mn>0.5</mn><mi>n</mi></msup>
+                </mrow>
+              </math>
+            </div>
+            <p class="cw-note">
+              “未达到显著”不等于证明二者完全相同；它只说明在当前听者、素材、设备和试次数量下，
+              没有足够证据拒绝随机猜测假设。
+            </p>
+          </article>
+
+          <article class="cw-card">
+            <h3>P.835 与 P.808：降噪维度和众包控制</h3>
+            <p>
+              P.835 面向含噪声抑制的语音通信系统，把评价拆成
+              <strong>SIG</strong>（Speech Signal Quality，语音信号质量）、
+              <strong>BAK</strong>（Background Noise Quality，背景噪声质量）和
+              <strong>OVRL</strong>（Overall Quality，总体质量）。
+            </p>
+            <p>
+              它揭示了降噪中的基本矛盾：降低噪声不等于提高语音质量。一个激进降噪器可能 BAK 很高，
+              SIG 较低，OVRL 中等，因为背景干净并不能抵消人声断裂、金属感或过抑制。
+            </p>
+            <p>
+              P.808 解决的是众包环境下如何组织在线听测：耳机和环境检查、训练样本、金标准题、重复样本一致性、
+              最短作答时间、异常听者剔除、设备与环境元数据记录。它可以与 MOS、P.835 或其他明确任务组合使用。
+            </p>
+          </article>
+        </div>
+
+        <div class="cw-card se-mushra-demo" id="mushra-speech-repair-demo">
+          <h3>MUSHRA 互动示例：语音修复任务</h3>
+          <p>
+            这里把语音修复看成一个有参考的质量比较任务：Reference 是未损伤的干净语音；
+            待测版本包含隐藏参考、低质量锚点和三个修复系统。学生先不知道每个版本身份，只根据“与干净参考相比的听感质量”
+            在 0-100 分之间评分，最后揭示条件身份。
+          </p>
+          <div class="se-demo-grid" aria-label="语音修复 MUSHRA 互动评分">
+            <article class="se-demo-item is-reference">
+              <h4>Reference</h4>
+              <p>干净语音信号。MUSHRA 中允许听者反复切换 reference，用它建立满分质量的听觉基准。</p>
+              <div class="se-demo-actions">
+                <button type="button" data-mushra-play="reference">播放 reference</button>
+              </div>
+            </article>
+            <article class="se-demo-item">
+              <h4>版本 A</h4>
+              <p>待评分版本。请先听 reference，再听本版本，判断语音自然度、缺损修复和伪影程度。</p>
+              <div class="se-demo-actions">
+                <button type="button" data-mushra-play="a">播放版本 A</button>
+              </div>
+              <label class="se-demo-score">评分 <b data-mushra-score="a">70</b>
+                <input type="range" min="0" max="100" value="70" data-mushra-slider="a" />
+              </label>
+              <p class="se-demo-reveal" data-mushra-reveal="a"></p>
+            </article>
+            <article class="se-demo-item">
+              <h4>版本 B</h4>
+              <p>待评分版本。注意是否有过度平滑、频带缺失、断续感或人工合成感。</p>
+              <div class="se-demo-actions">
+                <button type="button" data-mushra-play="b">播放版本 B</button>
+              </div>
+              <label class="se-demo-score">评分 <b data-mushra-score="b">55</b>
+                <input type="range" min="0" max="100" value="55" data-mushra-slider="b" />
+              </label>
+              <p class="se-demo-reveal" data-mushra-reveal="b"></p>
+            </article>
+            <article class="se-demo-item">
+              <h4>版本 C</h4>
+              <p>待评分版本。这个版本可能很干净，但不一定忠实保留原始语音细节。</p>
+              <div class="se-demo-actions">
+                <button type="button" data-mushra-play="c">播放版本 C</button>
+              </div>
+              <label class="se-demo-score">评分 <b data-mushra-score="c">80</b>
+                <input type="range" min="0" max="100" value="80" data-mushra-slider="c" />
+              </label>
+              <p class="se-demo-reveal" data-mushra-reveal="c"></p>
+            </article>
+            <article class="se-demo-item">
+              <h4>版本 D</h4>
+              <p>待评分版本。MUSHRA 中通常包含一个低质量锚点，帮助听者使用完整评分范围。</p>
+              <div class="se-demo-actions">
+                <button type="button" data-mushra-play="d">播放版本 D</button>
+              </div>
+              <label class="se-demo-score">评分 <b data-mushra-score="d">30</b>
+                <input type="range" min="0" max="100" value="30" data-mushra-slider="d" />
+              </label>
+              <p class="se-demo-reveal" data-mushra-reveal="d"></p>
+            </article>
+            <article class="se-demo-item">
+              <h4>版本 E</h4>
+              <p>待评分版本。隐藏参考应接近 100 分；若被打得很低，说明任务理解、播放链路或听者可靠性需要检查。</p>
+              <div class="se-demo-actions">
+                <button type="button" data-mushra-play="e">播放版本 E</button>
+              </div>
+              <label class="se-demo-score">评分 <b data-mushra-score="e">90</b>
+                <input type="range" min="0" max="100" value="90" data-mushra-slider="e" />
+              </label>
+              <p class="se-demo-reveal" data-mushra-reveal="e"></p>
+            </article>
+          </div>
+          <div class="se-demo-footer">
+            <button type="button" id="revealMushra">揭示条件身份</button>
+            <button type="button" id="resetMushra">重置评分</button>
+          </div>
+          <p class="cw-note">
+            这个演示用浏览器合成的类语音信号说明 MUSHRA 结构；真实实验应使用真实语音材料、统一响度、随机化页面顺序，
+            并记录每位听者对隐藏参考和锚点的评分。
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="objective-metrics">
+        <div class="section-heading">
+          <p>OBJECTIVE METRICS</p>
+          <h2>客观感知评价指标</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>全参考或侵入式指标</h3>
+            <p>
+              全参考指标同时输入高质量参考信号与待评价信号，代表包括 PESQ、POLQA、STOI、ViSQOL。
+              优点是有明确比较基准；缺点是在真实录音、生成式输出、未知干净语音或合理输出不唯一的任务中，
+              “越接近参考越好”的假设可能不成立。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>无参考或非侵入式指标</h3>
+            <p>
+              无参考指标只输入待评价音频，通过统计模型或神经网络估计质量，代表包括 DNSMOS 和 DNSMOS P.835。
+              它们适合真实录音、线上监测和大规模筛选，但严重依赖训练数据分布；预测分数不能直接称为真实 MOS。
+            </p>
+          </article>
+        </div>
+
+        <div class="se-table-wrap" role="region" aria-label="主要客观感知指标对照" tabindex="0">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>指标</th>
+                <th>参考要求</th>
+                <th>主要预测目标</th>
+                <th>典型场景</th>
+                <th>关键限制</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>PESQ</strong></td>
+                <td>全参考</td>
+                <td>窄带/宽带语音听感质量，常见输出为 MOS-LQO 映射。</td>
+                <td>传统编解码、语音增强论文复现。</td>
+                <td>P.862 系列已于 2024-01-05 被 ITU 删除；当前通信语音质量客观评价应转向 P.863 系列或说明继续使用 PESQ 的理由。</td>
+              </tr>
+              <tr>
+                <td><strong>POLQA</strong></td>
+                <td>全参考</td>
+                <td>语音通信听感质量，输出 MOS-LQO。</td>
+                <td>现代语音通信、宽带与超宽带系统。</td>
+                <td>不是可懂度指标；需要规范实现和合适的通信语音使用条件。</td>
+              </tr>
+              <tr>
+                <td><strong>STOI / ESTOI</strong></td>
+                <td>全参考</td>
+                <td>语音可懂度，通常输出 0-1 范围的相关量。</td>
+                <td>噪声语音、增强算法、听力研究。</td>
+                <td>不衡量自然度、舒适度、总体音质或背景噪声烦扰度。</td>
+              </tr>
+              <tr>
+                <td><strong>ViSQOL</strong></td>
+                <td>全参考</td>
+                <td>语音或通用音频感知质量，输出 MOS-LQO。</td>
+                <td>编解码、语音与通用音频质量比较。</td>
+                <td>对模式、采样率、参考质量、对齐、静音比例和声道处理敏感。</td>
+              </tr>
+              <tr>
+                <td><strong>DNSMOS</strong></td>
+                <td>无参考</td>
+                <td>单条语音的主观质量预测。</td>
+                <td>真实降噪语音、大规模筛选、线上监测。</td>
+                <td>训练域偏差、语言和新型失真类型会影响泛化；不能代替最终听测。</td>
+              </tr>
+              <tr>
+                <td><strong>DNSMOS P.835</strong></td>
+                <td>无参考</td>
+                <td>预测 SIG、BAK、OVRL 三个分数。</td>
+                <td>降噪算法快速比较和问题定位。</td>
+                <td>仍是模型预测，不等于真实 P.835 主观实验。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cw-card se-warning">
+          <h3>不要把非感知指标误当成人耳质量</h3>
+          <p>
+            SNR、SI-SDR、MSE、频谱距离等主要描述信号误差或重建保真度。它们可以帮助诊断算法，
+            但不直接等于主观音质：波形误差小的输出可能有强烈音乐噪声；与参考波形不同的生成式增强输出也可能听起来自然。
+            因此它们应与感知代理指标和人耳评价分层使用。
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="experiment-design">
+        <div class="section-heading">
+          <p>EXPERIMENT DESIGN</p>
+          <h2>主观评价实验设计</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>从研究问题开始，而不是从指标开始</h3>
+            <p>
+              不要写“比较算法 A 和算法 B 哪个更好”。研究级问题应明确任务、素材、条件和构念：
+              例如“在中文近讲语音、三类非平稳噪声和 0/5/10 dB 信噪比下，
+              比较两种降噪算法的语音质量、背景噪声质量和总体质量”。
+            </p>
+            <div class="se-decision">
+              <article>
+                <h4>是否能听出差异？</h4>
+                <p>用 ABX；结论是可辨别性，不是质量优劣。</p>
+              </article>
+              <article>
+                <h4>多个中高质量版本且有参考？</h4>
+                <p>用 MUSHRA；保留明示参考、隐藏参考和锚点。</p>
+              </article>
+              <article>
+                <h4>降噪语音需要区分人声与背景？</h4>
+                <p>用 P.835；分别报告 SIG、BAK、OVRL。</p>
+              </article>
+              <article>
+                <h4>单刺激总体质量或真实录音？</h4>
+                <p>用 ACR/MOS；若在线众包，加入 P.808 质量控制。</p>
+              </article>
+            </div>
+          </article>
+
+          <article class="cw-card">
+            <h3>控制刺激、听者与统计报告</h3>
+            <p>
+              主观实验不是把音频发给听者打分那么简单。刺激应统一内容、时长、响度或播放增益，避免削波和文件名泄露身份；
+              条件与页面顺序要随机化，素材要覆盖多个说话人、语句、噪声和难度。
+            </p>
+            <p>
+              听者需要训练样本、耳机和左右声道检查、注意力或听力筛查；排除标准应提前规定。
+              结果至少报告听者数量、刺激数量、每条件评分数、均值/中位数/标准差/置信区间、
+              筛选与排除数量、统计检验、效应量、多重比较校正，以及按素材或听者的 bootstrap 或混合效应处理。
+            </p>
+            <p class="cw-note">
+              研究级数据通常同时嵌套听者、语句、说话人、噪声和算法等因素；把同一听者的多次评分全部当作独立样本，
+              会高估结论稳定性。
+            </p>
+          </article>
+        </div>
+
+        <div class="se-checklist" aria-label="主观实验常见错误清单">
+          <p><strong>名称错误：</strong>没有参考和锚点，却把多条音频评分称为 MUSHRA。</p>
+          <p><strong>构念错误：</strong>用 ABX 判断哪个系统更好，或用 STOI 证明自然度提高。</p>
+          <p><strong>统计错误：</strong>只报告平均分，不报告置信区间、样本量和多重比较。</p>
+          <p><strong>控制错误：</strong>不做响度匹配，听者实际在选择更响的版本。</p>
+          <p><strong>筛选错误：</strong>先看结果，再决定剔除哪些听者。</p>
+          <p><strong>指标错误：</strong>把 DNSMOS 输出直接称为真实 MOS。</p>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="history-lineage">
+        <div class="section-heading">
+          <p>HISTORICAL LINEAGE</p>
+          <h2>音频质量评价的发展脉络：从传输损伤到听觉体验</h2>
+        </div>
+        <div class="cw-card">
+          <h3>不是旧标准被新标准简单替代，而是评价对象不断扩张</h3>
+          <p>
+            音频质量评价的发展，并不是从“没有主观评价”发展到“开始评价音质”，也不是旧标准不断被新标准完全替代。
+            更准确地说，它是评价对象不断扩张、评价维度不断细化的过程：从物理信号是否正确，到传输或编码造成多少损伤；
+            从人耳总体觉得好不好，到究竟是语音、背景、空间特征还是交互体验出了问题；再到复杂 AI 音频是否自然、可信、忠实并适合具体任务。
+          </p>
+          <ul class="se-chain" aria-label="音频质量评价的总体演进链条">
+            <li><strong>物理信号</strong>频响、带宽、电平、SNR、失真。</li>
+            <li><strong>总体 MOS</strong>人总体觉得电话语音好不好。</li>
+            <li><strong>客观预测</strong>机器预测听者会给出的总体质量。</li>
+            <li><strong>多维诊断</strong>语音、背景、响度、断续、音色等分开看。</li>
+            <li><strong>真实交互</strong>通话、延迟、双讲、听觉努力。</li>
+            <li><strong>AI 音频</strong>自然度、忠实度、身份、空间和任务表现。</li>
+          </ul>
+          <p class="cw-note">
+            方法论主线可以概括为：从系统中心走向听者中心，从单一分数走向多维诊断，
+            从受控实验室走向真实使用场景，从有参考比较走向无参考感知预测。
+          </p>
+        </div>
+
+        <div class="se-timeline" aria-label="音频质量评价发展阶段">
+          <article>
+            <div class="se-time">Stage 1</div>
+            <div>
+              <h3>设备和传输链路中心：信号损失了多少</h3>
+              <p>
+                早期电话系统主要由相对线性的模拟传输链路构成。工程评价首先关注频率响应、信号电平、
+                信噪比、谐波失真、串音、带宽、线路衰减和噪声功率。核心问题是：
+                输入信号经过线路、设备或网络后，物理上发生了多大变化？
+              </p>
+              <p>
+                这种方法适合分析线性滤波、增益变化和加性噪声，却无法完整解释人的听觉体验。
+                相同的频谱误差或 SNR 变化可能产生完全不同的主观影响；反过来，波形变化明显的两个信号也可能听起来几乎没有差别。
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <div class="se-time">P.80 / P.800</div>
+            <div>
+              <h3>标准化主观评价：人总体觉得好不好</h3>
+              <p>
+                电话网络需要能直接反映用户感受的统一标尺，于是形成 P.80 以及后来的 ITU-T P.800 主观评价体系。
+                P.800 规范传输质量主观评价中的听者、语料、播放环境、评分尺度、测试程序和统计报告。
+              </p>
+              <p>
+                这一阶段的代表输出是 MOS。听者听取一段语音后，按照“优、良、一般、差、很差”等等级评价整体听音质量。
+                早期 MOS 已经包含总体质量概念：综合考虑各种听到的失真后，这段电话语音整体有多好、是否可接受。
+              </p>
+              <p class="cw-note">
+                局限也很清楚：总体 MOS 可以告诉我们系统 A 比系统 B 好，但不能告诉我们究竟为什么好、哪里出了问题。
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <div class="se-time">P.830 / BS.1116</div>
+            <div>
+              <h3>数字编解码器：传统物理指标解释不了新的失真</h3>
+              <p>
+                数字语音编码普及后，失真不再只是简单噪声或频响变化，而开始出现量化失真、编码伪影、
+                频谱细节缺失、帧擦除、语音活动检测截断、多次转码、包丢失和时延变化。
+                ITU-T P.830 可以看作 P.800 通用框架在数字语音编解码器评价中的专门化。
+              </p>
+              <p>
+                通用音频和广播领域也形成另一条路线。ITU-R BS.1116 面向高质量音频系统中的细微损伤，
+                要求严格控制实验环境，以检测接近透明编码条件下的小差异。
+              </p>
+              <p class="cw-note">
+                从这里开始，语音通信和通用音频逐渐形成两条相关但不同的标准体系：
+                ITU-T P 系列偏电话、通信和语音质量，ITU-R BS 系列偏广播、音乐和通用音频质量。
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <div class="se-time">PSQM / PESQ / POLQA</div>
+            <div>
+              <h3>从真人评价到客观感知模型：机器能否预测 MOS</h3>
+              <p>
+                标准化主观听测可靠，但成本高、周期长、难以实时运行。因此研究转向：
+                能否让算法模拟人耳，把参考信号和退化信号进行比较，自动预测听者会给出的总体质量分数？
+              </p>
+              <p>
+                ITU-T P.861 / PSQM 主要面向电话带语音编解码器，用心理声学模型估计编解码损伤的主观影响。
+                P.862 / PESQ 进一步面向窄带电话网络和语音编解码器的端到端质量，增强对时延、时间对齐、网络损伤和复杂失真的处理能力。
+                当前通信语音质量客观评价已转向 P.863 / POLQA 这一代。
+              </p>
+              <p class="cw-note">
+                这一阶段完成的是“真人总体评价 -> 机器预测真人总体评价”，但还没有从根本上解决“为什么不好”的诊断问题。
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <div class="se-time">P.835 / P.806</div>
+            <div>
+              <h3>从单一总体分数走向多维质量：究竟哪里不好</h3>
+              <p>
+                随着回声消除、自动增益控制和噪声抑制进入通信终端，单一 MOS 越来越难以解释系统表现。
+                特别是在降噪中，算法可能同时减少背景噪声又增加语音失真。只问“整体质量如何”时，
+                有人更讨厌噪声，有人更讨厌语音失真，评分权重不一致。
+              </p>
+              <p>
+                P.835 将降噪语音拆成 SIG、BAK、OVRL 三个维度。P.806 则进一步采用多个评分尺度，
+                除总体质量和响度外，还评价与质量退化相关的感知属性，以诊断总体质量下降的具体原因。
+              </p>
+              <p class="cw-note">
+                核心变化不是“开始评价音质”，而是从给出一个最终分数，发展到解释这个分数是怎样形成的。
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <div class="se-time">P.804 / P.805</div>
+            <div>
+              <h3>从单向听音走向真实会话：听着不错是否等于通话好用</h3>
+              <p>
+                P.800、P.830、P.835 等方法多属于 listening-only 评价：听者播放预先录制好的语音，但不真正参与交流。
+                实际通话体验还包括端到端时延、回声、双讲、抢话与打断、自己声音反馈、说话是否费力、对话节奏是否自然。
+              </p>
+              <p>
+                因此，P.805 发展会话质量评价方法，通过更接近实际服务的会话任务评价通信质量；
+                P.804 则进一步从听、说和交互等阶段诊断会话语音质量。评价对象由“声音片段”扩展为“交流过程”。
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <div class="se-time">BS.1534 / MUSHRA</div>
+            <div>
+              <h3>通用音频路线：从透明编码到中等质量和多媒体</h3>
+              <p>
+                音乐、广播和通用音频并不总能用电话语音标准评价。BS.1116 适合高质量音频系统中的微小损伤；
+                但互联网流媒体、数字广播、移动多媒体和低码率音频常处于中等质量范围，差异更大、系统更多。
+              </p>
+              <p>
+                ITU-R BS.1534 / MUSHRA 用隐藏参考、低质量锚点和多个待测系统比较中间质量音频。
+                因此，MOS、MUSHRA 和 P.835 不是“低级到高级”的线性关系，而是分别适配不同评价任务：
+                MOS 用于单刺激总体质量，MUSHRA 用于有参考条件下多个系统的相对质量，P.835 用于降噪语音的语音、背景和总体质量分解。
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <div class="se-time">P.808 / DNSMOS</div>
+            <div>
+              <h3>从受控实验室走向众包，从有参考走向无参考</h3>
+              <p>
+                随着算法迭代速度加快，统一实验室、耳机、播放电平和监督流程难以支持大规模评价。
+                ITU-T P.808 建立互联网众包语音质量评价框架，将设备检查、训练、质量控制、异常听者筛选和结果报告纳入流程。
+              </p>
+              <p>
+                同时，PESQ、POLQA 等传统客观模型通常需要干净参考语音，而真实会议、手机录音、直播和用户上传内容往往没有参考。
+                DNSMOS 和 DNSMOS P.835 等模型使用大量真人评分训练神经网络，从单条语音预测质量或 SIG/BAK/OVRL。
+              </p>
+              <p class="cw-note">
+                P.808 改变的是“怎样获得评分”，DNSMOS 改变的是“没有参考时怎样预测评分”。二者都不是人耳本身。
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="ai-era">
+        <div class="section-heading">
+          <p>AI AUDIO ERA</p>
+          <h2>当前阶段：从“音质”走向复杂的人类体验</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>AI 音频让评价对象再次复杂化</h3>
+            <p>
+              当前音频系统已经不只是对原信号进行压缩和传输，而越来越多地包含深度学习降噪、生成式语音增强、
+              声源分离、语音修复、音色转换、空间音频、沉浸式通信、个性化听觉补偿、语音交互和智能代理。
+            </p>
+            <p>
+              生成式增强尤其会带来传统指标难以处理的问题：听起来更自然但与原始语音不完全一致；
+              噪声更低但改变了辅音或词语；总体质量较高但说话人身份漂移。
+              此时，单个总体质量分数很难回答所有问题。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>现代评价通常需要组合证据</h3>
+            <p>
+              现代音频评价往往要同时考虑整体质量、前景声音自然度、背景质量、可懂度、自然度、忠实度、偏好、
+              听觉努力、空间质量、会话质量、语义准确性和身份保持。它们分别回答不同问题，不能互相替代。
+            </p>
+            <p class="cw-note">
+              最稳妥的证据链通常是：信号误差指标 + 感知客观指标 + 多维主观评价 + 任务正确率 + 真实使用场景测试。
+            </p>
+          </article>
+        </div>
+
+        <div class="se-table-wrap" role="region" aria-label="当前音频评价维度" tabindex="0">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>评价维度</th>
+                <th>回答的问题</th>
+                <th>为什么 AI 音频中更重要</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Overall quality</strong></td>
+                <td>整体听起来好不好。</td>
+                <td>仍是产品体验入口，但不能单独解释问题来源。</td>
+              </tr>
+              <tr>
+                <td><strong>Signal / Background quality</strong></td>
+                <td>前景声音是否自然，背景是否干净、稳定、可接受。</td>
+                <td>增强系统常在降噪与语音失真之间做权衡。</td>
+              </tr>
+              <tr>
+                <td><strong>Intelligibility</strong></td>
+                <td>内容能否正确听懂。</td>
+                <td>可懂度提高不必然意味着自然度、舒适度或忠实度提高。</td>
+              </tr>
+              <tr>
+                <td><strong>Naturalness / Fidelity</strong></td>
+                <td>是否像真实声音，是否忠实于原内容和说话人。</td>
+                <td>生成式模型可能产生自然但不忠实的输出。</td>
+              </tr>
+              <tr>
+                <td><strong>Spatial quality</strong></td>
+                <td>方位、距离、宽度、包围感是否正确。</td>
+                <td>空间音频和沉浸式通信不能只用单声道语音质量指标评价。</td>
+              </tr>
+              <tr>
+                <td><strong>Conversational quality</strong></td>
+                <td>实际交流是否自然流畅，是否费力。</td>
+                <td>低延迟、双讲、回声和交互节奏会决定真实使用体验。</td>
+              </tr>
+              <tr>
+                <td><strong>Semantic accuracy / Identity preservation</strong></td>
+                <td>处理后是否改变语言内容，是否保留说话人身份和音色。</td>
+                <td>生成式增强、修复、分离和转换需要防止“听着好但内容错”。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="workflow">
+        <div class="section-heading">
+          <p>THREE-LAYER WORKFLOW</p>
+          <h2>工程与研究中的三层评价框架</h2>
+        </div>
+        <div class="se-workflow">
+          <article>
+            <span>1</span>
+            <h3>信号与系统正确性</h3>
+            <p>
+              先排除工程错误：削波、电平、时延、采样率、频响、SNR、SI-SDR、实时率和算法稳定性。
+              这一层回答“系统有没有基本做对”。
+            </p>
+          </article>
+          <article>
+            <span>2</span>
+            <h3>感知代理指标</h3>
+            <p>
+              用 POLQA/PESQ、STOI、ViSQOL、DNSMOS 等做大规模快速比较和问题定位。
+              这一层回答“在指标假设成立时，系统可能怎样被人耳评价”。
+            </p>
+          </article>
+          <article>
+            <span>3</span>
+            <h3>人耳评价与任务验证</h3>
+            <p>
+              用 MOS/ACR、MUSHRA、ABX、P.835、P.808 众包控制、真实任务理解率、偏好和听觉努力验证最终体验。
+              这一层决定算法是否真正改善人的使用感受。
+            </p>
+          </article>
+        </div>
+
+        <div class="cw-card">
+          <h3>本章最终结论</h3>
+          <p>
+            音频质量评价的发展，不是从“信号损失”简单走向“Overall quality”，因为总体主观质量在早期 MOS 体系中已经存在。
+            更准确的脉络是：早期评价关注通信链路和编解码器是否损害总体听音质量；随后通过感知模型预测这一总体质量；
+            当降噪、回声消除和复杂处理出现后，又进一步把总体质量拆解为语音、背景和具体失真属性；
+            今天则扩展到会话交互、空间体验、自然度、内容忠实度和真实任务表现。
+          </p>
+          <p class="cw-note">
+            评价问题已经从“这个系统有没有损伤声音？”发展为“这个系统在具体场景下，是否真正改善了人的听觉体验和任务表现？”
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip" id="route">
+        <p class="card-label">学习路线</p>
+        <h2>本章把模型与音频系统的输出变成可检验的听觉证据</h2>
+        <p>
+          前面章节提供波形、频谱、空间线索、心理声学和机器特征；本章承接这些表示，训练学生判断：
+          一个处理结果究竟改善了哪一种人的体验，证据来自主观实验、客观代理指标、历史上形成的标准方法，
+          还是真实任务中的使用表现。
+        </p>
+        <div class="cw-route-row">
+          <a href="../audio-feature-representations/">前置知识：音频特征表征</a>
+          <a href="../spatial-hearing-scene-analysis/">复用场景：空间听觉与场景组织</a>
+          <a href="../../session/">回到全部导览</a>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (() => {
+        const defaults = { a: 70, b: 55, c: 80, d: 30, e: 90 };
+        const identities = {
+          a: "温和修复系统：缺损基本补齐，残留少量噪声和轻微断续感。",
+          b: "过度平滑系统：噪声较少，但语音细节、空气感和自然起伏被抹平。",
+          c: "生成式修复系统：整体较自然，但音色和细节与 reference 不完全一致。",
+          d: "低质量锚点 Anchor：带宽受限并保留明显缺损，用来撑开评分尺度。",
+          e: "隐藏参考 Hidden Reference：与 clean reference 相同，理想情况下应接近满分。"
+        };
+        let audioContext;
+        let activeSource;
+
+        function getContext() {
+          audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+          return audioContext;
+        }
+
+        function voicedSample(t, variant) {
+          const f0 = (variant === "c" ? 132 : 126) + 12 * Math.sin(2 * Math.PI * 1.7 * t);
+          const syllable = 0.42 + 0.58 * Math.max(0, Math.sin(2 * Math.PI * 3.2 * t));
+          const attack = Math.min(1, t / 0.035);
+          const release = Math.min(1, (1.45 - t) / 0.08);
+          const env = syllable * attack * release;
+          let y = 0;
+          const tilt = variant === "b" ? 1.75 : variant === "d" ? 2.35 : 1.25;
+          for (let h = 1; h <= 14; h += 1) {
+            const formant =
+              1.2 * Math.exp(-Math.pow((h * f0 - 650) / 420, 2)) +
+              0.75 * Math.exp(-Math.pow((h * f0 - 1450) / 620, 2)) +
+              0.34 * Math.exp(-Math.pow((h * f0 - 2600) / 900, 2));
+            y += (formant / Math.pow(h, tilt)) * Math.sin(2 * Math.PI * h * f0 * t);
+          }
+          return 0.26 * env * y;
+        }
+
+        function noiseAt(i) {
+          const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+          return 2 * (x - Math.floor(x)) - 1;
+        }
+
+        function dropout(t, kind) {
+          if (kind === "reference" || kind === "e") return 1;
+          if (kind === "a" && ((t > 0.46 && t < 0.5) || (t > 1.03 && t < 1.07))) return 0.55;
+          if (kind === "b" && ((t > 0.68 && t < 0.75) || (t > 1.12 && t < 1.2))) return 0.72;
+          if (kind === "c" && t > 0.84 && t < 0.9) return 0.82;
+          if (kind === "d" && ((t > 0.3 && t < 0.42) || (t > 0.78 && t < 0.92) || (t > 1.17 && t < 1.3))) return 0.18;
+          return 1;
+        }
+
+        function makeBuffer(kind) {
+          const ctx = getContext();
+          const duration = 1.45;
+          const length = Math.floor(ctx.sampleRate * duration);
+          const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          let smooth = 0;
+          for (let i = 0; i < length; i += 1) {
+            const t = i / ctx.sampleRate;
+            let sample = voicedSample(t, kind) * dropout(t, kind);
+            if (kind === "a") sample += 0.012 * noiseAt(i);
+            if (kind === "b") {
+              smooth = smooth * 0.93 + sample * 0.07;
+              sample = smooth + 0.004 * noiseAt(i);
+            }
+            if (kind === "c") sample = 0.92 * sample + 0.018 * Math.sin(2 * Math.PI * 2320 * t) * Math.max(0, Math.sin(2 * Math.PI * 3.2 * t));
+            if (kind === "d") {
+              smooth = smooth * 0.985 + sample * 0.015;
+              sample = 0.74 * smooth + 0.04 * noiseAt(i);
+            }
+            data[i] = Math.max(-0.95, Math.min(0.95, sample));
+          }
+          return buffer;
+        }
+
+        function playCondition(kind) {
+          const ctx = getContext();
+          if (activeSource) activeSource.stop();
+          const source = ctx.createBufferSource();
+          source.buffer = makeBuffer(kind);
+          const gain = ctx.createGain();
+          gain.gain.value = 0.9;
+          source.connect(gain).connect(ctx.destination);
+          source.start();
+          activeSource = source;
+        }
+
+        document.querySelectorAll("[data-mushra-play]").forEach((button) => {
+          button.addEventListener("click", () => playCondition(button.dataset.mushraPlay));
+        });
+
+        document.querySelectorAll("[data-mushra-slider]").forEach((slider) => {
+          const key = slider.dataset.mushraSlider;
+          slider.addEventListener("input", () => {
+            const score = document.querySelector(`[data-mushra-score="${key}"]`);
+            if (score) score.textContent = slider.value;
+          });
+        });
+
+        document.getElementById("revealMushra")?.addEventListener("click", () => {
+          Object.entries(identities).forEach(([key, text]) => {
+            const target = document.querySelector(`[data-mushra-reveal="${key}"]`);
+            const score = document.querySelector(`[data-mushra-slider="${key}"]`)?.value;
+            if (target) target.textContent = `${text} 当前评分：${score}。`;
+          });
+        });
+
+        document.getElementById("resetMushra")?.addEventListener("click", () => {
+          Object.entries(defaults).forEach(([key, value]) => {
+            const slider = document.querySelector(`[data-mushra-slider="${key}"]`);
+            const score = document.querySelector(`[data-mushra-score="${key}"]`);
+            const reveal = document.querySelector(`[data-mushra-reveal="${key}"]`);
+            if (slider) slider.value = value;
+            if (score) score.textContent = value;
+            if (reveal) reveal.textContent = "";
+          });
+        });
+      })();
+    </script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>

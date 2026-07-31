@@ -15,7 +15,7 @@
         AUDIO <b>AI</b>
       </a>
       <nav class="chapter-links" aria-label="课程导航">
-        <a href="../../session/spatial-scene-feature-route/">空间场景路线</a>
+        <a href="../../session/auditory-perception-spatial-representation/">感知与表征路线</a>
         <a href="../spatial-hearing-scene-analysis/">空间听觉</a>
         <a href="../../session/">全部导览</a>
       </nav>
@@ -24,11 +24,12 @@
     <main>
       <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
         <a href="#overview">先看全貌</a>
-        <a href="#human-machine-map">人机映射</a>
-        <a href="#window-hop">窗长帧移</a>
-        <a href="#mel-bands">Mel 频带</a>
-        <a href="#feature-lab">特征实验</a>
-        <a href="#task-fit">任务匹配</a>
+        <a href="#why-features">为什么需要</a>
+        <a href="#mel-bands">Mel/Log-Mel</a>
+        <a href="#mfcc">MFCC</a>
+        <a href="#cqt">CQT</a>
+        <a href="#feature-comparison">特征比较</a>
+        <a href="#feature-lab">实验</a>
         <a href="#route">学习路线</a>
       </nav>
 
@@ -47,6 +48,67 @@
           <p><strong>选择</strong>：窗长、帧移、频带数、任务目标。</p>
           <p><strong>输出</strong>：给分类/检测等模型使用的特征表示。</p>
         </aside>
+      </section>
+
+      <section class="chapter-block" id="why-features">
+        <div class="section-heading">
+          <p>WHY FEATURES</p>
+          <h2>为什么需要音频特征表示</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>从“人听声音”到“机器处理声音”</h3>
+            <p>
+              人听一段声音时，往往会直接感到“这是语音”“这是鼓点”“这个声源在移动”“这段音乐音高在上行”。
+              但机器最先拿到的通常只是采样波形 <span class="inline-mathml"><math><mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo></math></span>：
+              一串随时间变化的数字。它忠实记录声压变化，却不直接告诉算法哪些结构对任务真正重要。
+            </p>
+            <p>
+              因此，音频特征表示不是把声音“画得好看”，而是在原始波形和后续模型之间建立一个信息接口：
+              把时间、频率、能量、包络、周期性和听觉尺度整理成机器更容易比较、学习和判断的形式。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>波形没有直接回答的问题</h3>
+            <p>
+              原始波形本身并不直接标注：哪些频率成分在何时出现，频谱包络是什么，基频和谐波如何分布，
+              哪些变化更接近人的听觉感知，哪些信息对语音识别、音乐分析、声事件分类或空间定位最有区分度。
+            </p>
+            <p class="cw-note">
+              本章后面的 Mel 频谱、Log-Mel、MFCC 和 CQT，都是在回答同一个问题：
+              面向某个任务，我们应该让机器“看见”声音的哪些方面，又应该主动弱化哪些无关变化？
+            </p>
+          </article>
+        </div>
+        <div class="cw-card">
+          <h3>音频特征表示的核心任务</h3>
+          <p>
+            将原始波形转换成一种更紧凑、更稳定、更有结构，并且更适合后续算法处理的表示。
+            这里的“更好”不是信息越多越好，而是保留与任务有关的信息，同时减少与任务无关的变化。
+          </p>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>语音任务</h3>
+            <p>
+              语音识别希望突出频谱包络、共振峰和音素差异，同时降低整体音量、录音距离和部分说话风格变化的干扰。
+              说话人识别则会更关心声道特征、基频、韵律和长期统计线索。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>音乐任务</h3>
+            <p>
+              音乐音高、和弦和调性分析希望突出倍频程、半音网格、谐波关系和随时间变化的音高轨迹。
+              这也是后面 CQT 与十二平均律、MIDI 表示发生连接的地方。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>环境与空间任务</h3>
+            <p>
+              环境声音分类通常希望保留较完整的时频纹理；声事件检测还需要事件发生时间；空间音频任务则不能丢掉双耳时间差、声级差和空间滤波等线索。
+            </p>
+          </article>
+        </div>
       </section>
 
       <section class="chapter-block" id="human-machine-map">
@@ -70,53 +132,421 @@
         </div>
       </section>
 
-      <section class="chapter-block" id="window-hop">
-        <div class="section-heading">
-          <p>FRAME DESIGN</p>
-          <h2>窗长与帧移：把连续声音切成模型可用片段</h2>
-        </div>
-        <div class="cw-two">
-          <article class="cw-card">
-            <h3>两种分辨率的拉扯</h3>
-            <p>
-              feature widget 用窗长和帧移说明特征设计的第一组取舍：短窗保留时间变化，长窗提高频率区分；
-              小帧移保留密集轨迹，但计算量更高。
-            </p>
-            <div class="cw-control-row">
-              <label>窗长 <b id="windowText">25 ms</b>
-                <input id="windowSize" data-feature-control type="range" min="8" max="96" step="1" value="25" />
-              </label>
-              <label>帧移 <b id="hopText">10 ms</b>
-                <input id="hopSize" data-feature-control type="range" min="4" max="40" step="1" value="10" />
-              </label>
-            </div>
-          </article>
-          <article class="cw-card">
-            <h3>学生要带走的判断</h3>
-            <p>不要把 STFT/Mel 图当成固定答案。它是把声音交给机器之前的一次观察尺度选择。</p>
-            <p class="cw-note">第一版先保留交互直觉，后续再补具体公式和实现细节。</p>
-          </article>
-        </div>
-      </section>
-
       <section class="chapter-block" id="mel-bands">
         <div class="section-heading">
-          <p>MEL BANDS</p>
-          <h2>Mel 频带数：压缩频率维度，也改变可见细节</h2>
+          <p>MEL AND LOG-MEL</p>
+          <h2>Mel 频谱与 Log-Mel 频谱</h2>
+        </div>
+        <div class="cw-media-grid" data-layout="single">
+          <figure class="cw-figure is-wide is-diagram" data-fit="contain" data-ratio="natural">
+            <img src="media/logmel-spectrogram.png" alt="Log-Mel 频谱示例图，横轴表示时间帧，纵轴表示 Mel 频带，颜色表示对数能量强弱。" />
+            <figcaption>
+              Log-Mel 频谱把短时功率谱先汇总到 Mel 频带，再用对数尺度显示能量；图中横向纹理对应时间变化，纵向结构对应不同听觉频带的能量分布。来源：课程备课素材。
+            </figcaption>
+          </figure>
         </div>
         <div class="cw-two">
           <article class="cw-card">
-            <h3>频带数不是装饰参数</h3>
+            <h3>为什么要改变频率轴</h3>
             <p>
-              Mel 频带越少，表示越紧凑但细节更少；频带越多，频率纹理更细，但也可能增加噪声和模型负担。
+              线性频率轴上，每个频点之间相差固定的 Hz；但人的音高感知更接近比例关系，而不是固定 Hz 差值。
+              在低频区域，人耳通常能感知更细的频率差异；到高频区域，相同的绝对频率差不一定带来同样明显的主观距离。
+            </p>
+            <p>
+              Mel 尺度试图把物理频率映射到更接近主观音高距离的尺度。常见换算公式是：
+            </p>
+            <div class="equation" id="eq-mel-scale" role="math" aria-label="Mel 尺度频率换算公式">
+              <math display="block">
+                <mrow>
+                  <mi>m</mi><mo>=</mo><mn>2595</mn>
+                  <msub><mi>log</mi><mn>10</mn></msub>
+                  <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mfrac><mi>f</mi><mn>700</mn></mfrac><mo>)</mo></mrow>
+                </mrow>
+              </math>
+            </div>
+            <p class="cw-note">Mel 尺度不是“人耳频率响应曲线”，也不是等响曲线；它主要描述频率间隔与主观音高距离之间的近似关系。</p>
+          </article>
+          <article class="cw-card">
+            <h3>Mel 滤波器组做了什么</h3>
+            <p>
+              Mel 频谱不是把频率轴简单拉伸，而是对功率谱施加一组三角形滤波器。低频处滤波器较密，高频处较疏；
+              相邻滤波器有重叠，输出维数远低于原始 FFT 频点数。
+            </p>
+            <div class="equation" id="eq-mel-filterbank" role="math" aria-label="第 m 个 Mel 滤波器输出">
+              <math display="block">
+                <mrow>
+                  <mi>M</mi><mo>(</mo><mi>t</mi><mo>,</mo><mi>m</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <munder><mo>&#x2211;</mo><mi>k</mi></munder>
+                  <msub><mi>H</mi><mi>m</mi></msub><mo>(</mo><mi>k</mi><mo>)</mo>
+                  <mi>S</mi><mo>(</mo><mi>t</mi><mo>,</mo><mi>k</mi><mo>)</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              其中 <span class="inline-mathml"><math><mrow><mi>S</mi><mo>(</mo><mi>t</mi><mo>,</mo><mi>k</mi><mo>)</mo></mrow></math></span>
+              是第 <span class="inline-mathml"><math><mi>t</mi></math></span> 帧、第 <span class="inline-mathml"><math><mi>k</mi></math></span> 个 FFT 频点的功率，
+              <span class="inline-mathml"><math><mrow><msub><mi>H</mi><mi>m</mi></msub><mo>(</mo><mi>k</mi><mo>)</mo></mrow></math></span>
+              是第 <span class="inline-mathml"><math><mi>m</mi></math></span> 个 Mel 三角滤波器的权重。比如单帧功率谱可能有 513 个频点，而 Mel 频谱常用 40、64、80 或 128 个频带。
             </p>
             <label>Mel 频带数 <b id="melBandsText">64</b>
               <input id="melBands" data-feature-control type="range" min="24" max="128" step="4" value="64" />
             </label>
           </article>
+        </div>
+        <div class="cw-two">
           <article class="cw-card">
-            <h3>与听觉的关系</h3>
-            <p>Mel 频带放在空间/场景之后，是为了说明机器特征常借用人类听觉尺度，但不会自动等同于人的听觉。</p>
+            <h3>Log-Mel 的完整数学表达</h3>
+            <p>
+              常见 Log-Mel 不是“先把每个 FFT 频点取对数，再求 Mel 平均”，而是先在一个 Mel 频带内汇总功率，再把这个频带总能量映射到对数尺度：
+            </p>
+            <div class="equation" id="eq-log-mel" role="math" aria-label="Log-Mel 频谱公式">
+              <math display="block">
+                <mrow>
+                  <mi>L</mi><mo>(</mo><mi>t</mi><mo>,</mo><mi>m</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <mn>10</mn><msub><mi>log</mi><mn>10</mn></msub>
+                  <mrow>
+                    <mo>[</mo>
+                    <mfrac>
+                      <mrow>
+                        <munder><mo>&#x2211;</mo><mi>k</mi></munder>
+                        <msub><mi>H</mi><mi>m</mi></msub><mo>(</mo><mi>k</mi><mo>)</mo>
+                        <msup>
+                          <mrow><mo>|</mo><mi>X</mi><mo>(</mo><mi>t</mi><mo>,</mo><mi>k</mi><mo>)</mo><mo>|</mo></mrow>
+                          <mn>2</mn>
+                        </msup>
+                        <mo>+</mo><mi>&#x03b5;</mi>
+                      </mrow>
+                      <msub><mi>M</mi><mrow><mi>ref</mi></mrow></msub>
+                    </mfrac>
+                    <mo>]</mo>
+                  </mrow>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              这里 <span class="inline-mathml"><math><mrow><mi>X</mi><mo>(</mo><mi>t</mi><mo>,</mo><mi>k</mi><mo>)</mo></mrow></math></span> 是复数 STFT，
+              <span class="inline-mathml"><math><msup><mrow><mo>|</mo><mi>X</mi><mo>|</mo></mrow><mn>2</mn></msup></math></span> 是功率谱，
+              <span class="inline-mathml"><math><mrow><msub><mi>H</mi><mi>m</mi></msub><mo>(</mo><mi>k</mi><mo>)</mo></mrow></math></span> 是第 <span class="inline-mathml"><math><mi>m</mi></math></span> 个 Mel 滤波器，
+              <span class="inline-mathml"><math><mi>&#x03b5;</mi></math></span> 避免对零取对数，
+              <span class="inline-mathml"><math><msub><mi>M</mi><mrow><mi>ref</mi></mrow></msub></math></span> 是参考功率。
+            </p>
+            <p class="cw-note">
+              计算顺序很关键：先得到 STFT 功率，再用 Mel 滤波器组求频带总能量，最后取对数压缩动态范围。一般情况下
+              <span class="inline-mathml"><math><mrow><mi>log</mi><mo>(</mo><munder><mo>&#x2211;</mo><mi>k</mi></munder><msub><mi>a</mi><mi>k</mi></msub><mo>)</mo><mo>&#x2260;</mo><munder><mo>&#x2211;</mo><mi>k</mi></munder><mi>log</mi><mo>(</mo><msub><mi>a</mi><mi>k</mi></msub><mo>)</mo></mrow></math></span>，
+              所以 Mel 汇总与 log 不能随意交换。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>从 STFT 到 Log-Mel 的三步</h3>
+            <p>
+              这条链路可以看成一次逐步压缩：STFT 回答“什么时间出现了什么频率”，功率谱把复数系数转为非负能量，
+              Mel 滤波器组回答“每个近似听觉频带里共有多少能量”，Log 变换再回答“应该用什么能量尺度观察这些频带”。
+            </p>
+            <ol class="feature-flow is-card-flow" aria-label="Log-Mel calculation flow">
+              <li><span>01</span><strong>STFT</strong><small>局部时频分解</small></li>
+              <li><span>02</span><strong>Power</strong><small>取模平方得到功率</small></li>
+              <li><span>03</span><strong>Mel</strong><small>频带加权求和</small></li>
+              <li><span>04</span><strong>Log</strong><small>压缩动态范围</small></li>
+            </ol>
+            <p>
+              因此，Log-Mel 并没有比 STFT “信息更多”。它恰好相反：主动丢掉一部分细节，把模型输入变成更紧凑、数值更稳定、也更接近许多听觉识别任务需求的二维时频表示。
+            </p>
+          </article>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>为什么 Log-Mel 成为常用音频输入特征</h3>
+            <p>
+              对许多语音识别、声音事件检测、音频分类、说话人识别、音乐标签和通用音频理解任务来说，Log-Mel 提供了一个很实用的折中：
+              它不是把原始波形丢给模型从零发现规律，而是提前给出短时时频分析、近似听觉频带划分和能量动态范围压缩这三类可靠先验。
+            </p>
+            <p>
+              这样做会显著降低输入维度。一个 1024 点 FFT 的单边功率谱有 513 个频点，转换后常只保留 40 到 128 个 Mel 频带；
+              模型需要处理的频率维度更小，显存、计算量和过拟合风险也更可控。对于训练数据有限的课堂项目或中小型数据集，这种先验常常比“完全从波形学习”更稳。
+            </p>
+            <p>
+              对数尺度还会把极强能量压下来、把弱能量结构相对展开，使共振峰、谐波、瞬态、噪声带和事件边界在数值与视觉上都更清晰。
+              因此 CNN 可以学习局部时频纹理，Transformer 可以把谱图切成 patch 建模长时依赖，RNN 或 Conformer 也可以沿时间轴追踪变化。
+            </p>
+            <p class="cw-note">
+              更准确的说法是：Log-Mel 是很多“识别与理解”任务的强基线和成熟工程接口，而不是所有音频任务的唯一最佳表示。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>它也形成了成熟的工程生态</h3>
+            <p>
+              Log-Mel 的流行还来自生态优势：常见采样率、窗长、帧移、Mel 频带数、归一化方式和数据增强方法都有成熟实现，
+              研究结果也容易横向比较。SpecAugment 这类遮挡式增强、音频预训练模型、声事件检测与分类基准，都经常围绕 Log-Mel 或类似的对数滤波器组特征展开。
+            </p>
+            <p>
+              这使 Log-Mel 成为课程项目里的好起点：学生可以先把注意力放在“哪些时频图案对应哪些声音事件或语音内容”，再逐步比较 MFCC、CQT、多尺度频谱、复数 STFT 或波形模型。
+            </p>
+          </article>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>主动丢掉：相位</h3>
+            <p>
+              Log-Mel 通常由幅度谱或功率谱计算，不保留原始 STFT 相位。对语音增强、声源分离、波束形成、双耳与空间音频、高保真生成和重建来说，相位常常是关键线索。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>主动丢掉：精细频率结构</h3>
+            <p>
+              Mel 频带在高频处更宽，一个频带可能汇总多个 FFT 频点。窄带故障诊断、精细乐器分析、多音高估计、自动音乐转录或谐波/非谐波成分分析，可能需要线性高分辨率谱、CQT 或复数谱。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>主动弱化：绝对能量</h3>
+            <p>
+              Log 压缩与归一化会强调相对能量模式，但会削弱绝对声压、功率或设备增益信息。声压级估计、响度测量、声功率测量和物理声学参数反演，不能只依赖归一化后的 Log-Mel。
+            </p>
+          </article>
+        </div>
+        <div class="cw-card">
+          <h3>边界结论：Log-Mel 不是全能特征</h3>
+          <p>
+            Log-Mel 的价值在于有选择地压缩：保留很多识别任务需要的时频纹理，同时弱化相位、精细高频结构和过大的动态范围。
+            当任务目标是“这是什么声音、说了什么、发生了什么事件”时，它经常很好用；当任务目标是“怎样精确重建、定位、控制、测量或生成声音”时，就需要补充相位、复数谱、多通道线索或波形级信息。
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="mfcc">
+        <div class="section-heading">
+          <p>MFCC</p>
+          <h2>MFCC：从 Log-Mel 到低维频谱包络</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>MFCC 在解决什么问题</h3>
+            <p>
+              Mel 频谱和 Log-Mel 频谱仍然保留了每个 Mel 频带的局部能量，相邻频带之间通常高度相关。
+              <strong>MFCC</strong> 的目标是进一步提取较平滑的频谱包络，并减少特征维度和相关性。
+              MFCC 全称为 <strong>Mel-Frequency Cepstral Coefficients</strong>，中文常译为梅尔频率倒谱系数。
+            </p>
+            <ol class="feature-flow is-card-flow" aria-label="MFCC calculation flow">
+              <li><span>01</span><strong>波形</strong><small>采样序列</small></li>
+              <li><span>02</span><strong>短时功率谱</strong><small>局部频率能量</small></li>
+              <li><span>03</span><strong>Mel 滤波器组</strong><small>感知频带压缩</small></li>
+              <li><span>04</span><strong>log</strong><small>动态范围压缩</small></li>
+              <li><span>05</span><strong>DCT</strong><small>去相关与降维</small></li>
+              <li><span>06</span><strong>MFCC</strong><small>低维倒谱系数</small></li>
+            </ol>
+            <p class="cw-note">
+              这里的重点不是重复短时谱分析，而是理解：MFCC 在 Log-Mel 之后又做了一次频带方向的压缩与去相关。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>DCT 的作用</h3>
+            <p>
+              MFCC 对 Log-Mel 频谱沿频带方向做离散余弦变换 <strong>DCT</strong>，把“Mel 频带坐标”变成“频谱变化速度坐标”。
+              低阶系数描述频谱整体形状和缓慢变化，高阶系数描述频谱中的细小起伏。
+            </p>
+            <div class="equation" id="eq-mfcc-dct" role="math" aria-label="MFCC 的 DCT 计算公式">
+              <math display="block">
+                <mrow>
+                  <msub><mi>c</mi><mi>p</mi></msub><mo>(</mo><mi>m</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <munderover><mo>&#x2211;</mo><mrow><mi>r</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>R</mi><mo>-</mo><mn>1</mn></mrow></munderover>
+                  <msub><mi>L</mi><mi>r</mi></msub><mo>(</mo><mi>m</mi><mo>)</mo>
+                  <mi>cos</mi>
+                  <mrow>
+                    <mo>[</mo>
+                    <mfrac><mrow><mi>&#x03c0;</mi><mi>p</mi></mrow><mi>R</mi></mfrac>
+                    <mrow><mo>(</mo><mi>r</mi><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>)</mo></mrow>
+                    <mo>]</mo>
+                  </mrow>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              其中 <span class="inline-mathml"><math><mi>R</mi></math></span> 是 Mel 滤波器数量，
+              <span class="inline-mathml"><math><mi>p</mi></math></span> 是倒谱系数编号，
+              <span class="inline-mathml"><math><mrow><msub><mi>c</mi><mi>p</mi></msub><mo>(</mo><mi>m</mi><mo>)</mo></mrow></math></span>
+              是第 <span class="inline-mathml"><math><mi>p</mi></math></span> 个 MFCC。
+            </p>
+          </article>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>与语音产生机制的关系</h3>
+            <p>
+              语音可以粗略看成“声源激励 × 声道滤波”。取对数后，声源谱与声道谱包络更容易分开；
+              MFCC 主要保留较平滑的频谱包络，因此适合描述元音共振峰、音素间的声道差异和说话人的声道特征。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>动态特征</h3>
+            <p>
+              传统语音系统常把 MFCC 与一阶差分、二阶差分组合：
+              <span class="inline-mathml"><math><mrow><mo>[</mo><mi>MFCC</mi><mo>,</mo><mi>&#x0394;MFCC</mi><mo>,</mo><msup><mi>&#x0394;</mi><mn>2</mn></msup><mi>MFCC</mi><mo>]</mo></mrow></math></span>。
+              这说明语音信息不仅在单帧频谱中，也在频谱随时间的运动轨迹中。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>优势与局限</h3>
+            <p>
+              MFCC 维度低、计算量小、对整体幅度变化相对稳健，适合传统 GMM、HMM、SVM 等模型。
+              但 DCT 压缩会损失二维时频局部结构，对音乐音高、精细谐波、瞬态纹理和现代深度模型可学习细节表达不足。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="cqt">
+        <div class="section-heading">
+          <p>CQT</p>
+          <h2>CQT：面向音乐音高比例的常数 Q 变换</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>为什么音乐分析需要另一种频率表示</h3>
+            <p>
+              线性频谱图的频率 bin 具有相同的 Hz 间隔，这对物理频率分析很自然；
+              但音乐音高系统按频率比例组织。十二平均律中，相邻半音的频率比是
+              <span class="inline-mathml"><math><msup><mn>2</mn><mfrac><mn>1</mn><mn>12</mn></mfrac></msup></math></span>，
+              相差一个八度的两个音频率比为 2，而不是相差固定 Hz。
+            </p>
+            <p>
+              因此在音高、和弦、旋律和调性分析中，希望频率轴按照对数比例排列，让相同音程在图上具有更稳定的几何关系。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>CQT 的基本思想</h3>
+            <p>
+              <strong>CQT</strong> 全称为 <strong>Constant-Q Transform</strong>，即常数 Q 变换。
+              它的中心频率通常按几何级数排列：
+            </p>
+            <div class="equation" id="eq-cqt-frequency" role="math" aria-label="CQT 中心频率公式">
+              <math display="block">
+                <mrow>
+                  <msub><mi>f</mi><mi>k</mi></msub>
+                  <mo>=</mo>
+                  <msub><mi>f</mi><mrow><mi>min</mi></mrow></msub>
+                  <msup><mn>2</mn><mfrac><mi>k</mi><mi>B</mi></mfrac></msup>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              其中 <span class="inline-mathml"><math><msub><mi>f</mi><mrow><mi>min</mi></mrow></msub></math></span> 是最低分析频率，
+              <span class="inline-mathml"><math><mi>B</mi></math></span> 是每个八度的 bin 数，
+              <span class="inline-mathml"><math><mi>k</mi></math></span> 是频率 bin 索引。
+            </p>
+          </article>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>为什么叫常数 Q</h3>
+            <p>
+              品质因数定义为中心频率与带宽之比：
+            </p>
+            <div class="equation" id="eq-cqt-q" role="math" aria-label="CQT 品质因数公式">
+              <math display="block">
+                <mrow>
+                  <mi>Q</mi><mo>=</mo><mfrac><msub><mi>f</mi><mi>k</mi></msub><mi>&#x0394;f</mi></mfrac>
+                  <mo>,</mo>
+                  <mspace width="0.5em" />
+                  <mi>Q</mi><mo>=</mo><mfrac><mn>1</mn><mrow><msup><mn>2</mn><mfrac><mn>1</mn><mi>B</mi></mfrac></msup><mo>-</mo><mn>1</mn></mrow></mfrac>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              当每个频带保持相同的相对带宽时，Q 近似保持常数。常见设置包括
+              <span class="inline-mathml"><math><mrow><mi>B</mi><mo>=</mo><mn>12</mn></mrow></math></span> 每个半音一个 bin，
+              <span class="inline-mathml"><math><mrow><mi>B</mi><mo>=</mo><mn>24</mn></mrow></math></span> 每个半音两个 bin。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>多分辨率特性</h3>
+            <p>
+              CQT 在不同频率处使用不同长度的分析窗：低频窗更长，频率分辨率更高；
+              高频窗更短，时间分辨率更高。这与音乐声学较匹配：低音区相邻音符 Hz 差值小，需要细频率分辨率；
+              高频区音符之间 Hz 差值较大，可以使用较宽的绝对带宽。
+            </p>
+            <p class="cw-note">
+              CQT 常用于音高估计、旋律提取、和弦识别、调性分析、音乐转录、乐谱对齐和音乐相似性分析；
+              但它并不必然优于 Log-Mel。环境声、语音或需要统一时间分辨率的任务，Log-Mel 往往更简单稳定。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="feature-comparison">
+        <div class="section-heading" id="task-fit">
+          <p>COMPARISON</p>
+          <h2>几种特征的比较</h2>
+        </div>
+        <div class="cw-card">
+          <h3>核心对比</h3>
+          <div class="feature-matrix" role="table" aria-label="音频特征表示核心对比">
+            <div class="feature-matrix-head" role="row">
+              <span role="columnheader">表示</span>
+              <span role="columnheader">频率轴</span>
+              <span role="columnheader">时频分辨率</span>
+              <span role="columnheader">主要保留信息</span>
+              <span role="columnheader">常见用途</span>
+            </div>
+            <article class="feature-matrix-row" role="row">
+              <h4 role="cell"><span>Linear</span>线性频谱图</h4>
+              <p role="cell"><b>线性 Hz</b><small>物理频率等间隔</small></p>
+              <p role="cell"><b>固定分析尺度</b><small>同一尺度看全频段</small></p>
+              <p role="cell"><b>较完整物理频谱</b><small>保留原始频率细节</small></p>
+              <p role="cell"><b>声学分析</b><small>通用可视化、诊断</small></p>
+            </article>
+            <article class="feature-matrix-row" role="row">
+              <h4 role="cell"><span>Mel</span>Mel 频谱</h4>
+              <p role="cell"><b>感知近似尺度</b><small>低频密，高频疏</small></p>
+              <p role="cell"><b>通常固定分析尺度</b><small>频率轴被滤波器组压缩</small></p>
+              <p role="cell"><b>频带能量</b><small>感知压缩后的能量轮廓</small></p>
+              <p role="cell"><b>语音与环境声</b><small>常作为深度学习输入</small></p>
+            </article>
+            <article class="feature-matrix-row is-highlight" role="row">
+              <h4 role="cell"><span>Log</span>Log-Mel</h4>
+              <p role="cell"><b>Mel 尺度</b><small>再做强度非线性</small></p>
+              <p role="cell"><b>二维时频结构</b><small>横向时间，纵向频带</small></p>
+              <p role="cell"><b>压缩动态范围</b><small>保留谐波、共振峰、瞬态</small></p>
+              <p role="cell"><b>现代音频神经网络</b><small>CNN、Transformer、预训练模型</small></p>
+            </article>
+            <article class="feature-matrix-row" role="row">
+              <h4 role="cell"><span>DCT</span>MFCC</h4>
+              <p role="cell"><b>Mel 后经 DCT</b><small>频带方向去相关</small></p>
+              <p role="cell"><b>通常固定分析尺度</b><small>低维、紧凑</small></p>
+              <p role="cell"><b>频谱包络</b><small>弱化精细谐波和局部纹理</small></p>
+              <p role="cell"><b>传统语音识别</b><small>轻量分类、低算力系统</small></p>
+            </article>
+            <article class="feature-matrix-row" role="row">
+              <h4 role="cell"><span>Music</span>CQT</h4>
+              <p role="cell"><b>对数频率轴</b><small>按比例组织音高</small></p>
+              <p role="cell"><b>随频率变化</b><small>低频长窗，高频短窗</small></p>
+              <p role="cell"><b>音高比例与谐波</b><small>八度关系更稳定</small></p>
+              <p role="cell"><b>音乐信息检索</b><small>音高、和弦、调性、转录</small></p>
+            </article>
+          </div>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>语音与说话人</h3>
+            <p>
+              语音识别常优先考虑 Log-Mel；传统模型或低算力系统可使用 MFCC。
+              说话人识别可以使用 MFCC 或 Log-Mel，现代系统通常进一步学习说话人嵌入。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>音乐音高、和弦与调性</h3>
+            <p>
+              音乐音高、和弦、调性和旋律任务更常考虑 CQT、Chroma、高分辨率频谱或多分辨率表示，
+              因为它们更贴近八度、半音和谐波比例结构。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>环境声、事件与重建</h3>
+            <p>
+              环境声和声事件检测常以 Log-Mel 作为强基线，也可结合多尺度频谱或波形模型。
+              音频生成与重建要谨慎：幅度谱不等于完整声音，相位对高质量重建非常重要，Mel 与 MFCC 都是有损表示。
+            </p>
           </article>
         </div>
       </section>
@@ -129,31 +559,10 @@
         <div class="cw-panel">
           <canvas id="featureCanvas" class="cw-canvas" aria-label="音频特征表示示意图"></canvas>
           <div class="cw-metric-row">
-            <p class="cw-metric"><strong id="timeRes">较好时间分辨率</strong><span>窗长越短越能定位瞬态</span></p>
-            <p class="cw-metric"><strong id="freqRes">中等频率分辨率</strong><span>窗长越长频率分辨率越好</span></p>
-            <p class="cw-metric"><strong id="taskHint">适合分类/检测</strong><span>特征与机器任务的关系</span></p>
+            <p class="cw-metric"><strong id="timeRes">二维时频纹理</strong><span>Log-Mel 保留横向时间变化</span></p>
+            <p class="cw-metric"><strong id="freqRes">64 个 Mel 频带</strong><span>频带数决定频率轴压缩程度</span></p>
+            <p class="cw-metric"><strong id="taskHint">适合分类/检测基线</strong><span>特征与机器任务的关系</span></p>
           </div>
-        </div>
-      </section>
-
-      <section class="chapter-block" id="task-fit">
-        <div class="section-heading">
-          <p>TASK FIT</p>
-          <h2>任务匹配：模型需要的是合适信息，不是全部信息</h2>
-        </div>
-        <div class="cw-three">
-          <article class="cw-mini">
-            <h3>分类</h3>
-            <p>常关心稳定的频谱纹理、音色和事件形状。</p>
-          </article>
-          <article class="cw-mini">
-            <h3>检测</h3>
-            <p>常关心事件何时出现，时间分辨率不能太差。</p>
-          </article>
-          <article class="cw-mini">
-            <h3>空间/场景</h3>
-            <p>如果任务关心方向或对象分离，单通道 Mel 特征可能丢掉关键线索。</p>
-          </article>
         </div>
       </section>
 
@@ -162,7 +571,7 @@
         <h2>本章把空间/场景讨论收束到机器可计算表示</h2>
         <p>它和空间听觉/场景组织相连，但知识对象已经变成机器可用的表示选择，所以单独成章。</p>
         <div class="cw-route-row">
-          <a href="../../session/spatial-scene-feature-route/">回到空间场景路线</a>
+          <a href="../../session/auditory-perception-spatial-representation/">回到感知与表征路线</a>
           <a href="../spatial-hearing-scene-analysis/">回到空间听觉与场景组织</a>
         </div>
       </section>

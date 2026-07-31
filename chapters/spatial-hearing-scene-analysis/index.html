@@ -15,7 +15,7 @@
         AUDIO <b>AI</b>
       </a>
       <nav class="chapter-links" aria-label="课程导航">
-        <a href="../../session/spatial-scene-feature-route/">空间场景路线</a>
+        <a href="../../session/auditory-perception-spatial-representation/">感知与表征路线</a>
         <a href="../audio-feature-representations/">音频特征</a>
         <a href="../../session/">全部导览</a>
       </nav>
@@ -67,6 +67,47 @@
             <p>
               方位角和频率滑块用于观察双耳线索：低频下到达时间差更稳定，高频下头影导致的强度差更明显。
             </p>
+            <div class="equation" id="eq-itd" role="math" aria-label="ITD 的计算公式">
+              <math display="block">
+                <mrow>
+                  <mi>ITD</mi>
+                  <mo>=</mo>
+                  <msub><mi>t</mi><mi>L</mi></msub>
+                  <mo>-</mo>
+                  <msub><mi>t</mi><mi>R</mi></msub>
+                  <mo>&#8776;</mo>
+                  <mfrac>
+                    <msub><mi>d</mi><mrow><mi>eff</mi></mrow></msub>
+                    <mi>c</mi>
+                  </mfrac>
+                  <mi>sin</mi>
+                  <mo>(</mo><mi>&#952;</mi><mo>)</mo>
+                </mrow>
+              </math>
+            </div>
+            <div class="equation" id="eq-ild" role="math" aria-label="ILD 的计算公式">
+              <math display="block">
+                <mrow>
+                  <mi>ILD</mi>
+                  <mo>=</mo>
+                  <msub><mi>L</mi><mi>L</mi></msub>
+                  <mo>-</mo>
+                  <msub><mi>L</mi><mi>R</mi></msub>
+                  <mo>=</mo>
+                  <mn>20</mn>
+                  <msub><mi>log</mi><mn>10</mn></msub>
+                  <mfrac>
+                    <msub><mi>p</mi><mrow><mi>L</mi><mo>,</mo><mi>rms</mi></mrow></msub>
+                    <msub><mi>p</mi><mrow><mi>R</mi><mo>,</mo><mi>rms</mi></mrow></msub>
+                  </mfrac>
+                  <mtext>&#xA0;dB</mtext>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              这里约定方位角 <math class="inline-mathml"><mi>&#952;</mi></math> 向右为正，因此右侧声源通常给出正 ITD；<math class="inline-mathml"><msub><mi>d</mi><mrow><mi>eff</mi></mrow></msub></math>
+              是等效双耳距离，<math class="inline-mathml"><mi>c</mi></math> 是声速。ILD 要在同一频带内比较左右耳有效声压，符号会随左、右约定改变。
+            </p>
             <div class="cw-control-row">
               <label>声源方位角 <b id="azimuthText">35°</b>
                 <input id="azimuth" data-spatial-control type="range" min="-80" max="80" step="1" value="35" />
@@ -90,13 +131,32 @@
       <section class="chapter-block" id="hrtf">
         <div class="section-heading">
           <p>HRTF</p>
-          <h2>耳廓、耳道与个性化空间音频</h2>
+          <h2>头相关传递函数 HRTF</h2>
         </div>
         <div class="cw-two">
           <article class="cw-card">
-            <h3>方向相关谱线索</h3>
+            <h3>HRTF 是什么</h3>
             <p>
-              HRTF 把方向、仰角和个体耳廓差异变成左右耳频响。这里用课程配色绘制 HRTF 谱线索示意。
+              头相关传递函数描述声波从某个空间方向到达左右耳入口或鼓膜附近时，被躯干、肩部、头部、耳廓和耳道共同滤波后的结果。
+              对方向 <math class="inline-mathml"><mi>&#937;</mi><mo>=</mo><mo>(</mo><mi>&#952;</mi><mo>,</mo><mi>&#966;</mi><mo>)</mo></math>，
+              频域 HRTF 可以写成耳处声压与自由场参考声压之比：
+            </p>
+            <div class="equation" id="eq-hrtf-definition" role="math" aria-label="HRTF 的频域定义">
+              <math display="block">
+                <mrow>
+                  <msub><mi>H</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub>
+                  <mo>(</mo><mi>&#937;</mi><mo>,</mo><mi>&#969;</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <mfrac>
+                    <msub><mi>P</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub>
+                    <msub><mi>P</mi><mrow><mi>ref</mi></mrow></msub>
+                  </mfrac>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              它不是单独的“左右响度差”或“到达时间差”，而是一个方向相关的双耳滤波器：低频相位和群延迟携带 ITD，
+              高频幅度谱携带 ILD，耳廓造成的谱峰、谱谷尤其影响上下、前后和外部化判断。
             </p>
             <div class="cw-control-row">
               <label>虚拟方位 <b id="hrtfAzText">35°</b>
@@ -119,11 +179,135 @@
             </div>
           </div>
         </div>
-        <section class="cw-card" id="hrtf-data">
-          <h3>SOFA 与开放 HRTF 数据集</h3>
+
+        <div class="cw-media-grid" data-layout="single" aria-label="HRTF path overview figure">
+          <figure class="cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+            <img src="media/hrtf-path-overview.png" alt="声源信号经过左耳和右耳 HRTF 滤波后形成双耳信号的示意图" />
+            <figcaption>
+              HRTF 可以理解为从声源方向到左右耳的两条方向相关滤波路径：同一个输入声源
+              <math class="inline-mathml"><mi>x</mi><mo>(</mo><mi>t</mi><mo>)</mo></math>
+              经过
+              <math class="inline-mathml"><msub><mi>h</mi><mi>L</mi></msub><mo>(</mo><mi>t</mi><mo>)</mo></math>
+              和
+              <math class="inline-mathml"><msub><mi>h</mi><mi>R</mi></msub><mo>(</mo><mi>t</mi><mo>)</mo></math>
+              变成左右耳信号。图源：备课素材 / 10 HRTF。
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="cw-three" id="hrtf-measurement">
+          <article class="cw-mini">
+            <h3>HRTF 怎么测量</h3>
+            <p>
+              在消声室或低反射环境中，把扬声器放在已知方位和仰角，受试者或假人头耳道入口放微型麦克风。
+              播放 sweep、MLS 或脉冲信号，记录左右耳响应，再通过反卷积得到 HRIR。
+            </p>
+            <p>
+              测量时要登记坐标系、采样率、声源距离、参考点、耳道是否堵塞、麦克风位置和个体信息。
+              同一个方向必须得到一对左右耳响应，否则不能用于双耳渲染。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>HRTF 的表现形式</h3>
+            <p>
+              工程里常用两种等价形式：时域的 HRIR
+              <math class="inline-mathml"><msub><mi>h</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub><mo>[</mo><mi>n</mi><mo>;</mo><mi>&#937;</mi><mo>]</mo></math>
+              和频域的 HRTF
+              <math class="inline-mathml"><msub><mi>H</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub><mo>(</mo><mi>&#937;</mi><mo>,</mo><mi>&#969;</mi><mo>)</mo></math>。
+            </p>
+            <p>
+              HRIR 适合直接卷积；HRTF 适合观察幅度谱、相位、耳廓 notch、ITD/ILD 和插值后的频响连续性。
+              数据库通常只在离散角度网格上测量，因此“连续移动”必然涉及方向选择、插值或交叉淡化。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>SOFA 在做什么</h3>
+            <p>
+              SOFA 是 Spatially Oriented Format for Acoustics，用 netCDF/HDF5 风格的数据结构保存空间声学数据。
+              对 HRTF，常见约定是把左右耳 HRIR 放在 <code>Data.IR</code>，把方向放在 <code>SourcePosition</code>，
+              同时保存 <code>Data.SamplingRate</code>、接收者朝向、坐标单位和数据库元信息。
+            </p>
+            <p>
+              它解决的不是“怎么渲染声音”，而是让不同实验室的 HRTF 可以用统一字段读取、比较、复现和交换。
+            </p>
+          </article>
+        </div>
+
+        <div class="cw-media-grid" data-layout="compare" aria-label="HRTF measurement and SOFA data figures">
+          <figure class="cw-figure is-photo" data-fit="cover">
+            <img src="media/hrtf-measurement-anechoic.png" alt="受试者在消声室中通过扬声器阵列测量 HRTF" />
+            <figcaption>
+              HRTF 测量需要把声源方向、受试者姿态、耳道入口麦克风和房间条件固定下来；每个方向记录一对左右耳 HRIR。
+              图源：备课素材 / 10 HRTF。
+            </figcaption>
+          </figure>
+          <figure class="cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+            <img src="media/hrtf-sofa-source-positions.webp" alt="SOFA HRTF 数据中离散声源方向网格的可视化" />
+            <figcaption>
+              SOFA 文件把离散测量方向写成 <code>SourcePosition</code>，把对应左右耳响应写成 <code>Data.IR</code>。
+              连续移动声像需要在这些离散方向之间选择、插值或交叉淡化。图源：备课素材 / 10 HRTF。
+            </figcaption>
+          </figure>
+        </div>
+
+        <section class="cw-card" id="hrtf-rendering">
+          <h3>怎样设计一段基于 HRTF 的空间音频</h3>
           <p>
-            SOFA 和数据集作为工程案例放在 HRTF 后面。本章第一版先保留关系：HRTF 不只是概念，
-            还会以数据格式和测量库进入空间音频渲染。
+            基本渲染就是把单声道声源分别与目标方向的左右耳 HRIR 做卷积：
+          </p>
+          <div class="equation" id="eq-hrtf-binaural-rendering" role="math" aria-label="基于 HRTF 的双耳渲染公式">
+            <math display="block">
+              <mtable columnalign="left" rowspacing="0.55em">
+                <mtr><mtd>
+                  <mrow>
+                    <msub><mi>y</mi><mi>L</mi></msub><mo>[</mo><mi>n</mi><mo>]</mo>
+                    <mo>=</mo>
+                    <mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                    <mo>*</mo>
+                    <msub><mi>h</mi><mi>L</mi></msub><mo>[</mo><mi>n</mi><mo>;</mo><mi>&#937;</mi><mo>]</mo>
+                  </mrow>
+                </mtd></mtr>
+                <mtr><mtd>
+                  <mrow>
+                    <msub><mi>y</mi><mi>R</mi></msub><mo>[</mo><mi>n</mi><mo>]</mo>
+                    <mo>=</mo>
+                    <mi>x</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                    <mo>*</mo>
+                    <msub><mi>h</mi><mi>R</mi></msub><mo>[</mo><mi>n</mi><mo>;</mo><mi>&#937;</mi><mo>]</mo>
+                  </mrow>
+                </mtd></mtr>
+              </mtable>
+            </math>
+          </div>
+          <p>
+            方向选择时，先把声源轨迹写成每个音频块的方位
+            <math class="inline-mathml"><mi>&#937;</mi><mo>(</mo><mi>t</mi><mo>)</mo></math>，再在 HRTF 网格中找最近的测量方向或做相邻方向插值。
+            例如声像从左前方移动到右后方时，每 10-20 ms 更新一次目标方向；更新太慢会产生跳变，更新太快但滤波器直接替换会产生 zipper noise。
+          </p>
+          <p>
+            实作时不要在一个采样点突然把
+            <math class="inline-mathml"><msub><mi>h</mi><mi>old</mi></msub></math>
+            换成
+            <math class="inline-mathml"><msub><mi>h</mi><mi>new</mi></msub></math>。
+            更稳的做法是并行计算两个方向的双耳输出，并在一个短窗口内交叉淡化：
+          </p>
+          <div class="equation" id="eq-hrtf-crossfade" role="math" aria-label="HRTF 切换时的交叉淡化公式">
+            <math display="block">
+              <mrow>
+                <mi>y</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                <mo>=</mo>
+                <mo>(</mo><mn>1</mn><mo>-</mo><mi>&#945;</mi><mo>[</mo><mi>n</mi><mo>]</mo><mo>)</mo>
+                <msub><mi>y</mi><mrow><mi>old</mi></mrow></msub><mo>[</mo><mi>n</mi><mo>]</mo>
+                <mo>+</mo>
+                <mi>&#945;</mi><mo>[</mo><mi>n</mi><mo>]</mo>
+                <msub><mi>y</mi><mrow><mi>new</mi></mrow></msub><mo>[</mo><mi>n</mi><mo>]</mo>
+              </mrow>
+            </math>
+          </div>
+          <p>
+            <math class="inline-mathml"><mi>&#945;</mi><mo>[</mo><mi>n</mi><mo>]</mo></math>
+            可用线性、raised-cosine 或 equal-power 曲线从 0 走到 1。对短 HRIR，10-50 ms 的淡化通常足以消除参数切换感；
+            对快速绕头运动，可以先按角度插值 HRIR/HRTF，再对输出做块级交叉淡化。最后还要检查响度守恒、前后混淆、个体 HRTF 匹配度和耳机均衡，否则声像会“贴头”或定位漂移。
           </p>
         </section>
       </section>
@@ -135,9 +319,55 @@
         </div>
         <div class="cw-two">
           <article class="cw-card">
-            <h3>相关性与宽度</h3>
+            <h3>IACC 的定义</h3>
             <p>
-              左右耳信号越相似，声像越容易集中；相关性降低时，空间包围感和宽度增强，但定位清晰度可能下降。
+              IACC 是 <strong>Interaural Cross-Correlation Coefficient</strong>，即双耳互相关系数。
+              它先计算左右耳信号的归一化互相关函数 IACF，再在一个很短的双耳延迟范围内取最大绝对值。
+              这个“允许微小延迟后还能多相似”的量，正好把 ITD 补偿后的双耳相似性压缩成 0 到 1 之间的指标。
+            </p>
+            <div class="equation" id="eq-iacf" role="math" aria-label="双耳互相关函数 IACF 的计算公式">
+              <math display="block">
+                <mrow>
+                  <msub><mi>&#961;</mi><mrow><mi>L</mi><mi>R</mi></mrow></msub>
+                  <mo>(</mo><mi>&#964;</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <mfrac>
+                    <mrow>
+                      <msubsup><mo>&#8747;</mo><msub><mi>t</mi><mn>1</mn></msub><msub><mi>t</mi><mn>2</mn></msub></msubsup>
+                      <msub><mi>p</mi><mi>L</mi></msub><mo>(</mo><mi>t</mi><mo>)</mo>
+                      <msub><mi>p</mi><mi>R</mi></msub><mo>(</mo><mi>t</mi><mo>+</mo><mi>&#964;</mi><mo>)</mo>
+                      <mi>d</mi><mi>t</mi>
+                    </mrow>
+                    <msqrt>
+                      <mrow>
+                        <msubsup><mo>&#8747;</mo><msub><mi>t</mi><mn>1</mn></msub><msub><mi>t</mi><mn>2</mn></msub></msubsup>
+                        <msubsup><mi>p</mi><mi>L</mi><mn>2</mn></msubsup><mo>(</mo><mi>t</mi><mo>)</mo><mi>d</mi><mi>t</mi>
+                        <msubsup><mo>&#8747;</mo><msub><mi>t</mi><mn>1</mn></msub><msub><mi>t</mi><mn>2</mn></msub></msubsup>
+                        <msubsup><mi>p</mi><mi>R</mi><mn>2</mn></msubsup><mo>(</mo><mi>t</mi><mo>)</mo><mi>d</mi><mi>t</mi>
+                      </mrow>
+                    </msqrt>
+                  </mfrac>
+                </mrow>
+              </math>
+            </div>
+            <div class="equation" id="eq-iacc" role="math" aria-label="IACC 的计算公式">
+              <math display="block">
+                <mrow>
+                  <mi>IACC</mi>
+                  <mo>=</mo>
+                  <msub><mi>max</mi><mrow><mo>|</mo><mi>&#964;</mi><mo>|</mo><mo>&#8804;</mo><mn>1</mn><mtext> ms</mtext></mrow></msub>
+                  <mo>|</mo>
+                  <msub><mi>&#961;</mi><mrow><mi>L</mi><mi>R</mi></mrow></msub>
+                  <mo>(</mo><mi>&#964;</mi><mo>)</mo>
+                  <mo>|</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              这里的 <math class="inline-mathml"><msub><mi>p</mi><mi>L</mi></msub></math> 和
+              <math class="inline-mathml"><msub><mi>p</mi><mi>R</mi></msub></math> 是左右耳声压或双耳录音信号；
+              <math class="inline-mathml"><mo>[</mo><msub><mi>t</mi><mn>1</mn></msub><mo>,</mo><msub><mi>t</mi><mn>2</mn></msub><mo>]</mo></math>
+              是分析时间窗。房间声学里常把早期窗和晚期窗分开看：早期 IACC 更影响 apparent source width，晚期低相关能增强 listener envelopment。
             </p>
             <label>左右耳相关性 <b id="iaccText">0.55</b>
               <input id="iaccValue" data-spatial-control type="range" min="0" max="1" step="0.01" value="0.55" />
@@ -152,6 +382,40 @@
             </div>
           </div>
         </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>为什么 IACC 高时声像集中</h3>
+            <p>
+              如果左右耳波形在补偿微小 ITD 后仍高度相似，听觉系统可以把它解释为同一个紧凑声源的双耳投影。
+              这种情况下声像边界清楚，位置稳定，通常听起来更“窄”、更靠近一个明确方向。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>为什么 IACC 低时更宽</h3>
+            <p>
+              当反射、扩散声或人工去相关处理让左右耳细节不再同步时，单一方向的解释变弱。
+              大脑会把能量组织成更宽的声源或包围声场，因此宽度和空间感增强，但精确定位会变差。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>使用边界</h3>
+            <p>
+              IACC 支撑的是“双耳相似性与空间印象”的判断，不等于完整定位模型。
+              它要和 ITD、ILD、HRTF 谱线索、直达声/混响比例和分析时间窗一起解释；宽带音乐、瞬态语音和晚期混响得到的 IACC 含义并不完全相同。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>复杂场景下不能只看 IACC</h3>
+            <p>
+              对真实声场、音乐和日常听觉场景，IACC 与声像宽度、空间感之间并没有确定的一一对应关系。
+              同样的 IACC 数值可能来自扩散混响、多个声源、频带间线索冲突、人工去相关处理或录音制式差异，听感并不必然相同。
+            </p>
+            <p>
+              因此复杂场景中的声像宽度和空间感更依赖高维特征：直达声/早期反射/晚期混响结构、频带相关性、动态包络、声源数量、语义对象、场景先验、头部运动和视觉绑定。
+              IACC 适合作为一个可计算的双耳相似度入口，但不能单独替代完整的空间感知解释。
+            </p>
+          </article>
+        </div>
       </section>
 
       <section class="chapter-block" id="precedence">
@@ -161,10 +425,35 @@
         </div>
         <div class="cw-two">
           <article class="cw-card">
-            <h3>直达声与反射</h3>
+            <h3>优先效应是什么</h3>
             <p>
-              反射延迟滑块展示优先效应：短延迟时事件融合，中等延迟时定位主要由先到达声主导，
-              延迟更长时可能分裂成回声。
+              优先效应也叫 <strong>precedence effect</strong> 或 <strong>law of the first wavefront</strong>。
+              当同一个声音先以直达声到达耳朵，随后又以墙面、地面或天花板反射声到达时，听觉系统通常不会把每个反射都听成一个新声源；
+              它会把短延迟反射融合进同一个听觉事件，并让定位主要跟随最先到达的波前。
+            </p>
+            <p>
+              一个最小模型可以写成“直达声 + 延迟反射”：
+            </p>
+            <div class="equation" id="eq-precedence-direct-reflection" role="math" aria-label="直达声与反射声的双耳信号模型">
+              <math display="block">
+                <mrow>
+                  <msub><mi>x</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub>
+                  <mo>(</mo><mi>t</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <msub><mi>d</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub>
+                  <mo>(</mo><mi>t</mi><mo>)</mo>
+                  <mo>+</mo>
+                  <mi>a</mi>
+                  <msub><mi>r</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub>
+                  <mo>(</mo><mi>t</mi><mo>-</mo><mi>&#916;</mi><mi>t</mi><mo>)</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              其中 <math class="inline-mathml"><msub><mi>d</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub></math>
+              是直达声到左右耳后的波形，<math class="inline-mathml"><msub><mi>r</mi><mrow><mi>L</mi><mo>,</mo><mi>R</mi></mrow></msub></math>
+              是反射路径的双耳波形，<math class="inline-mathml"><mi>a</mi></math> 是反射相对强度，
+              <math class="inline-mathml"><mi>&#916;</mi><mi>t</mi></math> 是反射相对直达声的延迟。
             </p>
             <label>反射延迟 <b id="echoDelayText">18 ms</b>
               <input id="echoDelay" data-spatial-control type="range" min="0" max="80" step="1" value="18" />
@@ -179,6 +468,42 @@
             </div>
           </div>
         </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>时间区间怎么理解</h3>
+            <p>
+              极短延迟时，直达声和反射声在时间上几乎叠加，听觉主要感到音色、响度或梳状滤波改变。
+              延迟增加到几毫秒到几十毫秒范围内，反射仍与直达声融合成一个事件，但定位被先到达声支配，这就是 localization dominance。
+              再继续增大延迟，反射会越过 echo threshold，被听成分离的回声。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>为什么定位不被反射拉走</h3>
+            <p>
+              定位线索最可靠的部分通常出现在声源起始瞬间：直达声最先给出一致的 ITD、ILD 和 HRTF 谱线索。
+              稍后的反射虽然带来额外能量，但它的方向线索与直达声冲突；听觉系统会下调这些晚到线索的定位权重，把它们更多解释为房间信息。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>Haas 效应与强度边界</h3>
+            <p>
+              Haas effect 常指延迟声与直达声融合时，延迟声可以增加响度和空间感，而定位仍偏向先到达声。
+              但这个边界不是固定常数：语音、点击声、音乐、频谱、反射强度和房间混响都会改变 echo threshold。
+              如果反射比直达声强很多，或直达声起始被掩蔽，定位就可能被反射方向拉偏。
+            </p>
+          </article>
+        </div>
+        <section class="cw-card" id="precedence-engineering">
+          <h3>工程上应该怎么用</h3>
+          <p>
+            做空间音频或房间仿真时，直达声负责清晰方向，早期反射负责房间大小、表面距离和空间感，晚期混响负责包围感。
+            因此不要只把“反射”当作一个延迟拷贝：需要分别控制反射的延迟、增益、方向、频谱衰减和扩散程度。
+          </p>
+          <p>
+            一个可操作的设计原则是：先让直达声的 HRTF/ITD/ILD 明确建立方位；再加入若干早期反射，延迟通常在几毫秒到几十毫秒之间，
+            增益低于直达声，并使用各自反射方向的 HRTF；最后用低相关的晚期混响增加包围感。这样学生能把“定位稳定”和“有房间感”分开理解。
+          </p>
+        </section>
       </section>
 
       <section class="chapter-block" id="scene-analysis">
@@ -188,8 +513,15 @@
         </div>
         <div class="cw-two">
           <article class="cw-card">
-            <h3>分组线索</h3>
-            <p>四个复选框表示空间一致、同步起音、音色相似、共同变化。线索越一致，越容易形成稳定对象。</p>
+            <h3>ASA 研究的核心问题</h3>
+            <p>
+              Auditory Scene Analysis，简称 ASA，讨论的是：耳朵收到的是一个混合波形，为什么我们却能听出“说话人”“乐器”“脚步声”“房间反射”等对象。
+              关键不是把声压拆成物理声源的真实标签，而是把频率成分和时间片段组织成有意义的听觉流。
+            </p>
+            <p>
+              因此 ASA 位于本章前面线索之后：ITD/ILD/HRTF 给出方向，IACC 和优先效应解释宽度、房间感和反射融合；
+              ASA 进一步问这些线索如何共同决定哪些声学成分属于同一个对象，哪些应该被分离成不同音流。
+            </p>
             <div class="cw-control-row">
               <label class="cw-chip"><input data-asa-cue data-spatial-control type="checkbox" checked /> 空间一致</label>
               <label class="cw-chip"><input data-asa-cue data-spatial-control type="checkbox" checked /> 同步起音</label>
@@ -206,6 +538,86 @@
             </div>
           </div>
         </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>同时分组：哪些频率成分属于一个对象</h3>
+            <p>
+              同一时刻出现的频率成分，如果共享起音、基频关系、谐波结构、空间方向和相似调制，就更容易被合成为一个声源。
+              例如元音的多个谐波不是被听成许多纯音，而是被组织成一个说话人的一个音节。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>序列分组：哪些片段形成一条音流</h3>
+            <p>
+              跨时间的声音片段，如果频率接近、音色相似、节奏连续、运动轨迹一致，就容易被连成同一条 stream。
+              如果相邻片段频率跨度很大或空间位置跳变明显，听觉会倾向于把它们分裂成不同对象。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>空间线索不是唯一线索</h3>
+            <p>
+              空间一致能帮助分组，但并不总是决定性证据。两个乐器在同一方向仍可因音色和音高分离；
+              同一个说话人在反射环境中也可能因为优先效应和共同调制被维持为一个对象。
+            </p>
+          </article>
+        </div>
+        <section class="cw-card" id="asa-cue-model">
+          <h3>从 Auditory Scene Analysis 走向 Computational Auditory Scene Analysis</h3>
+          <p>
+            对机器听觉，ASA 可以被看成一个线索融合问题。先把声信号拆成时频单元
+            <math class="inline-mathml"><mo>(</mo><mi>t</mi><mo>,</mo><mi>f</mi><mo>)</mo></math>，
+            再为每个单元估计空间、起音、谐波、音色、调制等属性。两个单元越像来自同一对象，它们之间的关联权重越高：
+          </p>
+          <div class="equation" id="eq-asa-affinity" role="math" aria-label="听觉场景分析中的线索融合亲和度">
+            <math display="block">
+              <mrow>
+                <mi>A</mi><mo>(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo>)</mo>
+                <mo>=</mo>
+                <msub><mi>w</mi><mrow><mi>s</mi><mi>p</mi></mrow></msub>
+                <msub><mi>S</mi><mrow><mi>s</mi><mi>p</mi></mrow></msub>
+                <mo>+</mo>
+                <msub><mi>w</mi><mrow><mi>o</mi><mi>n</mi></mrow></msub>
+                <msub><mi>S</mi><mrow><mi>o</mi><mi>n</mi></mrow></msub>
+                <mo>+</mo>
+                <msub><mi>w</mi><mrow><mi>h</mi><mi>a</mi><mi>r</mi></mrow></msub>
+                <msub><mi>S</mi><mrow><mi>h</mi><mi>a</mi><mi>r</mi></mrow></msub>
+                <mo>+</mo>
+                <msub><mi>w</mi><mrow><mi>m</mi><mi>o</mi><mi>d</mi></mrow></msub>
+                <msub><mi>S</mi><mrow><mi>m</mi><mi>o</mi><mi>d</mi></mrow></msub>
+              </mrow>
+            </math>
+          </div>
+          <p>
+            这里 <math class="inline-mathml"><msub><mi>S</mi><mrow><mi>s</mi><mi>p</mi></mrow></msub></math>
+            表示空间一致性，<math class="inline-mathml"><msub><mi>S</mi><mrow><mi>o</mi><mi>n</mi></mrow></msub></math>
+            表示同步起音，<math class="inline-mathml"><msub><mi>S</mi><mrow><mi>h</mi><mi>a</mi><mi>r</mi></mrow></msub></math>
+            表示谐波或音高关系，<math class="inline-mathml"><msub><mi>S</mi><mrow><mi>m</mi><mi>o</mi><mi>d</mi></mrow></msub></math>
+            表示共同包络或共同调制。亲和度高的单元可以被聚成同一声源轨迹；亲和度低的单元则倾向于分离。
+          </p>
+        </section>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>人类 ASA 与机器任务</h3>
+            <p>
+              在声源分离、说话人分离、音乐转录和声音事件检测中，模型也在做类似决定：哪些时频成分属于目标，哪些属于干扰或背景。
+              掩蔽估计、聚类、深度嵌入和注意力机制，都可以看成不同形式的“分组规则学习”。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>典型失败情况</h3>
+            <p>
+              如果多个声源同方向、同起音、音色相近，分组会变难；如果一个声源被强混响拉长，时间边界会变模糊；
+              如果视觉线索指向另一个位置，听觉对象还可能被跨模态重新绑定。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>这一节要带走什么</h3>
+            <p>
+              空间听觉不止回答“声音从哪来”，还回答“哪些声学证据属于同一个东西”。
+              ASA 把双耳线索、谱线索、时间线索和经验约束合成对象层面的解释，是从人类听觉走向机器听觉特征和任务的桥。
+            </p>
+          </article>
+        </div>
       </section>
 
       <section class="chapter-block" id="complex-boundaries">
@@ -213,18 +625,67 @@
           <p>BOUNDARIES</p>
           <h2>复杂声音、距离感知与视觉影响</h2>
         </div>
-        <div class="cw-three">
-          <article class="cw-mini">
+        <div class="cw-story-stack">
+          <article class="cw-card">
             <h3>复杂声侧向化</h3>
-            <p>宽带、瞬态和谐波结构会共同影响左右定位，不一定能用单频线索解释。</p>
+            <p>
+              侧向化的英文是 <strong>lateralization</strong>。它和 localization 不完全一样：localization 是判断外部声源在空间中的位置；
+              lateralization 更强调耳机、双耳信号或实验刺激中，声像在头内左右轴上的偏移。例如一个声音听起来在头中央、偏左耳、偏右耳，
+              或在两耳之间移动，这就是典型的侧向化判断。
+            </p>
+            <p>
+              对单频纯音，侧向化可以主要由 ITD 或 ILD 控制；但真实复杂声通常是宽带、瞬态、谐波和包络共同存在。
+              低频成分可能给出稳定相位差，高频成分给出头影强度差，起音瞬间又会强烈影响初始方向感。
+              如果这些频段给出的双耳线索彼此一致，声像会集中、稳定；如果不同频段线索冲突，声像可能变宽、分裂、漂移，甚至出现“低频在一边、高频在另一边”的融合困难。
+            </p>
+            <p>
+              这就是为什么复杂声不能只用一个单频 ITD/ILD 数值解释。研究和工程中常要分频带估计双耳线索，再考虑频带权重、包络同步、起音支配以及听觉系统的跨频整合。
+              对空间音频渲染来说，若 HRTF、耳机均衡或双耳相位处理不一致，听感上会表现为声像贴头、中心不稳、左右移动不连续或声源宽度异常。
+            </p>
           </article>
-          <article class="cw-mini">
-            <h3>距离感知</h3>
-            <p>距离判断依赖声级、直混比、频谱变化和经验，不只是“更响更近”。</p>
+          <article class="cw-split-card">
+            <div class="cw-split-copy">
+              <h3>距离、高度、前后感知</h3>
+            <p>
+              听觉距离 perception of auditory distance 依赖多种弱线索共同推断。近距离时，整体声级、低频近场效应、双耳差异和头部运动可能有帮助；
+              在房间中，直达声与混响声的比例 direct-to-reverberant ratio 往往更关键：直达声相对强，通常更近；混响占比高，通常更远。
+              高频空气吸收、声源熟悉度、语音响度经验和房间先验也会参与判断。
+            </p>
+            <p>
+              高度 elevation 主要依赖耳廓造成的方向相关谱峰和谱谷，尤其是中高频 notch 随仰角变化的位置。
+              前后 front-back 判断也依赖类似的谱线索和头部运动产生的动态变化。问题在于，前方和后方的 ITD/ILD 可能非常相近，
+              只靠左右耳时间差和强度差很容易落在同一个 cone of confusion 上，因此会出现前后混淆、上下混淆和内外部化失败。
+            </p>
+            <p>
+              这些机理到现在也不是一个完全统一的闭式模型。个体耳廓差异很大，HRTF 不匹配会显著影响高度和前后判断；
+              房间反射既能提供距离信息，也会破坏清晰定位；头部运动、视觉信息和经验学习又会动态修正判断。
+              所以学术界通常把距离、高度、前后感知看成多线索贝叶斯整合或任务依赖推断，而不是某一个固定公式能解释完的现象。
+            </p>
+            </div>
+            <figure class="cw-split-media cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+              <img src="media/elevation-perception.png" alt="不同高度方向对应不同 HRTF 频谱凹陷位置的示意图" />
+              <figcaption>
+                高度判断常依赖耳廓造成的中高频谱峰和谱谷；图中不同仰角对应不同的谱凹陷位置，说明 elevation 不能只靠 ITD/ILD 判断。图源：备课素材 / 10 HRTF。
+              </figcaption>
+            </figure>
           </article>
-          <article class="cw-mini">
+          <article class="cw-card">
             <h3>视觉影响</h3>
-            <p>看见的声源位置会改变听觉定位判断，空间听觉不是孤立通道。</p>
+            <p>
+              视觉会系统性改变听觉定位。最典型的是 <strong>ventriloquism effect</strong>：当视觉对象的位置与声音位置有小到中等偏差时，
+              听者常把声音位置拉向看见的对象。影院、视频会议和舞台扩声都利用了这一点：声音实际从扬声器来，但只要视听时间和语义匹配，
+              我们会把声音绑定到屏幕人物或舞台表演者身上。
+            </p>
+            <p>
+              多模态交互不是简单“视觉覆盖听觉”。大脑会根据可靠性给不同通道分配权重：视觉空间分辨率通常高，所以影响方位判断强；
+              听觉时间分辨率高，所以在节奏、同步和事件起始上更有优势。当视觉和听觉在时间上同步、语义上属于同一事件、空间偏差没有大到不可解释时，
+              系统倾向于把它们绑定成一个多模态对象。
+            </p>
+            <p>
+              这种交互也会带来边界和错觉。视听偏差过大时会解绑定，听者会感到“声画分离”；长期暴露在固定偏差下会产生 ventriloquism aftereffect，
+              后续纯听觉定位也可能被重新校准。对空间音频、AR/VR 和机器人听觉来说，这意味着定位不能只看麦克风或耳机信号：
+              还要考虑屏幕位置、头部姿态、视觉目标、语义匹配和视听同步，否则用户会听到位置正确但感知上“不对”的声音。
+            </p>
           </article>
         </div>
       </section>
@@ -234,7 +695,7 @@
         <h2>本章承接空间线索，并把它推进到场景组织</h2>
         <p>机器特征表示已拆出为独立 Chapter，避免把“人怎么组织声音”和“机器怎么取特征”混在同一页里。</p>
         <div class="cw-route-row">
-          <a href="../../session/spatial-scene-feature-route/">回到空间场景路线</a>
+          <a href="../../session/auditory-perception-spatial-representation/">回到感知与表征路线</a>
           <a href="../audio-feature-representations/">进入音频特征表示</a>
         </div>
       </section>

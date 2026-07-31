@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Audio AI | 空间听觉、场景组织与机器特征路线</title>
-    <meta name="description" content="空间听觉、场景组织与机器特征路线：组织 ITD/ILD、HRTF、IACC、优先效应、ASA 和音频特征表示之间的学习关系。" />
-    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
-    <link rel="stylesheet" href="../../assets/css/route.css?v=20260718-1" />
+    <meta http-equiv="refresh" content="6; url=../auditory-perception-spatial-representation/" />
+    <title>Audio AI | 路线已合并</title>
+    <meta
+      name="description"
+      content="空间听觉、场景组织与机器特征路线已合并到“心理声学、空间听觉与听觉特征表征”Session。"
+    />
+    <link rel="stylesheet" href="../../assets/css/theme.css" />
+    <link rel="stylesheet" href="../../assets/css/route.css" />
   </head>
   <body class="route-page" data-session-route="spatial-scene-feature-route">
     <header class="route-header">
@@ -14,79 +18,37 @@
       <nav aria-label="课程导航">
         <a href="../">全部路线</a>
         <a href="../../">课程首页</a>
-        <a href="../../syllabus/">课程大纲</a>
       </nav>
     </header>
 
-    <nav class="route-dock" aria-label="空间场景关系导航" data-session-route-nav>
-      <span>关系导航</span>
+    <nav class="route-dock" aria-label="兼容路线导航" data-session-route-nav>
+      <span>路线已合并</span>
       <div class="route-dock-links">
-        <a href="#overview">全貌</a>
-        <a href="../../chapters/spatial-hearing-scene-analysis/#binaural-cues">当前：ITD/ILD</a>
-        <a href="../../chapters/spatial-hearing-scene-analysis/#hrtf">扩展：HRTF</a>
-        <a href="../../chapters/spatial-hearing-scene-analysis/#scene-analysis">组织：ASA</a>
-        <a href="../../chapters/audio-feature-representations/#feature-lab">用于后续：音频特征</a>
+        <a href="../auditory-perception-spatial-representation/">进入新 Session</a>
+        <a href="../../chapters/spatial-hearing-scene-analysis/">空间听觉 Chapter</a>
+        <a href="../../chapters/audio-feature-representations/">音频特征 Chapter</a>
       </div>
     </nav>
 
     <main>
       <section class="route-hero" id="overview">
-        <p class="route-eyebrow">SESSION / SPATIAL SCENE ROUTE</p>
-        <h1>同一条波形，<br /><span>为什么能听出空间、对象和任务线索？</span></h1>
+        <p class="route-eyebrow">COMPATIBILITY ROUTE</p>
+        <h1>这条路线已合并到<br /><span>心理声学、空间听觉与听觉特征表征</span></h1>
         <p>
-          这条 Session 把“人怎么定位和组织声音”与“机器怎么选择特征”放在同一条路线上：
-          先从双耳时间差和强度差进入空间线索，再扩展到 HRTF、IACC 与反射环境，
-          然后用听觉场景分析解释对象分组，最后落到窗长、帧移和 Mel 频带等机器表示选择。
+          原来的“空间听觉、场景组织与机器特征路线”不再作为独立入口。它已经并入一个更完整的感知与表征 Session，
+          与心理声学、音高音色和听觉特征表征放在同一条学习路线中。
         </p>
-        <div class="session-notice">
-          本页只组织关系，不重讲具体线索。每个链接都说明为什么跳转；完整示意图、交互控件和使用边界在 Chapter 中维护。
-        </div>
-      </section>
-
-      <section class="route-section" id="route-map">
-        <div class="route-section-heading">
-          <div><p>ROUTE MAP</p><h2>空间与场景这条线适合分三步走</h2></div>
-        </div>
-        <div class="relation-grid">
-          <article class="relation-card">
-            <p class="relation-label">当前主题</p>
-            <h3>先从左右耳差异建立空间问题</h3>
-            <p>空间听觉的入口不是“声源在哪里”的结论，而是两个耳朵接收到的时间、强度和谱形差异。</p>
-            <ul>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#overview">进入 Chapter：空间与对象问题 <small class="link-preview">从听辨入口建立问题。</small></a></li>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#binaural-cues">跳到锚点：ITD / ILD <small class="link-preview">操作方位角和频率，观察双耳线索。</small></a></li>
-            </ul>
-          </article>
-          <article class="relation-card">
-            <p class="relation-label">扩展真实场景</p>
-            <h3>再把定位线索扩展到个体、宽度和反射</h3>
-            <p>真实空间不只提供左右差异，还包含耳廓滤波、双耳相关性、直达声和反射声之间的时间关系。</p>
-            <ul>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#hrtf">跳到锚点：HRTF <small class="link-preview">观察方向、仰角和个体差异。</small></a></li>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#iacc">跳到锚点：IACC <small class="link-preview">操作相关性和声像宽度。</small></a></li>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#precedence">跳到锚点：优先效应 <small class="link-preview">操作反射延迟。</small></a></li>
-            </ul>
-          </article>
-          <article class="relation-card">
-            <p class="relation-label">用于后续</p>
-            <h3>最后从听觉组织走向机器特征</h3>
-            <p>ASA 说明人会把声学线索组织成对象；机器特征则把需要保留的信息转成可计算的时间、频率和感知尺度表示。</p>
-            <ul>
-              <li><a href="../../chapters/spatial-hearing-scene-analysis/#scene-analysis">跳到锚点：听觉场景分析 <small class="link-preview">操作空间一致、同步起音、音色相似和共同变化。</small></a></li>
-              <li><a href="../../chapters/audio-feature-representations/#overview">进入 Chapter：音频特征表示 <small class="link-preview">看窗长、帧移、Mel 频带数和任务适配。</small></a></li>
-              <li><a href="../../chapters/audio-feature-representations/#feature-lab">跳到锚点：特征实验 <small class="link-preview">操作特征表示画布。</small></a></li>
-            </ul>
-          </article>
+        <div class="route-actions">
+          <a class="primary-action" href="../auditory-perception-spatial-representation/">进入新的统一 Session</a>
+          <a href="../../chapters/spatial-hearing-scene-analysis/">打开空间听觉 Chapter</a>
         </div>
       </section>
     </main>
 
     <footer class="route-footer">
-      <span>Draft Session：路线已接入，正文仍待教师审核</span>
+      <span>保留此页是为了避免旧链接失效。</span>
       <a href="../">返回全部路线</a>
     </footer>
     <script src="../../assets/js/theme.js"></script>
-    <script src="../../assets/js/analytics-config.js"></script>
-    <script src="../../assets/js/analytics.js"></script>
   </body>
 </html>

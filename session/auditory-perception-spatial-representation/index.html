@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 心理声学、空间听觉与听觉特征表征</title>
+    <meta
+      name="description"
+      content="心理声学、空间听觉与听觉特征表征 Session：组织听觉通路、心理声学边界、音高音色、空间线索、场景组织与机器听觉特征之间的学习关系。"
+    />
+    <link rel="stylesheet" href="../../assets/css/theme.css" />
+    <link rel="stylesheet" href="../../assets/css/route.css" />
+  </head>
+  <body class="route-page" data-session-route="auditory-perception-spatial-representation">
+    <header class="route-header">
+      <a class="route-brand" href="../../">AUDIO <strong>AI</strong></a>
+      <nav aria-label="课程导航">
+        <a href="../">全部路线</a>
+        <a href="../../">课程首页</a>
+        <a href="../../syllabus/">课程大纲</a>
+      </nav>
+    </header>
+
+    <nav class="route-dock" aria-label="感知与表征关系导航" data-session-route-nav>
+      <span>关系导航</span>
+      <div class="route-dock-links">
+        <a href="#overview">全貌</a>
+        <a href="../../chapters/auditory-system-psychoacoustics/#auditory-chain">当前：听觉通路</a>
+        <a href="../../chapters/auditory-system-psychoacoustics/#auditory-filter">转换：听觉滤波器</a>
+        <a href="../../chapters/pitch-timbre-symbolic-audio/#pitch">换一层：音高音色</a>
+        <a href="../../chapters/spatial-hearing-scene-analysis/#binaural-cues">换一维：空间听觉</a>
+        <a href="../../chapters/audio-feature-representations/#feature-lab">用于后续：机器特征</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="route-hero" id="overview">
+        <p class="route-eyebrow">SESSION / AUDITORY PERCEPTION AND REPRESENTATION</p>
+        <h1>心理声学、空间听觉<br /><span>与听觉特征表征</span></h1>
+        <p>
+          这条 Session 把两次课的材料收束成一个大主题单元：声学信号不只是可测的波形和频谱，
+          还会被人耳组织成响度、音高、音色、方向、距离和对象；机器听觉再把这些经验边界转成可计算的特征表征。
+          本页只说明主题为什么相邻、应该按什么顺序跳转，以及每次跳转对应哪个 Chapter。
+        </p>
+        <div class="session-notice">
+          具体定义、图示、交互实验、适用边界和工程细节均由 Chapter 承载。本 Session 不替代 Chapter，只提供学习路线和关系导航。
+        </div>
+      </section>
+
+      <section class="route-section" id="route-map">
+        <div class="route-section-heading">
+          <div>
+            <p>ROUTE MAP</p>
+            <h2>这条路线适合按四个观察层次推进</h2>
+          </div>
+        </div>
+        <div class="relation-grid">
+          <article class="relation-card">
+            <p class="relation-label">进入听觉系统</p>
+            <h3>先把“声波到达耳朵”变成可定位的生理通路</h3>
+            <p>
+              先看外耳、中耳、内耳如何改变声波，再理解生理学和神经学实验如何把耳蜗频率选择性总结为听觉滤波器组。
+            </p>
+            <ul>
+              <li>
+                <a href="../../chapters/auditory-system-psychoacoustics/#auditory-chain">
+                  进入 Chapter：外耳、中耳、内耳
+                  <small class="link-preview">观察结构图和 3D 模型，建立声音传递路径。</small>
+                </a>
+              </li>
+              <li>
+                <a href="../../chapters/auditory-system-psychoacoustics/#auditory-filter">
+                  跳到锚点：听觉滤波器
+                  <small class="link-preview">从耳蜗实验、ERB 和 Gammatone 理解滤波器组。</small>
+                </a>
+              </li>
+            </ul>
+          </article>
+
+          <article class="relation-card">
+            <p class="relation-label">转向心理声学</p>
+            <h3>再把物理强度和频率转成“是否听见、听起来多响”</h3>
+            <p>
+              这一步把声压级、频率和背景声放到人的可听性边界里，为音高、音色、掩蔽和感知编码铺路。
+            </p>
+            <ul>
+              <li>
+                <a href="../../chapters/auditory-system-psychoacoustics/#thresholds-health">
+                  跳到锚点：听阈与听力健康
+                  <small class="link-preview">理解听阈、audiogram 和辅听设备之间的关系。</small>
+                </a>
+              </li>
+              <li>
+                <a href="../../chapters/auditory-system-psychoacoustics/#loudness">
+                  跳到锚点：响度与等响
+                  <small class="link-preview">比较不同频率达到同等响感所需的声压。</small>
+                </a>
+              </li>
+              <li>
+                <a href="../../chapters/auditory-system-psychoacoustics/#masking">
+                  用于后续：掩蔽
+                  <small class="link-preview">把“听不见”连接到感知频带和特征组织。</small>
+                </a>
+              </li>
+            </ul>
+          </article>
+
+          <article class="relation-card">
+            <p class="relation-label">形成音高与音色</p>
+            <h3>然后看频率关系如何变成音乐和合成中的表征</h3>
+            <p>
+              音高和音色把频率比例、谐波结构、包络和符号编号连起来，使听觉经验可以进入音乐音频和合成控制。
+            </p>
+            <ul>
+              <li>
+                <a href="../../chapters/pitch-timbre-symbolic-audio/#pitch">
+                  进入 Chapter：音高与符号音频
+                  <small class="link-preview">操作半音、MIDI 和缺失基频。</small>
+                </a>
+              </li>
+              <li>
+                <a href="../../chapters/pitch-timbre-symbolic-audio/#timbre">
+                  跳到锚点：音色
+                  <small class="link-preview">改变谐波能量和起音速度，观察同音高下的听感差异。</small>
+                </a>
+              </li>
+            </ul>
+          </article>
+
+          <article class="relation-card">
+            <p class="relation-label">加入空间和对象</p>
+            <h3>换到空间维度，解释方向、距离和声源分组</h3>
+            <p>
+              空间听觉不只是左右声道差异，而是双耳线索、耳廓滤波、反射、相关性和场景组织共同形成的判断。
+            </p>
+            <ul>
+              <li>
+                <a href="../../chapters/spatial-hearing-scene-analysis/#binaural-cues">
+                  跳到锚点：ITD / ILD
+                  <small class="link-preview">从左右耳时间差和强度差建立定位问题。</small>
+                </a>
+              </li>
+              <li>
+                <a href="../../chapters/spatial-hearing-scene-analysis/#hrtf">
+                  扩展：HRTF
+                  <small class="link-preview">看方向、仰角和个体差异如何改变频谱。</small>
+                </a>
+              </li>
+              <li>
+                <a href="../../chapters/spatial-hearing-scene-analysis/#scene-analysis">
+                  组织：听觉场景分析
+                  <small class="link-preview">从线索走向对象和音流。</small>
+                </a>
+              </li>
+            </ul>
+          </article>
+
+          <article class="relation-card">
+            <p class="relation-label">转成机器特征</p>
+            <h3>最后把听觉边界转化为机器可计算的表示选择</h3>
+            <p>
+              机器特征不是随意调参，而是在时间分辨率、频率分辨率、感知尺度和任务目标之间取舍。
+            </p>
+            <ul>
+              <li>
+                <a href="../../chapters/audio-feature-representations/#human-machine-map">
+                  进入 Chapter：从听觉组织到机器表示
+                  <small class="link-preview">把心理声学和空间线索映射到特征设计。</small>
+                </a>
+              </li>
+              <li>
+                <a href="../../chapters/audio-feature-representations/#feature-lab">
+                  进入实验：窗长、帧移与 Mel 频带
+                  <small class="link-preview">操作特征参数，观察表示画布如何改变。</small>
+                </a>
+              </li>
+              <li>
+                <a href="../../chapters/audio-feature-representations/#task-fit">
+                  用于后续：分类、检测与分离
+                  <small class="link-preview">把特征选择连接到机器听觉任务。</small>
+                </a>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="route-footer">
+      <span>Draft Session：审阅完成后再加入正式公开路径。</span>
+      <a href="../">返回全部路线</a>
+    </footer>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>
