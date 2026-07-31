@@ -1,6 +1,6 @@
 # Audio AI Course Blueprint
 
-Last verified: 2026-07-18
+Last verified: 2026-07-21
 
 This file is the current course-building contract. Update the current statements in place when the user confirms a new direction. Do not use it as a changelog.
 
@@ -74,6 +74,14 @@ For the current sound-physics Session, the user-confirmed canonical topic pages 
 - `chapters/frequency-domain-processing/index.html` — convolution, complex sinusoids, Fourier transform, DFT, and STFT.
 
 `session/sound-physics-sampling-spectrum/index.html` must provide the physical starting point, the macro relationship of the complete field `p(r,t)` across time, space, and frequency, and visible contextual jumps to the three canonical pages above. It must not explain or reproduce their concrete knowledge and must not become a shortened replacement for them.
+
+For the draft perceptual-and-representation Session, the user-confirmed canonical route is:
+
+- `session/auditory-perception-spatial-representation/index.html` organizes the macro route named **心理声学、空间听觉与听觉特征表征**.
+- The Session receives time, frequency, and spatial signal representations, then relates human auditory organization to machine-usable feature representation.
+- It links to four stable Chapter modules: `chapters/auditory-system-psychoacoustics/`, `chapters/pitch-timbre-symbolic-audio/`, `chapters/spatial-hearing-scene-analysis/`, and `chapters/audio-feature-representations/`.
+- Former separate draft Sessions for auditory psychoacoustics and spatial scene features are compatibility entries, not student-facing canonical route identities.
+- This Session may explain why psychoacoustics, pitch/timbre, spatial hearing, scene organization, and audio features belong in one learning unit, but it must not duplicate their Chapter-owned definitions, examples, interactions, or validity boundaries.
 
 ## 5. Required chapter narrative
 
@@ -179,6 +187,15 @@ Use `assets/css/theme.css` as the canonical source of shared `--course-*` tokens
 - Long MathML keeps its intrinsic width with `width/min-width: max-content`, is centered when it fits, aligns to the inline start when it needs mobile scrolling, and scrolls only inside its equation wrapper; clipping glyphs or creating whole-page overflow is a release blocker.
 - Cyan represents the primary signal, response, wave, or coordinate. Gold represents phase, polarity contrast, or emphasis. Coral is reserved for warnings, incident rays, or error states. Axes and annotations remain neutral.
 - Page-local body font stacks, duplicate global palettes, hardcoded display-equation sizes, and unrelated animation palettes are release blockers.
+
+Media layout is part of the course visual system, not a page-local afterthought.
+
+- Do not default every inserted image to equal-size, one-row thumbnails. Choose layout by teaching role: single primary figure, comparison, sequence, feature-plus-details, full-width figure, or external embed.
+- Use shared media classes in `assets/css/chapter.css`: `.cw-media-grid` with `data-layout="single"`, `compare`, `sequence`, or `feature`; `.cw-figure.is-wide`; `.cw-embed` for trusted external viewers.
+- Choose image fit by material type. Photos may use `.is-photo` or `data-fit="cover"` only when cropping does not remove required evidence. Diagrams, charts, anatomy labels, screenshots, axes, legends, and UI captures use `.is-diagram` or `data-fit="contain"` so labels are never cropped.
+- Use `data-ratio="natural"` when an image's native aspect ratio carries meaning, such as audiograms, scanned figures, tall diagrams, or unusual screenshots. Use `square`, `portrait`, `wide`, or `panorama` only when a stable ratio improves comparison or layout.
+- Captions must explain what the learner should observe and include source/licensing information where applicable. External models should be embedded through the official viewer when license terms do not allow local redistribution.
+- Teacher-facing examples and usage rules live in `docs/teacher/media-layout-guidelines.md`.
 
 ## 12. Rendered acceptance gate
 

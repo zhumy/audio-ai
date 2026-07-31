@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 音高、音色与符号音频</title>
+    <meta name="description" content="从音高、音色、十二平均律、MIDI 到缺失基频与合成听辨，理解频率关系如何变成音乐和声音表示。" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-7" />
+  </head>
+  <body class="chapter-page lecture-page courseware-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../session/auditory-perception-spatial-representation/">感知与表征路线</a>
+        <a href="../auditory-system-psychoacoustics/">心理声学</a>
+        <a href="../audio-feature-representations/">音频特征</a>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#pitch">音高</a>
+        <a href="#timbre">音色</a>
+        <a href="#pitch-timbre-unity">统一理解</a>
+        <a href="#equal-temperament">十二平均律</a>
+        <a href="#midi">MIDI</a>
+        <a href="#synthesis-practice">合成听辨</a>
+        <a href="#route">学习路线</a>
+      </nav>
+
+      <section class="chapter-hero lecture-hero" id="overview">
+        <div>
+          <p class="chapter-code">DRAFT CHAPTER / PITCH AND TIMBRE</p>
+          <h1>音高、音色与<br /><span>符号音频</span></h1>
+          <p class="chapter-lead">
+            音高和音色把听觉系统的加工结果转向“频率关系如何被组织成音乐和合成控制”。
+            因此这里单独成章，先理解音高与音色，再把十二平均律和 MIDI 分开作为两种符号化系统讲清楚。
+          </p>
+        </div>
+        <aside class="brief-card">
+          <span class="card-label">本章转换</span>
+          <p><strong>输入</strong>：基频、谐波、包络和频率比例。</p>
+          <p><strong>表示</strong>：音高、音色、半音、MIDI。</p>
+          <p><strong>实践</strong>：播放与画布观察同音高不同音色。</p>
+        </aside>
+      </section>
+
+      <section class="chapter-block" id="pitch">
+        <div class="section-heading">
+          <p>PITCH</p>
+          <h2>音高：频率相关，但不等于频率</h2>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>先把问题问清楚</h3>
+            <p>
+              课堂上不要把音高直接说成“频率”。频率是物理量，单位是 Hz；音高是听觉属性，回答的是“这个声音听起来有多高”。
+              对纯音来说，两者常常近似对应；对复合音、缺失基频和乐器声来说，音高是听觉系统对周期结构、谐波关系和神经时间信息的组织结果。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>音高如何测量</h3>
+            <p>
+              音高通常用心理声学匹配任务测量：先呈现一个待判断声音，再让听者调节纯音或周期脉冲序列，直到两者听起来“同高”。
+              这个匹配频率或重复率不是声学仪器直接读出的属性，而是听者报告出的知觉等效量。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>关键结论 Takeaway 1</h3>
+            <p>
+              音高不是频率本身，而是听觉系统根据频率结构和时间周期形成的知觉。音色差异过大时，音高匹配会变难，这说明音高与音色可以概念区分，却不能在真实听觉任务中完全拆开。
+            </p>
+          </article>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>把频率关系听成“高低”</h3>
+            <p>
+              基频、谐波数量和缺失基频开关展示了一个关键现象：音高依赖周期与谐波组织，
+              但听到的音高不一定等于某个单独频率成分。
+            </p>
+            <div class="cw-control-row">
+              <label>相对 A4 的半音距离 <b id="semitoneText">0</b>
+                <input id="semitoneFromA4" data-pitch-control type="range" min="-12" max="24" step="1" value="0" />
+              </label>
+              <label>谐波数量 <b id="harmonicCountText">5</b>
+                <input id="pitchHarmonics" data-pitch-control type="range" min="1" max="10" step="1" value="5" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <canvas id="pitchCanvas" class="cw-canvas" aria-label="音高示例的波形与谐波谱图"></canvas>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="pianoFreqText">440.00 Hz</strong><span>十二平均律频率</span></p>
+              <p class="cw-metric"><strong id="midiNoteText">MIDI 69</strong><span>符号音频编号</span></p>
+              <p class="cw-metric"><strong id="pianoNoteText">A4</strong><span>当前琴键</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="cw-two" id="missing-fundamental">
+          <article class="cw-card">
+            <h3>音高现象：缺失基频</h3>
+            <p>
+              打开缺失基频后，画布会压低 H1，并保留高阶谐波。这个现象说明：
+              音高判断可以来自周期结构，而不只是某一个频谱峰。
+            </p>
+            <label class="cw-chip"><input id="missingFundamental" type="checkbox" /> 缺失基频，只播放高阶谐波</label>
+            <div class="cw-button-row">
+              <button id="playPitch" type="button">播放当前音高示例</button>
+            </div>
+          </article>
+          <article class="cw-card">
+            <h3>现象检查</h3>
+            <p>如果 H1 不在信号里，但 H2、H3、H4 仍然形成规则间隔，人耳仍可能听到对应的基频音高。</p>
+            <p class="cw-note">这是音高感知与频谱表示之间很适合讨论的分岔点。</p>
+          </article>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>音乐音高的两个维度：Tone Height 与 Tone Chroma</h3>
+            <p>
+              音乐里的音高不是一条简单的“低到高”直线。<strong>Tone Height</strong> 指音高高度，通常随频率升高而上升；
+              <strong>Tone Chroma</strong> 指音级类别，也就是 C、D、E 或 A、B 这类跨八度仍可被听成相近类别的旋律身份。
+            </p>
+            <p>
+              例如 220 Hz 与 440 Hz 的音高高度不同，但都可归入 A 类音级。八度感、旋律轮廓和音级命名依赖的不只是频率比，还依赖时间编码是否还能稳定提供周期信息。
+              当频率升到约 4-5 kHz 以上，听者仍能听出高低变化，但八度匹配、旋律组织和清晰的音级类别会明显变差。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>复合音音高：不是读最低谱峰</h3>
+            <p>
+              谐波复合音的分量可写成 <span class="inline-mathml"><math><mrow><msub><mi>f</mi><mi>n</mi></msub><mo>=</mo><mi>n</mi><msub><mi>f</mi><mn>0</mn></msub></mrow></math></span>。
+              当 <span class="inline-mathml"><math><msub><mi>f</mi><mn>0</mn></msub></math></span> 为 200 Hz 时，400、600、800、1000 Hz 等高阶谐波通常仍支持接近 200 Hz 的整体音高。
+              因此缺失基频现象说明：音高可以对应一个频谱中并不存在的基频。
+            </p>
+            <div class="equation" id="eq-complex-pitch-period" role="math" aria-label="复合音共同周期与感知音高">
+              <math display="block">
+                <mrow>
+                  <mi>Pitch</mi><mo>&#x2248;</mo><mfrac><mn>1</mn><msub><mi>T</mi><mn>0</mn></msub></mfrac>
+                  <mo>,</mo>
+                  <mspace width="0.5em" />
+                  <msub><mi>T</mi><mn>0</mn></msub><mo>=</mo><mfrac><mn>1</mn><msub><mi>f</mi><mn>0</mn></msub></mfrac>
+                </mrow>
+              </math>
+            </div>
+          </article>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>已分辨谐波 Resolved Harmonics</h3>
+            <p>
+              低次谐波之间的间隔相对听觉滤波器带宽较大，能在基底膜上形成较独立的激励峰。听觉系统可利用这些低次谐波之间的整数关系，匹配最可能的基频模板。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>未分辨谐波 Unresolved Harmonics</h3>
+            <p>
+              高次谐波可能落入同一个听觉滤波器，不能被逐个分开，但滤波器输出的包络仍会按共同周期起伏。此时时间间隔和神经放电同步仍可提供基频线索。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>优势原则 Principle of Dominance</h3>
+            <p>
+              复合音音高不是所有谐波的简单平均。实验中，低次、已分辨的谐波通常比高次、未分辨谐波产生更清晰、更稳定的音高，尤其是第 3、4、5 次附近的谐波常具有较高权重。
+            </p>
+          </article>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>分析型听者与综合型听者</h3>
+            <p>
+              当复合音只含少量较低谐波时，不同听者可能采取不同组织方式。分析型听者 <strong>Analytic Listener</strong> 更容易听到各个谐波自身的音高；
+              综合型听者 <strong>Synthetic Listener</strong> 更容易把多个谐波融合成一个整体低音高。谐波数量增加、共同周期更稳定时，整体音高通常更占主导。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>关键结论 Takeaway 11</h3>
+            <p>
+              复合音音高来自耳蜗频谱分析与神经时间分析的联合，而不是单一的频谱峰值或单一的包络周期。
+              对机器听觉来说，这意味着 pitch tracking 不应只找最大谱峰，也不应只找全局自相关峰；需要同时考虑谐波可分辨性、共同周期、显著性权重和声源组织。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="timbre">
+        <div class="section-heading">
+          <p>TIMBRE</p>
+          <h2>音色：同一音高为什么听起来不像同一种声音</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>从音高自然过渡到音色</h3>
+            <p>
+              如果两个声音以相同方式呈现，并且响度、音高大致相同，我们仍然能区分钢琴、小提琴、长笛或人声。这个剩余的听觉差异就是音色 <strong>Timbre</strong> 的核心问题：
+              它回答的不是“这个声音有多高”，而是“这个声音是什么样，可能来自什么声源”。
+            </p>
+            <p>
+              因此音色不能被压缩成一个单一数值。它通常同时涉及明亮/暗淡、尖锐/柔和、丰满/单薄、平滑/粗糙、纯净/带噪、瞬态强弱和稳定/波动等多个维度。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>稳态音色：频谱包络与听觉滤波</h3>
+            <p>
+              对稳态复合音来说，相对谐波幅度是音色的重要线索。即使两个声音有相同基频，只要谐波衰减规律不同，例如
+              <span class="inline-mathml"><math><mrow><msub><mi>A</mi><mi>n</mi></msub><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac></mrow></math></span>
+              与
+              <span class="inline-mathml"><math><mrow><msub><mi>A</mi><mi>n</mi></msub><mo>=</mo><mfrac><mn>1</mn><msup><mi>n</mi><mn>2</mn></msup></mfrac></mrow></math></span>，
+              听起来也会明显不同。
+            </p>
+            <p>
+              但音色也不能只看线性 FFT 的每一个频点。更合理的描述要经过听觉滤波器或近似临界带/ERB 的分带，因为耳蜗看到的是分带后的激励模式和谱包络。
+            </p>
+          </article>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>谐波能量与起音包络</h3>
+            <p>
+              音色实验通过 H1-H5 能量和起音速度控制，比较“同一音高，不同频谱包络和时间包络”的听感差异。
+            </p>
+            <div class="cw-control-row">
+              <label>H1 <b id="h1Text">100%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="100" /></label>
+              <label>H2 <b id="h2Text">40%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="40" /></label>
+              <label>H3 <b id="h3Text">20%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="20" /></label>
+              <label>H4 <b id="h4Text">10%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="10" /></label>
+              <label>H5 <b id="h5Text">5%</b><input data-timbre-control data-harmonic type="range" min="0" max="100" value="5" /></label>
+              <label>起音速度 <b id="attackText">30 ms</b><input id="attackMs" data-timbre-control type="range" min="5" max="220" value="30" /></label>
+            </div>
+            <div class="cw-button-row">
+              <button id="playTimbre" type="button">播放当前音色</button>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <canvas id="timbreCanvas" class="cw-canvas" aria-label="音色示例的波形、包络与谐波谱图"></canvas>
+          </div>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>频谱质心 Spectral Centroid</h3>
+            <p>
+              明亮度常与频谱质心相关：高频能量占比越高，声音通常越明亮或尖锐。但它只是音色空间中的一个维度，不能代表全部音色。
+            </p>
+            <div class="equation" id="eq-spectral-centroid" role="math" aria-label="频谱质心公式">
+              <math display="block">
+                <mrow>
+                  <mi>C</mi><mo>=</mo>
+                  <mfrac>
+                    <mrow><msub><mo>&#x2211;</mo><mi>k</mi></msub><msub><mi>f</mi><mi>k</mi></msub><msub><mi>A</mi><mi>k</mi></msub></mrow>
+                    <mrow><msub><mo>&#x2211;</mo><mi>k</mi></msub><msub><mi>A</mi><mi>k</mi></msub></mrow>
+                  </mfrac>
+                </mrow>
+              </math>
+            </div>
+          </article>
+          <article class="cw-mini">
+            <h3>动态音色：时间包络不能省略</h3>
+            <p>
+              真实声音包含起音、稳态、衰减和终止。两个声音即使长期平均频谱相同，只要起音速度、衰减方向或时间反转关系不同，听起来也可能完全不像同一声源。
+              钢琴声时间反转后不再像正常钢琴，就是典型例子。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>不同谐波有不同时间生命</h3>
+            <p>
+              真实乐器并不是所有谐波同时出现、同时达到峰值、再乘同一个包络消失。更真实的合成需要给不同谐波设置独立包络，并加入吹气、摩擦、敲击等非周期瞬态和噪声成分。
+            </p>
+          </article>
+        </div>
+        <div class="cw-card">
+          <h3>关键结论 Takeaway 12-16</h3>
+          <p>
+            音高回答“这个声音有多高”，音色回答“这个声音是什么样、可能来自什么声源”。稳态音色主要受听觉滤波后的频谱形状影响；
+            音色是多维属性；长期平均频谱不能完整决定音色；各频率成分在什么时候出现、怎样增长、怎样衰减，也同样决定声源身份。
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="pitch-timbre-unity">
+        <div class="section-heading">
+          <p>UNIFIED VIEW</p>
+          <h2>音高与音色的统一理解</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>同一声音结构，两种整合方式</h3>
+            <p>
+              音高与音色并不是来自两套完全分离的声学信息，而是听觉系统对同一复杂声音进行不同方式的整合。
+              共同周期、基频和谐波关系倾向于形成相对单一的音高；相对谐波幅度、谱包络、起音、衰减、噪声和瞬态则保留下更多声源细节，形成音色。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>最终 Takeaway</h3>
+            <p>
+              音高倾向于描述声音的周期结构，音色倾向于描述周期结构之外保留下来的频谱与时间细节。
+              因此，“找基频”和“识别音色”在算法上可以分成不同任务，但在听觉机制上共享耳蜗频谱分析、神经时间分析和听觉对象组织。
+            </p>
+          </article>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>共同重复率</h3>
+            <p>主要决定整体音高，也会影响声源的周期性身份。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>相对谐波幅度</h3>
+            <p>影响音高显著度和稳定度，同时决定谱包络、明亮度和厚薄感。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>起音、衰减与噪声</h3>
+            <p>通常不决定基本音高，却强烈影响乐器、人声和环境声的声源识别。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="equal-temperament">
+        <div class="section-heading">
+          <p>EQUAL TEMPERAMENT</p>
+          <h2>十二平均律：把连续频率折叠成可转调的音高网格</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>从比例音程到平均分割</h3>
+            <p>
+              音乐中的“同一个旋律升高一截仍像同一个旋律”，来自频率比例而不是频率差。八度 octave 对应频率乘以 2；
+              五度、四度、三度在不同文化和调律系统中常被看成重要音程，是因为它们接近简单整数比并容易与谐波结构形成稳定关系。
+            </p>
+            <p>
+              十二平均律把一个八度平均分成 12 个等比半音，使每一步频率比相同。这样牺牲了一部分纯律音程的精确整数比，换来一个巨大好处：
+              在所有调上使用同一套键盘位置和和声关系，转调、合奏、作曲和制造乐器都更方便。
+            </p>
+            <div class="equation" id="eq-twelve-tone-equal-temperament" role="math" aria-label="十二平均律频率公式">
+              <math display="block">
+                <mrow>
+                  <mi>f</mi><mo>(</mo><mi>n</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <msub><mi>f</mi><mrow><mi>ref</mi></mrow></msub>
+                  <msup><mn>2</mn><mfrac><mrow><mi>n</mi><mo>-</mo><msub><mi>n</mi><mrow><mi>ref</mi></mrow></msub></mrow><mn>12</mn></mfrac></msup>
+                </mrow>
+              </math>
+            </div>
+          </article>
+          <article class="cw-card">
+            <h3>历史上为什么会走向十二平均律</h3>
+            <p>
+              中国、古希腊、阿拉伯-波斯、印度和欧洲都发展过基于比例、弦长、管长或声学经验的音阶理论。
+              但只要用纯五度、纯三度一路叠加，就会遇到闭合误差：若干个“很纯”的音程循环以后，无法同时回到完全一致的八度网格。
+            </p>
+            <p>
+              欧洲键盘乐器、复调和转调需求推动了多种 temperament：中庸律、良律、平均律等。十二平均律最终成为现代钢琴、吉他品格、合成器和数字音乐软件中最常用的默认网格，
+              不是因为它“天然唯一正确”，而是因为它在转调便利、和声可用性、制作标准化之间取得了工程折中。
+            </p>
+          </article>
+        </div>
+        <div class="cw-media-grid" data-layout="single">
+          <figure class="cw-figure is-wide is-diagram" data-ratio="natural">
+            <img src="media/twelve-tone-equal-temperament.png" alt="十二平均律示意图，展示一个八度被等比分成十二个半音" loading="lazy" />
+            <figcaption>十二平均律把一个八度等比分成 12 个半音，每一步保持相同频率比，便于跨调复用同一套音高网格。</figcaption>
+          </figure>
+          <figure class="cw-figure is-wide is-diagram" data-ratio="natural">
+            <img src="media/keyboard-layout.png" alt="钢琴键盘示意图，展示白键、黑键与十二平均律半音位置" loading="lazy" />
+            <figcaption>键盘把十二平均律的半音网格映射为空间位置：白键提供常用音级骨架，黑键补足相邻白键之间的半音。</figcaption>
+          </figure>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>中国传统音阶</h3>
+            <p>
+              五声音阶宫、商、角、徵、羽常被近似理解为一个八度内的五个稳定级进；十二律又提供更细的律名系统。
+              它强调调式骨架、旋律走向和音级功能，不等同于现代十二平均律的均匀半音网格。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>欧洲大小调系统</h3>
+            <p>
+              现代大调、小调与十二平均律结合后，形成了便于转调、和声分析和记谱的软件默认语言。但这只是众多音高组织方式之一。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>机器表示的提醒</h3>
+            <p>
+              对机器听觉和音乐生成，十二平均律是一种方便编码，不是全世界音乐的唯一真值。处理传统音乐、声乐和非西方音乐时，要允许微分音、滑音和调式语法。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="midi">
+        <div class="section-heading">
+          <p>MIDI</p>
+          <h2>MIDI：把演奏动作变成可交换的符号事件</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>MIDI 全称与历史来历</h3>
+            <p>
+              MIDI 的全称是 <strong>Musical Instrument Digital Interface</strong>，即“乐器数字接口”。
+              它不是音频格式，不直接传输声音波形；它传输的是演奏和控制信息，例如按下哪个音、力度多大、选择什么音色、控制器旋钮转到哪里。
+            </p>
+            <p>
+              20 世纪 70-80 年代早期，不同品牌合成器、鼓机和音序器常使用彼此不兼容的模拟电压、触发或专有数字接口。
+              1981-1983 年间，Sequential Circuits、Roland、Oberheim、Yamaha、Korg 等厂商围绕通用乐器接口形成标准化方案；
+              1983 年 NAMM 展上，Sequential Prophet-600 与 Roland 设备之间的连接展示让 MIDI 成为电子乐器行业的共同语言。
+            </p>
+          </article>
+          <article class="cw-card">
+            <h3>当下音乐行业怎么用 MIDI</h3>
+            <p>
+              今天 MIDI 仍然是 DAW、软件乐器、合成器、采样器、控制器、灯光、舞台设备和游戏/互动音频之间的核心控制语言。
+              作曲者可以录下键盘演奏为 MIDI 轨，再随时改音色、改速度、量化节奏、编辑力度、转调或驱动外部硬件。
+            </p>
+            <p>
+              在制作流程里，MIDI 负责“演奏结构”和“控制意图”，音频负责“实际声音结果”。这也是为什么同一段 MIDI 可以触发钢琴、弦乐、鼓机或粒子合成器：
+              MIDI 描述事件，合成器或采样器决定声音。
+            </p>
+          </article>
+        </div>
+        <div class="cw-media-grid" data-layout="single">
+          <figure class="cw-figure is-wide is-diagram" data-ratio="natural">
+            <img src="media/midi-introduction-1.png" alt="MIDI 介绍示意图，展示 MIDI 在演奏控制、设备连接与声音生成之间的关系" loading="lazy" />
+            <figcaption>MIDI 不是音频波形本身，而是把演奏动作、控制信息和设备响应组织成可交换的事件流。</figcaption>
+          </figure>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>Channel Voice 消息</h3>
+            <p>
+              常见 MIDI 1.0 演奏消息包括 Note On、Note Off、Control Change、Program Change、Pitch Bend、Channel Pressure 和 Polyphonic Key Pressure。
+              传统 MIDI 有 16 个逻辑 channel，用来区分不同乐器声部或控制目标。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>Note On 如何表达一次按键</h3>
+            <p>
+              一个 Note On 通常包含通道、音符编号和 velocity。比如 A4 常对应 MIDI note 69；velocity 描述按键力度，接收端可把它映射到响度、亮度或采样层。
+              Note Off 或 velocity 为 0 的 Note On 表示释放。
+            </p>
+          </article>
+          <article class="cw-mini">
+            <h3>控制器怎么交互</h3>
+            <p>
+              旋钮、推子、踏板和表情控制常通过 Control Change 发送。Program Change 切换音色；Pitch Bend 表示连续弯音；Clock、MTC、MMC 可用于节拍、时间码和录音设备同步。
+            </p>
+          </article>
+        </div>
+        <section class="cw-card" id="midi-message-flow">
+          <h3>MIDI 信息是怎么交互的</h3>
+          <p>
+            一个典型链路是：控制器产生事件，MIDI 端口或 USB/Bluetooth/网络传输事件，DAW 或硬件合成器接收事件，再把事件映射成声音参数。
+            因此 MIDI 信息流通常是“事件流”，不是连续音频流：
+          </p>
+          <div class="formula-roadmap" aria-label="MIDI event flow">
+            <span>键盘/控制器</span><i></i><span>Note / CC / Pitch Bend</span><i></i><span>DAW 或音源</span><i></i><span>合成/采样输出音频</span>
+          </div>
+          <p>
+            MIDI 1.0 的很多数据是 7-bit，取值 0-127，足够支撑大量经典设备，但连续控制会有量化台阶。
+            MIDI 2.0 在保持 MIDI 1.0 音乐语义和兼容思路的基础上，加入更高分辨率的 Channel Voice、双向能力协商 MIDI-CI、Profiles 和 Universal MIDI Packet，
+            让现代控制器、软件乐器和网络/USB 传输能够表达更细的力度、弯音和每音控制。
+          </p>
+        </section>
+      </section>
+
+      <section class="chapter-block" id="synthesis-practice">
+        <div class="section-heading">
+          <p>PRACTICE</p>
+          <h2>合成听辨：把参数变化听出来</h2>
+        </div>
+        <div class="cw-three">
+          <article class="cw-mini">
+            <h3>先看图</h3>
+            <p>观察波形周期、谐波柱状图和包络形状，先预测声音会变高、变暗、变亮还是变硬。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>再播放</h3>
+            <p>使用浏览器音频播放当前设置。第一次播放需要用户点击，符合浏览器自动播放策略。</p>
+          </article>
+          <article class="cw-mini">
+            <h3>再解释</h3>
+            <p>把“听起来像什么”落回基频、谐波和包络，而不是只停留在形容词。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block reading-strip" id="route">
+        <p class="card-label">学习路线</p>
+        <h2>从心理声学拆出，服务后续表示</h2>
+        <p>本章的对象已经转向音乐/符号/合成表示，适合被后续机器听觉和生成任务多次复用。</p>
+        <div class="cw-route-row">
+          <a href="../../session/auditory-perception-spatial-representation/">回到感知与表征路线</a>
+          <a href="../auditory-system-psychoacoustics/">回到听觉系统与心理声学</a>
+          <a href="../audio-feature-representations/">进入音频特征表示</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/perceptual-courseware.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>

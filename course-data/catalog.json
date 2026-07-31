@@ -52,6 +52,78 @@
       "maintainers": ["@zhumy"]
     },
     {
+      "id": "auditory-perception-spatial-representation",
+      "type": "session",
+      "title": "心理声学、空间听觉与听觉特征表征",
+      "url": "session/auditory-perception-spatial-representation/",
+      "status": "draft",
+      "maintainers": ["@zhumy"],
+      "related_topics": [
+        "auditory-system-psychoacoustics",
+        "pitch-timbre-symbolic-audio",
+        "spatial-hearing-scene-analysis",
+        "audio-feature-representations"
+      ]
+    },
+    {
+      "id": "auditory-psychoacoustics-route",
+      "type": "session",
+      "title": "听觉系统与心理声学路线（已合并）",
+      "url": "session/auditory-psychoacoustics-route/",
+      "status": "archived",
+      "maintainers": ["@zhumy"],
+      "related_topics": ["auditory-perception-spatial-representation"]
+    },
+    {
+      "id": "auditory-system-psychoacoustics",
+      "type": "chapter",
+      "title": "听觉系统与心理声学基础",
+      "url": "chapters/auditory-system-psychoacoustics/",
+      "status": "draft",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "pitch-timbre-symbolic-audio",
+      "type": "chapter",
+      "title": "音高、音色与符号音频",
+      "url": "chapters/pitch-timbre-symbolic-audio/",
+      "status": "draft",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "spatial-scene-feature-route",
+      "type": "session",
+      "title": "空间听觉、场景组织与机器特征路线（已合并）",
+      "url": "session/spatial-scene-feature-route/",
+      "status": "archived",
+      "maintainers": ["@zhumy"],
+      "related_topics": ["auditory-perception-spatial-representation"]
+    },
+    {
+      "id": "spatial-hearing-scene-analysis",
+      "type": "chapter",
+      "title": "空间听觉与场景组织",
+      "url": "chapters/spatial-hearing-scene-analysis/",
+      "status": "draft",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "audio-feature-representations",
+      "type": "chapter",
+      "title": "音频特征表征",
+      "url": "chapters/audio-feature-representations/",
+      "status": "draft",
+      "maintainers": ["@zhumy"]
+    },
+    {
+      "id": "subjective-evaluation",
+      "type": "chapter",
+      "title": "主观评价",
+      "url": "chapters/subjective-evaluation/",
+      "status": "draft",
+      "maintainers": ["@zhumy"]
+    },
+    {
       "id": "sound-event-classification",
       "type": "project",
       "title": "声音事件分类项目",

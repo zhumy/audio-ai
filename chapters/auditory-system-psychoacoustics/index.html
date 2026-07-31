@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio AI | 听觉系统与心理声学基础</title>
+    <meta name="description" content="从外耳、中耳、内耳到听阈、响度、临界频带与掩蔽，理解声音如何被人耳组织成可听经验。" />
+    <link rel="stylesheet" href="../../assets/css/theme.css?v=20260718-3" />
+    <link rel="stylesheet" href="../../assets/css/chapter.css?v=20260718-7" />
+  </head>
+  <body class="chapter-page lecture-page courseware-page auditory-system-page">
+    <header class="chapter-nav">
+      <a class="wordmark" href="../../" aria-label="返回 Audio AI 首页">
+        <span class="signal"><i></i><i></i><i></i><i></i></span>
+        AUDIO <b>AI</b>
+      </a>
+      <nav class="chapter-links" aria-label="课程导航">
+        <a href="../../session/auditory-perception-spatial-representation/">感知与表征路线</a>
+        <a href="../pitch-timbre-symbolic-audio/">音高音色</a>
+        <a href="../../session/">全部导览</a>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="chapter-outline" aria-label="本章主线" data-course-outline>
+        <a href="#overview">先看全貌</a>
+        <a href="#auditory-chain">外中内耳</a>
+        <a href="#auditory-filter">听觉滤波器</a>
+        <a href="#thresholds-health">听阈健康</a>
+        <a href="#loudness">响度</a>
+        <a href="#critical-bands">临界频带</a>
+        <a href="#masking">掩蔽</a>
+        <a href="#mp3">MP3</a>
+      </nav>
+
+      <section class="chapter-hero lecture-hero" id="overview">
+        <div>
+          <p class="chapter-code">DRAFT CHAPTER / HUMAN HEARING</p>
+          <h1>听觉系统与<br /><span>心理声学基础</span></h1>
+          <p class="chapter-lead">
+            声音进入耳朵后并不是被动记录。外耳、中耳和内耳会改变声波，耳蜗和听神经实验进一步显示出频率选择性；
+            这些生理学与神经学观察会被经验总结为听觉滤波器组，并影响我们理解听阈、响度、临界频带和掩蔽。
+          </p>
+          <div class="cw-chip-row" aria-label="本章关键词">
+            <span class="cw-chip">外耳 / 中耳 / 内耳</span>
+            <span class="cw-chip">听觉滤波器组</span>
+            <span class="cw-chip">听阈与响度</span>
+            <span class="cw-chip">临界频带与掩蔽</span>
+          </div>
+        </div>
+        <aside class="brief-card">
+          <span class="card-label">本章转换</span>
+          <p><strong>声音输入</strong>：频率、声级、频谱和时间变化。</p>
+          <p><strong>听觉加工</strong>：外中内耳、频率选择性与心理声学约束。</p>
+          <p><strong>后续用途</strong>：音高音色、听觉滤波器组与机器特征。</p>
+        </aside>
+      </section>
+
+      <section class="chapter-block" id="auditory-chain">
+        <div class="section-heading">
+          <p>AUDITORY CHAIN</p>
+          <h2>外耳、中耳、内耳：声音进入听觉系统的整体路径</h2>
+        </div>
+        <div class="cw-grid">
+          <article class="cw-card">
+            <h3>不是被动麦克风</h3>
+            <p>
+              本章的第一条主线是：耳朵不是把空气压力原样交给大脑。耳廓和耳道改变方向相关频谱，
+              中耳把鼓膜振动传给卵圆窗，内耳再把机械振动转成神经活动。
+            </p>
+            <ul>
+              <li>外耳：收集声波并引入方向相关滤波。</li>
+              <li>中耳：鼓膜和听小骨完成机械耦合与阻抗匹配。</li>
+              <li>内耳：耳蜗基底膜把频率组织成空间位置。</li>
+            </ul>
+          </article>
+          <figure class="cw-figure is-diagram" data-fit="contain">
+            <img src="media/ear-overview-formal.png" alt="耳部整体构造图，标出外耳、中耳、内耳、耳廓、外耳道、鼓膜、听小骨、半规管、耳蜗和听神经" />
+            <figcaption>总览图先把外耳、中耳、内耳放在同一条传递链上，后面再分段观察每一部分的结构和作用。</figcaption>
+          </figure>
+        </div>
+        <div class="cw-story-stack" aria-label="外耳、中耳、内耳分段讲解">
+          <article class="cw-split-card">
+            <div class="cw-split-copy">
+              <p class="cw-step-kicker">OUTER EAR / 外耳</p>
+              <h3>外耳先改变进入耳道的声谱</h3>
+              <p>
+                外耳不是一个简单的入口。耳轮、耳甲腔、耳屏和耳廓褶皱会让不同方向、不同频率的声音在进入外耳道之前已经带上滤波痕迹。
+                这为后面的方向判断和 HRTF 埋下第一层线索。
+              </p>
+              <ul>
+                <li>耳廓形状参与方向相关滤波。</li>
+                <li>外耳道把声波引向鼓膜。</li>
+                <li>这一步仍然是声学空间中的变化，还没有进入机械换能。</li>
+              </ul>
+            </div>
+            <figure class="cw-figure is-diagram cw-split-media" data-fit="contain" data-ratio="natural">
+              <img src="media/outer-ear-auricle.png" alt="外耳解剖结构图，标出耳轮、三角窝、耳轮脚、耳甲艇、耳甲腔、耳屏和耳垂" />
+              <figcaption>外耳解剖结构。这里重点观察耳廓并非光滑漏斗，而是带有方向相关滤波能力的复杂形状。</figcaption>
+            </figure>
+          </article>
+
+          <article class="cw-split-card is-media-left">
+            <div class="cw-split-copy">
+              <p class="cw-step-kicker">MIDDLE EAR / 中耳</p>
+              <h3>中耳把鼓膜振动传给卵圆窗</h3>
+              <p>
+                声波推动鼓膜，锤骨、砧骨和镫骨把机械运动向内传递。这个过程不是“声音继续往里走”这么简单，
+                而是空气振动到内耳液体振动之间的机械耦合与阻抗匹配。
+              </p>
+              <ul>
+                <li>鼓膜先把空气压力变化转成机械振动。</li>
+                <li>听小骨链传递并调节振动。</li>
+                <li>镫骨推动卵圆窗，声波进入内耳液体系统。</li>
+              </ul>
+            </div>
+            <figure class="cw-figure is-diagram cw-split-media" data-fit="contain" data-ratio="natural">
+              <img src="media/middle-ear-ossicles.png" alt="中耳听小骨及声波传导过程图，标出鼓膜、锤骨、砧骨、镫骨、卵圆窗和声波传递箭头" />
+              <figcaption>中耳声波传导过程。图中的箭头显示从鼓膜到听小骨，再到卵圆窗的机械传递链。</figcaption>
+            </figure>
+          </article>
+
+          <article class="cw-split-card">
+            <div class="cw-split-copy">
+              <p class="cw-step-kicker">INNER EAR / 内耳</p>
+              <h3>内耳把频率组织成耳蜗上的位置</h3>
+              <p>
+                进入内耳后，耳蜗不是简单记录“有多少 Hz”，而是让不同频率在基底膜上形成不同响应位置：
+                高频更靠近基底端，低频能传播到更靠近顶端的位置。
+              </p>
+              <ul>
+                <li>顶区更偏向低频响应。</li>
+                <li>基底区更偏向高频响应。</li>
+                <li>频率到位置的映射，是后面听觉滤波器、临界频带和掩蔽的生理直觉来源。</li>
+              </ul>
+            </div>
+            <figure class="cw-figure is-diagram cw-split-media" data-fit="contain" data-ratio="natural">
+              <img src="media/inner-ear-cochlea-frequency.png" alt="耳蜗频率特性图，标出顶区低频、基底区高频以及从低频到高频的分布趋势" />
+              <figcaption>耳蜗频率特性。低频、中频、高频沿耳蜗展开，帮助把频谱和听觉位置编码连接起来。</figcaption>
+            </figure>
+          </article>
+        </div>
+        <details class="cw-optional-embed">
+          <summary>可选：打开 3D 耳部模型观察空间关系</summary>
+          <figure class="cw-embed">
+            <iframe
+              title="Human Ear Anatomy 3D model by Devden on Sketchfab"
+              src="https://sketchfab.com/models/c3e65826b8ac48f9ba472d5a384813ad/embed"
+              loading="lazy"
+              allow="autoplay; fullscreen; xr-spatial-tracking"
+              allowfullscreen
+            ></iframe>
+            <figcaption>
+              3D 观察补充：旋转模型可以查看外耳、中耳、内耳的空间关系。模型
+              <a href="https://sketchfab.com/3d-models/human-ear-anatomy-c3e65826b8ac48f9ba472d5a384813ad">Human Ear Anatomy</a>
+              by <a href="https://sketchfab.com/Devden">Devden</a>，通过 Sketchfab 官方 viewer 嵌入；模型文件不复制进课程仓库。
+            </figcaption>
+          </figure>
+        </details>
+      </section>
+
+      <span id="cochlear-map" aria-hidden="true"></span>
+      <section class="chapter-block" id="auditory-filter">
+        <div class="section-heading">
+          <p>AUDITORY FILTER</p>
+          <h2>听觉滤波器：从耳蜗实验到滤波器组</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>不是直接把耳蜗画成 FFT</h3>
+            <p>
+              耳蜗的构造提示我们：不同频率会在基底膜上形成不同响应。但在课程中更重要的一步，
+              是看生理学和神经学实验如何测量这种频率选择性，再把实验结果经验总结成一组带通的听觉滤波器。
+              Gammatone filter 就是常用的经验模型之一，用来模拟耳蜗基底膜附近的频率选择性。
+            </p>
+            <p>
+              因此，耳蜗不能简单理解成“带分频功能的 ADC”。更贴近课程直觉的说法是：
+              它像一个连续滤波器组前端，同时伴随自动增益控制、动态压缩和神经脉冲编码；
+              内毛细胞再把机械运动转换成神经信号。
+            </p>
+            <div class="cw-control-row">
+              <label>滤波器中心频率 <b id="filterCenterText">1000 Hz</b>
+                <input id="filterCenter" data-auditory-control type="range" min="120" max="8000" step="10" value="1000" />
+              </label>
+              <label>滤波器阶数 <b id="filterOrderText">4</b>
+                <input id="filterOrder" data-auditory-control type="range" min="2" max="6" step="1" value="4" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="auditoryFilterDiagram" class="cw-visual" data-label="听觉滤波器组与 Gammatone 响应示意"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="filterBandwidthText">132 Hz</strong><span>近似 ERB 带宽</span></p>
+              <p class="cw-metric"><strong id="filterQText">Q≈7.6</strong><span>中心频率 / 带宽</span></p>
+              <p class="cw-metric"><strong id="filterUseText">滤波器组</strong><span>从实验曲线到可计算前端</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="cw-grid">
+          <article class="cw-card">
+            <h3>经验链条</h3>
+            <ul>
+              <li><strong>生理观察</strong>：基底膜和听神经对不同频率有选择性响应。</li>
+              <li><strong>实验测量</strong>：通过响应曲线、调谐曲线和心理声学任务估计每个频率附近的有效通带。</li>
+              <li><strong>经验拟合</strong>：用 ERB 标尺和 Gammatone 这类模型，把连续的听觉响应整理成滤波器组。</li>
+              <li><strong>工程使用</strong>：后续很多音频特征并不是直接复制耳蜗，而是借鉴“按感知频带组织信息”的思想。</li>
+            </ul>
+          </article>
+          <article class="cw-card">
+            <h3>Gammatone 的角色</h3>
+            <p>
+              Gammatone 不是从第一性原理严格推导出来的耳蜗方程，而是对实验响应形状的经验拟合。
+              它常被写成一个带有 gamma 包络和中心频率振荡的冲激响应，用来构造符合 ERB 宽度变化的听觉滤波器组。
+            </p>
+            <div class="equation-wrap compact-equation" id="eq-gammatone-impulse">
+              <math display="block">
+                <mrow>
+                  <mi>g</mi><mo>(</mo><mi>t</mi><mo>)</mo>
+                  <mo>=</mo>
+                  <msup><mi>t</mi><mrow><mi>n</mi><mo>-</mo><mn>1</mn></mrow></msup>
+                  <msup><mi>e</mi><mrow><mo>-</mo><mn>2</mn><mi>π</mi><mi>b</mi><mi>t</mi></mrow></msup>
+                  <mi>cos</mi><mo>(</mo><mn>2</mn><mi>π</mi><msub><mi>f</mi><mi>c</mi></msub><mi>t</mi><mo>)</mo>
+                </mrow>
+              </math>
+            </div>
+            <p>
+              这里的学习重点不是记住公式形状，而是理解抽象过程：先观察耳蜗和听神经的频率选择性，
+              再用经验模型把这些响应整理成可计算、可复用的滤波器组。
+            </p>
+          </article>
+        </div>
+        <div class="cw-media-grid" data-layout="triple" aria-label="Hohmann Gammatone filterbank figures">
+          <figure class="cw-figure is-diagram" data-fit="contain">
+            <img src="media/gammatone-hohmann-overview.png" alt="Gammatone 滤波器组的频率分析与重建流程图" />
+            <figcaption>
+              Gammatone 滤波器组把输入信号分解到一组按听觉频带组织的通道，再通过合成路径重建信号。
+              图源：Hohmann, V., Frequency analysis and synthesis using a Gammatone filterbank, Acta Acustica, Vol. 88, 2002, pp. 433-442.
+            </figcaption>
+          </figure>
+          <figure class="cw-figure is-diagram" data-fit="contain">
+            <img src="media/gammatone-hohmann-analysis.png" alt="Gammatone analysis filter 的幅频响应和相位响应示意" />
+            <figcaption>
+              分析滤波器的中心频率、带宽和相位共同决定每个通道如何截取局部频率成分。
+              图源：Hohmann 2002.
+            </figcaption>
+          </figure>
+          <figure class="cw-figure is-diagram" data-fit="contain">
+            <img src="media/gammatone-hohmann-synthesis.png" alt="Gammatone synthesis filter 与滤波器组重建响应示意" />
+            <figcaption>
+              合成端需要补偿各通道的延迟、相位和增益，使滤波器组既能分析频带结构，也能保持可重建性。
+              图源：Hohmann 2002.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="thresholds-health">
+        <div class="section-heading">
+          <p>THRESHOLD AND HEALTH</p>
+          <h2>听阈、听损与助听设备</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>听阈曲线：不同频率的可听边界</h3>
+            <p>
+              同样的声压级在不同频率上不一定同样容易被听见。听阈曲线把“刚好能听到”的边界画成频率函数：
+              人耳通常在中频区域更敏感，低频和很高频需要更高声压才容易被察觉。
+            </p>
+            <p>
+              这条曲线也提醒我们，可听性不是单一 dB 数值决定的，而是频率、声级和听觉系统状态共同决定的结果。
+            </p>
+          </article>
+          <figure class="cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+            <img src="media/hearing-threshold-curve.png" alt="听阈曲线图，横轴为频率，纵轴为声压级，显示最小可听与高声级边界" />
+            <figcaption>听阈图把频率相关的可听边界和高声级风险放在同一坐标中观察。</figcaption>
+          </figure>
+        </div>
+
+        <div class="cw-two">
+          <figure class="cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+            <img src="media/audiogram.jpg" alt="听力图 audiogram 示例，标出不同频率下左右耳听阈和听损程度区域" />
+            <figcaption>Audiogram 把左右耳在不同频率下的听阈画成诊断线索。</figcaption>
+          </figure>
+          <article class="cw-card">
+            <h3>Audiogram：把听损变成可读图形</h3>
+            <p>
+              听力图通常横轴是频率，纵轴是听阈级。曲线越往下，表示需要更大的声音才听得见；
+              如果高频区域明显下降，常见结果就是辅音、齿音、细节和空间线索更容易丢失。
+            </p>
+            <p>
+              它不是简单给出“听力好或不好”，而是指出哪些频段出了问题，从而决定后续补偿应该集中在哪些频带。
+            </p>
+          </article>
+        </div>
+
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>听力测试：控制环境中的阈值测量</h3>
+            <p>
+              听阈需要在受控声学环境中测量。隔声室、校准耳机和标准化测试流程用于减少背景噪声、
+              房间反射和设备差异带来的干扰。
+            </p>
+            <p>
+              测试得到的不是“自然听音体验”的全部，而是一组可重复比较的频率阈值，为诊断和设备调试提供基准。
+            </p>
+          </article>
+          <figure class="cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+            <img src="media/hearing-test-environment.png" alt="听力测试环境示意图，显示隔声测试间、受试者、耳机和测试控制设备" />
+            <figcaption>听力测试环境通过隔声和校准降低无关变量。</figcaption>
+          </figure>
+        </div>
+
+        <div class="cw-two">
+          <figure class="cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+            <img src="media/cochlear-implant-device.png" alt="人工耳蜗结构示意图，显示体外处理器、植入体、电极阵列和听神经刺激路径" />
+            <figcaption>人工耳蜗把声音处理结果转换为对听神经通路的电刺激。</figcaption>
+          </figure>
+          <article class="cw-card">
+            <h3>助听设备：放大、补偿与神经刺激</h3>
+            <p>
+              助听器通常面向残余听力做频带增益、动态压缩和反馈控制；人工耳蜗则在毛细胞功能严重受损时，
+              通过电极阵列直接刺激听神经相关通路。
+            </p>
+            <p>
+              两类设备都不是“把声音变大”这么简单。它们需要根据听阈、频率分辨率、响度增长和使用场景，
+              在可听性、舒适度和语音清晰度之间折中。
+            </p>
+            <ul>
+              <li><strong>啸叫</strong>：扬声器输出再次被麦克风拾取会形成声反馈，增益越高、佩戴越松，越容易出现尖锐啸叫。</li>
+              <li><strong>WDRC</strong>：宽动态范围压缩需要把小声放大、把大声压住，同时尽量保留语音细节和响度自然感。</li>
+              <li><strong>降噪</strong>：真实环境里噪声、混响和多人说话常混在一起，算法要降低干扰，又不能把目标语音削薄或产生明显失真。</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="loudness">
+        <div class="section-heading">
+          <p>LOUDNESS</p>
+          <h2>响度：同一声压不等于同一听感</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>等响曲线的观察</h3>
+            <p>
+              等响曲线把“听起来一样响”转换成一组声压级曲线。1 kHz 常作为参照频率；当频率偏向低频或很高频时，
+              要达到相同响度通常需要不同的 dB SPL。
+            </p>
+            <p>
+              这说明响度不是声压级的直接同义词。声压是物理量，响度是经过听觉系统频率敏感性、声级范围和听觉压缩后形成的感知结果。
+            </p>
+          </article>
+          <figure class="cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+            <img src="media/equal-loudness-iso226-2023.png" alt="正常等响曲线，基于 ISO 226:2023，显示不同 phon 曲线在频率和声压级上的变化" />
+            <figcaption>正常等响曲线显示：同一响度级在不同频率上对应不同声压级，1 kHz 是常用参照频率。</figcaption>
+          </figure>
+        </div>
+        <details class="cw-details">
+          <summary>可选参考：复杂信号的感知响度计算</summary>
+          <div class="cw-details-body">
+            <p>
+              对音乐、语音、环境声这类复杂信号，响度计算不能只查一条等响曲线。算法会先把输入声信号校准到声压级，
+              再进入频带分析、听觉激励、特定响度和时间整合，最后输出整体 loudness、specific loudness 或时变百分位响度。
+            </p>
+            <div class="cw-grid">
+              <article class="cw-mini">
+                <h3>ISO 532-1 / Zwicker 框架</h3>
+                <p>
+                  这一路线以临界频带、Bark 标尺和特定响度为核心，适合从声压谱或时域信号估计整体响度。
+                  MATLAB 默认使用这个方法，并支持 stationary 与 time-varying loudness。
+                </p>
+                <ol>
+                  <li><strong>输入校准</strong>：从音频波形和采样率进入时，需要用 microphone calibration factor 把数字幅度换算到声压；也可以直接输入 1/3 octave SPL。</li>
+                  <li><strong>1/3 倍频程分析</strong>：把信号转换成 25 Hz 到 12.5 kHz 的 28 个 1/3 octave 频带声压级，输入 SPL 要使用 Z-weighting。</li>
+                  <li><strong>低频修正与能量合并</strong>：对低频段做去强调或修正，再把相邻频带能量按规则合并，得到更接近听觉前端的频带级。</li>
+                  <li><strong>核心响度</strong>：把频带声级转换为 core loudness，表示各临界频带中由物理能量诱发的初始响度贡献。</li>
+                  <li><strong>Bark 轴展开</strong>：把 core loudness 映射到 0.1 到 24 Bark 的 specific loudness 分布。</li>
+                  <li><strong>频率扩展与积分</strong>：用频率扩展斜率模拟掩蔽和频带间影响，再对 specific loudness 积分得到总响度，单位通常是 sone。</li>
+                  <li><strong>时变响度</strong>：对非平稳声音加入 temporal weighting，输出随时间变化的 loudness，并可统计 percentile loudness。</li>
+                </ol>
+              </article>
+              <article class="cw-mini">
+                <h3>ISO 532-2 / Moore-Glasberg 框架</h3>
+                <p>
+                  这一路线更像双耳听觉模型：它从外耳/中耳/耳蜗传递出发，先计算 excitation pattern，
+                  再转换为特定响度，并通过 binaural inhibition 合成双耳结果。MATLAB 中它对应 <code>Method="ISO 532-2"</code>。
+                </p>
+                <ol>
+                  <li><strong>输入校准</strong>：同样需要把波形换算到声压；若输入 1/3 octave SPL，则使用 25 Hz 到 16 kHz 的 29 个频带，并保持 Z-weighting。</li>
+                  <li><strong>声场条件</strong>：根据 free、diffuse、eardrum 或 earphones 等记录/播放条件，选择进入耳道与耳膜模型的修正方式。</li>
+                  <li><strong>外周听觉传递</strong>：每个耳道通道依次经过 tympanic membrane、中耳和耳蜗模型，得到更接近内耳机械响应的频率表示。</li>
+                  <li><strong>激励模式</strong>：耳蜗模型输出 excitation pattern，用来描述不同听觉滤波器位置上的有效激励。</li>
+                  <li><strong>特定响度</strong>：把 excitation 映射到 Cam 标尺上的 specific loudness；MATLAB 返回的维度对应约 1.8 到 38.9 Cam。</li>
+                  <li><strong>双耳整合</strong>：左右耳不是简单相加，而是经过 binaural inhibition 模型整合，形成一个双耳响度估计。</li>
+                  <li><strong>整体响度</strong>：沿 Cam 轴积分 specific loudness，得到总 loudness。这个方法主要面向 stationary loudness，而不是 ISO 532-1 那种时变百分位输出。</li>
+                </ol>
+              </article>
+            </div>
+            <p>
+              MATLAB Audio Toolbox 的
+              <a href="https://www.mathworks.com/help/audio/ref/acousticloudness.html">acousticLoudness</a>
+              函数把这两类 ISO 方法作为可选算法入口。它的典型输出包括总 loudness、specific loudness；
+              当 ISO 532-1 开启 <code>TimeVarying</code> 时，还可以得到 percentile loudness。
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <section class="chapter-block" id="critical-bands">
+        <div class="section-heading">
+          <p>CRITICAL BANDS</p>
+          <h2>临界频带：频谱不是无限精细地被感知</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>ERB 带宽</h3>
+            <p>
+              中心频率滑块说明：感知上的频率分辨率不是固定 Hz 宽度。中心频率越高，等效矩形带宽通常越宽。
+            </p>
+            <div class="cw-control-row">
+              <label>中心频率 <b id="bandFreqText">1000 Hz</b>
+                <input id="bandFreq" data-auditory-control type="range" min="120" max="8000" step="10" value="1000" />
+              </label>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="bandDiagram" class="cw-visual" data-label="临界频带与 ERB 带宽示意"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="bandWidthText">132 Hz</strong><span>近似 ERB 带宽</span></p>
+              <p class="cw-metric"><strong id="bandRangeText">934 - 1066 Hz</strong><span>示意频带范围</span></p>
+              <p class="cw-metric"><strong>感知分辨率</strong><span>相近频率更容易互相影响</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-block" id="masking">
+        <div class="section-heading">
+          <p>MASKING</p>
+          <h2>掩蔽：听不见不代表不存在</h2>
+        </div>
+        <div class="cw-two">
+          <article class="cw-card">
+            <h3>频域掩蔽：同一听觉滤波器里的竞争</h3>
+            <p>
+              当目标声在频率上靠近较强的掩蔽声，并且声级低于简化掩蔽阈值时，它可能存在于信号中但不容易被听见。
+              这不是声音消失，而是可闻性边界发生了变化。把这个现象和前面的听觉滤波器放在一起看，
+              声音是否“可闻”，取决于频率距离、声级差、滤波器带宽和上下文，而不是只看频谱上有没有那条线。
+            </p>
+            <div class="cw-control-row">
+              <label>掩蔽声频率 <b id="maskerFreqText">1000 Hz</b>
+                <input id="maskerFreq" data-auditory-control type="range" min="200" max="6000" step="10" value="1000" />
+              </label>
+              <label>目标声频率 <b id="targetFreqText">1200 Hz</b>
+                <input id="targetFreq" data-auditory-control type="range" min="200" max="6000" step="10" value="1200" />
+              </label>
+              <label>掩蔽声声级 <b id="maskerLevelText">65 dB</b>
+                <input id="maskerLevel" data-auditory-control type="range" min="30" max="90" step="1" value="65" />
+              </label>
+              <label>目标声声级 <b id="targetLevelText">45 dB</b>
+                <input id="targetLevel" data-auditory-control type="range" min="10" max="80" step="1" value="45" />
+              </label>
+            </div>
+            <div class="cw-button-row">
+              <button id="playMaskDemo" type="button">播放掩蔽声</button>
+              <button id="playTargetDemo" type="button">播放目标声</button>
+            </div>
+          </article>
+          <div class="cw-panel">
+            <div id="maskingDiagram" class="cw-visual" data-label="频域掩蔽阈值示意"></div>
+            <div class="cw-metric-row">
+              <p class="cw-metric"><strong id="audibleText">可能被掩蔽</strong><span>根据简化阈值模型估计</span></p>
+              <p class="cw-metric"><strong id="distanceText">相距 200 Hz</strong><span>频率距离</span></p>
+              <p class="cw-metric"><strong>特征连接</strong><span>后续会启发音频特征的感知频带组织</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="cw-grid">
+          <article class="cw-card">
+            <h3>时间上的掩蔽：前向与后向</h3>
+            <p>
+              掩蔽不只发生在同一时刻。强声音出现后，听觉系统需要一小段时间恢复，后面紧跟的弱声音可能更难被听见，
+              这叫前向掩蔽。反过来，如果一个强声音很快跟在弱声音之后，后来的强事件也可能干扰前面弱事件的知觉，
+              这叫后向掩蔽。
+            </p>
+            <ul>
+              <li><strong>前向掩蔽 Forward masking</strong>：掩蔽声先出现，目标声后出现。</li>
+              <li><strong>后向掩蔽 Backward masking</strong>：目标声先出现，强声很快随后出现。</li>
+              <li><strong>时间整合</strong>：耳朵不是逐点读取波形，而是在时间窗口内整合、恢复和解释声音事件。</li>
+            </ul>
+          </article>
+          <article class="cw-card">
+            <h3>机制上的掩蔽：energy 与 information</h3>
+            <p>
+              Energy masking 更接近外周听觉滤波器的能量竞争：目标和干扰在频率、时间或空间上重叠，
+              使目标声在早期听觉表示中被压住。Informational masking 则更偏向中枢层面的混淆：
+              即使目标和干扰在能量上可以分开，听者仍可能因为注意、相似性、语义或声源组织失败而听不出目标。
+            </p>
+            <ul>
+              <li><strong>Energy masking</strong>：主要来自听觉前端的频带/时间重叠。</li>
+              <li><strong>Informational masking</strong>：主要来自对象分离、注意选择和判断策略的困难。</li>
+              <li><strong>边界</strong>：真实听觉任务里两者常同时存在，不应把所有听不清都解释成能量遮盖。</li>
+            </ul>
+          </article>
+        </div>
+        <p class="cw-note">掩蔽描述频域、时间域和知觉组织层面的可听性下降：目标声仍然物理存在，但在听觉表示或判断过程中变得不突出。</p>
+      </section>
+
+      <section class="chapter-block" id="mp3">
+        <div class="section-heading">
+          <p>PERCEPTUAL CODING</p>
+          <h2>从掩蔽到 MP3：把“听不出来”变成工程能力</h2>
+        </div>
+        <div class="cw-grid">
+          <article class="cw-card">
+            <h3>为什么压缩不能只是删采样点</h3>
+            <p>
+              未压缩 CD 音质立体声大约是 1411 kbps，一首几分钟的歌曲很容易达到几十 MB。
+              MP3 的关键不是随机删掉波形点，而是让编码器估计听阈、临界频带和掩蔽阈值，
+              判断哪些频率成分更容易被听到，哪些细节可以用更少比特表示。
+            </p>
+            <ul>
+              <li><strong>心理声学模型</strong>：估计当前声音背景下哪些量化噪声更不容易被听见。</li>
+              <li><strong>比特分配</strong>：容易听出的频带保留更多精度，被掩蔽的频带减少比特。</li>
+              <li><strong>工程意义</strong>：感知编码把“信号里有什么”转换成“人实际能听出什么”。</li>
+            </ul>
+          </article>
+          <article class="cw-card">
+            <h3>从心理声学模型到码流</h3>
+            <p>
+              编码器先把音频分解到频带或变换域，再估计当前片段的可闻性边界。量化噪声只要被控制在较难察觉的区域，
+              文件体积就能显著下降，同时保留主要听感结构。
+            </p>
+            <ul>
+              <li><strong>1987</strong>：EUREKA EU147 数字音频广播项目形成研究联盟。</li>
+              <li><strong>1992/1993</strong>：MPEG-1 Audio Layer III 成为技术基础。</li>
+              <li><strong>1995-1998</strong>：.mp3 命名后进入个人电脑和便携音乐时代。</li>
+            </ul>
+          </article>
+        </div>
+        <figure class="cw-figure is-diagram" data-fit="contain" data-ratio="natural">
+          <img src="media/mp3-block-diagram.png" alt="MP3 编码框图，显示分析滤波器组、心理声学模型、量化编码和码流格式化之间的关系" />
+          <figcaption>MP3 编码框图把频带分析、心理声学模型、量化控制和码流组织放在同一条工程链路中。</figcaption>
+        </figure>
+        <p class="cw-note">
+          心理声学在这里进入工程语境：掩蔽不是孤立现象，而是感知音频编码能够大幅减少数据量的关键依据。
+        </p>
+      </section>
+
+      <section class="chapter-block reading-strip" id="route">
+        <p class="card-label">学习路线</p>
+        <h2>本章把听觉通路和心理声学边界合成一条主线</h2>
+        <p>
+          学习路线由 Session 组织；本章内部保留从听觉通路、听觉滤波器、听阈、响度、临界频带到掩蔽的主线。
+          MP3 承接掩蔽与听阈进入感知编码；音高、音色和 MIDI 拆到独立 Chapter，用于后续音乐与符号表征路线复用。
+        </p>
+        <div class="cw-route-row">
+          <a href="../../session/auditory-perception-spatial-representation/">回到感知与表征路线</a>
+          <a href="#auditory-filter">回看听觉滤波器</a>
+          <a href="#masking">回看掩蔽</a>
+          <a href="#mp3">回看 MP3 编码</a>
+          <a href="../pitch-timbre-symbolic-audio/">进入音高、音色与符号音频</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/perceptual-courseware.js"></script>
+    <script src="../../assets/js/analytics-config.js"></script>
+    <script src="../../assets/js/analytics.js"></script>
+  </body>
+</html>

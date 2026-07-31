@@ -11,28 +11,58 @@
   <body class="route-page">
     <header class="route-header">
       <a class="route-brand" href="../">AUDIO <strong>AI</strong></a>
-      <nav aria-label="课程导航"><a href="../session/">学习导览</a><a href="../">课程首页</a></nav>
+      <nav aria-label="课程导航">
+        <a href="../session/">学习导览</a>
+        <a href="../">课程首页</a>
+      </nav>
     </header>
     <main>
       <section class="route-hero">
         <p class="route-eyebrow">SYLLABUS</p>
-        <h1>课程大纲与<br /><span>当前公开路径</span></h1>
+        <h1>课程大纲中，<br /><span>当前公开路径与预览路径分开维护。</span></h1>
         <p>
-          教学周数和主题顺序可能随课程发展调整，因此网站不把周次写入 Chapter 身份。
-          正式大纲版本由教师维护；当前网站只展示已经达到发布标准的内容。
+          教学周数和主题顺序可以随课程发展调整，因此网站不把周次写入 Chapter 身份。
+          正式大纲版本持续维护；当前公开路线只展示已经达到发布标准的内容。
         </p>
       </section>
       <section class="route-section">
-        <div class="route-section-heading"><div><p>CURRENT ROUTE</p><h2>目前可以连续学习</h2></div></div>
+        <div class="route-section-heading">
+          <div>
+            <p>CURRENT ROUTE</p>
+            <h2>目前可以连续学习</h2>
+          </div>
+        </div>
         <div class="route-card-grid">
-          <a class="route-card featured" href="../session/sound-physics-sampling-spectrum/"><span>Session</span><h3>声音物理与多域表示导览</h3><p>宏观组织时域、空间域和频域之间的关系。</p></a>
+          <a class="route-card featured" href="../session/sound-physics-sampling-spectrum/">
+            <span>Session</span>
+            <h3>声音物理与多域表示导览</h3>
+            <p>宏观组织时域、空间域和频域之间的关系。</p>
+          </a>
           <a class="route-card" href="../chapters/time-domain-audio/"><span>Chapter</span><h3>时域音频</h3><p>完整知识页</p></a>
           <a class="route-card" href="../chapters/spatial-acoustic-features/"><span>Chapter</span><h3>空间声学特征</h3><p>完整知识页</p></a>
           <a class="route-card" href="../chapters/frequency-domain-processing/"><span>Chapter</span><h3>频域处理</h3><p>完整知识页</p></a>
         </div>
       </section>
+      <section class="route-section">
+        <div class="route-section-heading">
+          <div>
+            <p>TEACHER PREVIEW</p>
+            <h2>正在整合的感知与表征单元</h2>
+          </div>
+        </div>
+        <div class="route-card-grid">
+          <a class="route-card featured" href="../session/auditory-perception-spatial-representation/">
+            <span>Draft Session</span>
+            <h3>心理声学、空间听觉与听觉特征表征</h3>
+            <p>将心理声学、音高音色、空间听觉、场景组织和机器特征作为一个大主题单元组织。</p>
+          </a>
+        </div>
+      </section>
     </main>
-    <footer class="route-footer"><span>路径配置：course-data/paths/current.json</span><a href="../course-data/paths/current.json">查看配置</a></footer>
+    <footer class="route-footer">
+      <span>路径配置：course-data/paths/current.json</span>
+      <a href="../course-data/paths/current.json">查看配置</a>
+    </footer>
     <script src="../assets/js/theme.js"></script>
   </body>
 </html>
